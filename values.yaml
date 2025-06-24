@@ -1,0 +1,21 @@
+registryAuth:
+  enabled: false
+  server: "repo.firemetricshealth.com"
+  username: ""
+  password: ""
+
+db:
+  image: repo.firemetricshealth.com/ghcr/firemetrics/spilo16:3.3-p2-latest
+  pg:
+    dbname: firemetrics
+    user: postgres
+    password: postgres
+  requestedStorage: 10Gi
+
+panel:
+  enabled: true
+  image: repo.firemetricshealth.com/ghcr/firemetrics/fmx-panel:25dc7e8
+  ingress:
+    enabled: true
+    host: test.firemetrics.ai
+

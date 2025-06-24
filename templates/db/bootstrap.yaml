@@ -1,0 +1,63 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "db.bootstrapJob" . }}
+spec:
+  template:
+    spec:
+      restartPolicy: OnFailure
+      {{- if .Values.registryAuth.enabled }}
+      imagePullSecrets:
+        - name: {{ include "registry.secretName" . }}
+      {{ end }}
+      containers:
+        - name: main
+          image: {{ .Values.db.image | quote }}
+          env:
+            - name: PGHOST
+              value: {{ include "db.svcName" . }}
+            - name: PGUSER
+              value: {{ .Values.db.pg.user | quote }}
+            - name: PGPASSWORD
+              value: {{ .Values.db.pg.password | quote }}
+            - name: DATABASE_NAME
+              value: {{ .Values.db.pg.dbname | quote }}
+            - name: DATABASE_URL
+              value: {{ include "db.databaseUrl" . | quote }}
+          command:
+            - /bin/bash
+            - -c
+            - |
+              while ! pg_isready > /dev/null 2> /dev/null; do
+                echo "Waiting for Spilo to be ready..."
+                sleep 1
+              done
+
+              DB_EXISTS=$(psql -tc "SELECT 1 FROM pg_database WHERE datname = '$DATABASE_NAME'")
+
+              start_background_workers() {
+                echo "Starting background workers..."
+                psql -d $DATABASE_NAME -c "select fql_start_queue_workers(1);"
+              }
+
+              fhirql_migrate() {
+                echo "Running fhirql migrations..."
+                fql_migrate --postgres-url $DATABASE_URL
+              }
+
+              if [ -n "$DB_EXISTS" ]; then
+                echo "Database $DATABASE_NAME exists. Skipping creation."
+                psql -d $DATABASE_NAME -c "ALTER EXTENSION fhirql UPDATE;"
+                fhirql_migrate
+                start_background_workers
+                exit 0
+              fi
+
+              echo "Bootstrapping database $DATABASE_NAME..."
+              psql -c "CREATE DATABASE $DATABASE_NAME;" && \
+              psql -c "CREATE EXTENSION IF NOT EXISTS pg_cron;" && \
+              psql -d $DATABASE_NAME -c "CREATE EXTENSION IF NOT EXISTS fhirql CASCADE;" && \
+              psql -d $DATABASE_NAME -c "ALTER EXTENSION fhirql UPDATE;" && \
+              fhirql_migrate && \
+              start_background_workers
+

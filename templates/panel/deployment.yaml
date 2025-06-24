@@ -1,0 +1,50 @@
+{{- if .Values.panel.enabled -}}
+{{- $name := printf "%s-panel" .Release.Name -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $name }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/part-of: {{ include "appName" . }}
+      app.kubernetes.io/component: frontend
+      app.kubernetes.io/name: {{ include "panel.podLabel" . }}
+  template:
+    metadata:
+      name: {{ $name }}
+      labels:
+        app.kubernetes.io/part-of: {{ include "appName" . }}
+        app.kubernetes.io/component: frontend
+        app.kubernetes.io/name: {{ include "panel.podLabel" . }}
+    spec:
+      serviceAccountName: {{ include "resourceReaderSaName" . }}
+      {{- if .Values.registryAuth.enabled }}
+      imagePullSecrets:
+        - name: {{ include "registry.secretName" . }}
+      {{ end }}
+      initContainers:
+        - name: wait-for-db-bootstrap
+          image: bitnami/kubectl:latest
+          command:
+            - /bin/bash
+            - -c
+            - |
+              echo "Waiting for database bootstrap job to complete..."
+              until kubectl get job/{{ include "db.bootstrapJob" . }} -o jsonpath='{.status.conditions[?(@.type=="Complete")].status}' | grep True; do
+                echo "Not complete yet..."
+                sleep 5
+              done
+              echo "Bootstrap job is complete."
+      containers:
+        - name: main
+          image: {{ .Values.panel.image | quote }}
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 8000
+          env:
+            - name: FMXPANEL_DATABASE_URL
+              value: {{ include "db.databaseUrl" . | quote }}
+{{- end -}}
