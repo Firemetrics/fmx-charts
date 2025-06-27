@@ -14,7 +14,11 @@ data:
           "clientId": "panel-frontend",
           "enabled": true,
           "publicClient": true,
-          "redirectUris": ["*"],
+          {{- if and .Values.ingress.enabled }}
+          "redirectUris": ["https://{{ .Values.ingress.host }}/panel/*"],
+          {{- else }}
+          "redirectUris": [],
+          {{- end }}
           "defaultClientScopes": ["basic", "audience-panel-backend"]
         },
         {
