@@ -15,7 +15,7 @@ data:
           "enabled": true,
           "publicClient": true,
           "redirectUris": ["*"],
-          "defaultClientScopes": ["audience-panel-backend"]
+          "defaultClientScopes": ["basic", "audience-panel-backend"]
         },
         {
           "clientId": "panel-backend",
