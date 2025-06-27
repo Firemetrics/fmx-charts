@@ -63,16 +63,21 @@ spec:
   tls:
     secretName: {{ $tlsSecretName }}
   routes:
+    {{- if .Values.panel.enabled }}
     - match: {{ $panelMatch }}
       kind: Rule
       services:
         - name: {{ include "panel.svcName" . }}
           port: http
+    {{- end }}
+    {{- if .Values.keycloak.enabled }}
     - match: {{ $authMatch }}
       kind: Rule
       services:
         - name: {{ .Release.Name }}-keycloak
           port: http
+    {{- end }}
+    {{- if .Values.panel.enabled }}
     - match: {{ $hostMatch }}
       kind: Rule
       middlewares:
@@ -80,4 +85,5 @@ spec:
       services:
         - name: noop@internal
           kind: TraefikService
+    {{- end }}
 {{- end -}}

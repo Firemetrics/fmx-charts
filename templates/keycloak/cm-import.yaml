@@ -10,8 +10,9 @@ data:
       "enabled": true,
       "defaultDefaultClientScopes": ["basic"],
       "clients": [
+        {{- if .Values.panel.enabled }}
         {
-          "clientId": "panel-frontend",
+          "clientId": "{{ .Values.panel.oidc.frontendClientId }}",
           "enabled": true,
           "publicClient": true,
           {{- if and .Values.ingress.enabled }}
@@ -22,11 +23,12 @@ data:
           "defaultClientScopes": ["basic", "audience-panel-backend"]
         },
         {
-          "clientId": "panel-backend",
+          "clientId": "{{ .Values.panel.oidc.clientId }}",
           "enabled": true,
           "publicClient": false,
           "redirectUris": []
         }
+        {{- end }}
       ],
       "clientScopes": [
         {
@@ -63,7 +65,8 @@ data:
               }
             }
           ]
-        },
+        }
+        {{- if .Values.panel.enabled }},
         {
           "name": "audience-panel-backend",
           "protocol": "openid-connect",
@@ -74,13 +77,14 @@ data:
               "protocolMapper": "oidc-audience-mapper",
               "consentRequired": false,
               "config": {
-                "included.client.audience": "panel-backend",
+                "included.client.audience": "{{ .Values.panel.oidc.clientId }}",
                 "id.token.claim": "false",
                 "access.token.claim": "true"
               }
             }
           ]
         }
+        {{- end }}
       ]
     }
 {{- end -}}
