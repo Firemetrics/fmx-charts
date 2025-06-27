@@ -13,8 +13,8 @@ db:
   requestedStorage: 10Gi
 
 ingress:
-  enabled: true
-  host: test.firemetrics.ai
+  enabled: false
+  host: ""
 
 panel:
   enabled: true

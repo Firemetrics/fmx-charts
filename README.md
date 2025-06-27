@@ -29,13 +29,16 @@ helm install --create-namespace cert-manager jetstack/cert-manager \
 
 ## Installation
 
-To install the Firemetrics chart, you can use the following command. Make sure to replace `<username>` and `<password>` with your actual credentials for the Firemetrics Docker registry.
+To install the Firemetrics chart, you can use the following command. Make sure to replace `<username>`, `<password>`, `<admin-password>`, and `<host>` with your actual values.
 
 ```bash
 helm install --namespace fmx --create-namespace fmx \
   --set 'registryAuth.enabled=true' \
   --set 'registryAuth.username=<username>' \
   --set 'registryAuth.password=<password>' \
+  --set 'keycloak.auth.adminPassword=<admin-password>' \
+  --set 'ingress.enabled=true' \
+  --set 'ingress.host=<host>' \
   .
 ```
 
