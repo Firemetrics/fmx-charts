@@ -37,3 +37,9 @@
 {{- define "panel.svcName" -}}
 {{- .Release.Name }}-panel
 {{- end }}
+
+{{- define "keycloak.openidDiscoveryUrl" }}
+  {{- if and .Values.ingress.enabled .Values.keycloak.enabled .Values.keycloak.importRealm.realmName -}}
+    https://{{ .Values.ingress.host }}/auth/realms/{{ .Values.keycloak.importRealm.realmName }}/.well-known/openid-configuration
+  {{- end }}
+{{- end }}

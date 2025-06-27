@@ -47,4 +47,12 @@ spec:
           env:
             - name: FMXPANEL_DATABASE_URL
               value: {{ include "db.databaseUrl" . | quote }}
+            {{- $discoveryUrl := .Values.panel.openidDiscoveryUrl }}
+            {{- if not $discoveryUrl }}
+              {{- $discoveryUrl = include "keycloak.openidDiscoveryUrl" . }}
+            {{- end }}
+            {{- if $discoveryUrl }}
+            - name: FMXPANEL_OIDC_DISCOVERY_URL
+              value: {{ $discoveryUrl | quote }}
+            {{- end }}
 {{- end -}}

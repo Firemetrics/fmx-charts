@@ -2,3 +2,8 @@ apiVersion: v2
 name: fmx
 description:
 version: 0.1.0
+dependencies:
+  - name: keycloak
+    version: 24.7.4
+    repository: "https://charts.bitnami.com/bitnami"
+    condition: keycloak.enabled

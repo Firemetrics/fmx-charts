@@ -1,0 +1,83 @@
+{{- if .Values.ingress.enabled -}}
+{{- $hostMatch := printf "Host(`%s`)" .Values.ingress.host -}}
+{{- $panelMatch := printf "%s && PathPrefix(`/panel`)" $hostMatch -}}
+{{- $authMatch := printf "%s && PathPrefix(`/auth`)" $hostMatch -}}
+{{- $name := .Release.Name -}}
+{{- $httpRedirectMiddleware := printf "%s-http-redirect" $name -}}
+{{- $rootRedirectMiddleware := printf "%s-root-redirect" $name -}}
+{{- $tlsSecretName := printf "%s-tls" $name -}}
+
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ $name }}
+spec:
+  commonName: {{ .Values.ingress.host }}
+  secretName: {{ $tlsSecretName }}
+  dnsNames:
+    - {{ .Values.ingress.host }}
+  issuerRef:
+    kind: ClusterIssuer
+    name: letsencrypt
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: {{ $httpRedirectMiddleware }}
+spec:
+  redirectScheme:
+    scheme: https
+    permanent: true
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: {{ $rootRedirectMiddleware }}
+spec:
+  redirectRegex:
+    regex: ^https?://([^/]+)/(?:\?.*)?$
+    replacement: https://${1}/panel
+    permanent: false
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: {{ $name }}-web
+spec:
+  entryPoints: [web]
+  routes:
+    - match: {{ $hostMatch }}
+      kind: Rule
+      middlewares:
+        - name: {{ $httpRedirectMiddleware }}
+      services:
+        - name: noop@internal
+          kind: TraefikService
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: {{ $name }}-websecure
+spec:
+  entryPoints: [websecure]
+  tls:
+    secretName: {{ $tlsSecretName }}
+  routes:
+    - match: {{ $panelMatch }}
+      kind: Rule
+      services:
+        - name: {{ include "panel.svcName" . }}
+          port: http
+    - match: {{ $authMatch }}
+      kind: Rule
+      services:
+        - name: {{ .Release.Name }}-keycloak
+          port: http
+    - match: {{ $hostMatch }}
+      kind: Rule
+      middlewares:
+        - name: {{ $rootRedirectMiddleware }}
+      services:
+        - name: noop@internal
+          kind: TraefikService
+{{- end -}}
