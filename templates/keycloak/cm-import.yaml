@@ -12,7 +12,7 @@ data:
       "clients": [
         {{- if .Values.panel.enabled }}
         {
-          "clientId": "{{ .Values.panel.oidc.frontendClientId }}",
+          "clientId": "{{ .Values.panel.oidc.clientId }}",
           "enabled": true,
           "publicClient": true,
           {{- if and .Values.ingress.enabled }}
@@ -20,13 +20,14 @@ data:
           {{- else }}
           "redirectUris": [],
           {{- end }}
-          "defaultClientScopes": ["basic", "audience-panel-backend"]
-        },
-        {
-          "clientId": "{{ .Values.panel.oidc.clientId }}",
-          "enabled": true,
-          "publicClient": false,
-          "redirectUris": []
+          "defaultClientScopes": [
+            "basic",
+            "attribute-fhir-user",
+            "audience-panel"
+            {{- if .Values.panel.enabled }},
+            "audience-fuego"
+            {{- end }}
+          ]
         }
         {{- end }}
       ],
@@ -65,10 +66,31 @@ data:
               }
             }
           ]
-        }
-        {{- if .Values.panel.enabled }},
+        },
         {
-          "name": "audience-panel-backend",
+          "name": "attribute-fhir-user",
+          "protocol": "openid-connect",
+          "protocolMappers": [
+            {
+              "name": "attribute-mapper",
+              "protocol": "openid-connect",
+              "protocolMapper": "oidc-usermodel-attribute-mapper",
+              "consentRequired": false,
+              "config": {
+                "aggregate.attrs": "false",
+                "introspection.token.claim": "true",
+                "userinfo.token.claim": "true",
+                "user.attribute": "fhirUser",
+                "access.token.claim": "true",
+                "claim.name": "fhirUser",
+                "jsonType.label": "String"
+              }
+            }
+          ]
+        }
+        {{- if .Values.fuego.enabled }},
+        {
+          "name": "audience-fuego",
           "protocol": "openid-connect",
           "protocolMappers": [
             {
@@ -77,7 +99,38 @@ data:
               "protocolMapper": "oidc-audience-mapper",
               "consentRequired": false,
               "config": {
-                "included.client.audience": "{{ .Values.panel.oidc.clientId }}",
+                "included.custom.audience": "
+                {{- if .Values.ingress.enabled -}}
+                  https://{{ .Values.ingress.host }}/fhir/
+                {{- else -}}
+                  {{ .Values.fuego.oidc.audience }}
+                {{- end -}}
+                ",
+                "id.token.claim": "false",
+                "access.token.claim": "true"
+              }
+            }
+          ]
+        }
+        {{- end }}
+        {{- if .Values.panel.enabled }},
+        {
+          "name": "audience-panel",
+          "protocol": "openid-connect",
+          "protocolMappers": [
+            {
+              "name": "audience-mapper",
+              "protocol": "openid-connect",
+              "protocolMapper": "oidc-audience-mapper",
+              "consentRequired": false,
+              "config": {
+                "included.custom.audience": "
+                {{- if .Values.ingress.enabled -}}
+                  https://{{ .Values.ingress.host }}/panel/
+                {{- else -}}
+                  {{ .Values.panel.oidc.audience }}
+                {{- end -}}
+                ",
                 "id.token.claim": "false",
                 "access.token.claim": "true"
               }

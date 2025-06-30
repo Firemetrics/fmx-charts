@@ -30,6 +30,12 @@
 {{ printf "postgresql://%s:%s@%s:5432/%s" .Values.db.pg.user .Values.db.pg.password (include "db.svcName" .) .Values.db.pg.dbname }}
 {{- end }}
 
+{{- define "keycloak.openidDiscoveryUrl" }}
+  {{- if and .Values.ingress.enabled .Values.keycloak.enabled .Values.keycloak.importRealm.realmName -}}
+    https://{{ .Values.ingress.host }}/auth/realms/{{ .Values.keycloak.importRealm.realmName }}/.well-known/openid-configuration
+  {{- end }}
+{{- end }}
+
 {{- define "panel.podLabel" -}}
 {{- .Release.Name }}-panel
 {{- end }}
@@ -38,8 +44,10 @@
 {{- .Release.Name }}-panel
 {{- end }}
 
-{{- define "keycloak.openidDiscoveryUrl" }}
-  {{- if and .Values.ingress.enabled .Values.keycloak.enabled .Values.keycloak.importRealm.realmName -}}
-    https://{{ .Values.ingress.host }}/auth/realms/{{ .Values.keycloak.importRealm.realmName }}/.well-known/openid-configuration
-  {{- end }}
+{{- define "fuego.podLabel" -}}
+{{- .Release.Name }}-fuego
+{{- end }}
+
+{{- define "fuego.svcName" -}}
+{{- .Release.Name }}-fuego
 {{- end }}

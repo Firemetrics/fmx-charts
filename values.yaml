@@ -4,6 +4,10 @@ registryAuth:
   username: ""
   password: ""
 
+ingress:
+  enabled: false
+  host: ""
+
 db:
   image: repo.firemetricshealth.com/ghcr/firemetrics/spilo16:3.3-p2-latest
   pg:
@@ -12,17 +16,21 @@ db:
     password: postgres
   requestedStorage: 10Gi
 
-ingress:
-  enabled: false
-  host: ""
+fuego:
+  enabled: true
+  image: repo.firemetricshealth.com/ghcr/firemetrics/fuego:0ba35303
+  oidc:
+    enabled: true
+    discoveryUrl: ""
+    audience: ""
 
 panel:
   enabled: true
-  image: repo.firemetricshealth.com/ghcr/firemetrics/fmx-panel:956c5c0
+  image: repo.firemetricshealth.com/ghcr/firemetrics/fmx-panel:72635b7
   oidc:
     discoveryUrl: ""
-    clientId: "panel-backend"
-    frontendClientId: "panel-frontend"
+    clientId: "panel"
+    audience: ""
 
 keycloak:
   enabled: true

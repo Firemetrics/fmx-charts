@@ -1,5 +1,5 @@
-{{- if .Values.panel.enabled -}}
-{{- $name := printf "%s-panel" .Release.Name -}}
+{{- if .Values.fuego.enabled -}}
+{{- $name := printf "%s-fuego" .Release.Name -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -9,15 +9,15 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/part-of: {{ include "appName" . }}
-      app.kubernetes.io/component: frontend
-      app.kubernetes.io/name: {{ include "panel.podLabel" . }}
+      app.kubernetes.io/component: backend
+      app.kubernetes.io/name: {{ include "fuego.podLabel" . }}
   template:
     metadata:
       name: {{ $name }}
       labels:
         app.kubernetes.io/part-of: {{ include "appName" . }}
-        app.kubernetes.io/component: frontend
-        app.kubernetes.io/name: {{ include "panel.podLabel" . }}
+        app.kubernetes.io/component: backend
+        app.kubernetes.io/name: {{ include "fuego.podLabel" . }}
     spec:
       serviceAccountName: {{ include "resourceReaderSaName" . }}
       {{- if .Values.registryAuth.enabled }}
@@ -39,31 +39,40 @@ spec:
               echo "Bootstrap job is complete."
       containers:
         - name: main
-          image: {{ .Values.panel.image | quote }}
+          image: {{ .Values.fuego.image | quote }}
           imagePullPolicy: Always
           ports:
             - name: http
-              containerPort: 8000
+              containerPort: 3000
           env:
-            - name: FMXPANEL_DATABASE_URL
-              value: {{ include "db.databaseUrl" . | quote }}
-            - name: FMXPANEL_OIDC_CLIENT_ID
-              value: {{ .Values.panel.oidc.clientId | quote }}
-            - name: FMXPANEL_OIDC_AUDIENCE
-              value: "
-                {{- if .Values.ingress.enabled -}}
-                  https://{{ .Values.ingress.host }}/panel/
-                {{- else -}}
-                  {{ .Values.panel.oidc.audience }}
-                {{- end -}}
-              "
-
-            {{- $discoveryUrl := .Values.panel.oidc.discoveryUrl }}
+            - name: FUEGO_SERVER_INTERFACE
+              value: "0.0.0.0"
+            - name: FUEGO_SERVER_PORT
+              value: "3000"
+            {{- if .Values.ingress.enabled }}
+            - name: FUEGO_SERVER_PUBLIC_URL
+              value: https://{{ .Values.ingress.host }}
+            {{- end }}
+            - name: FUEGO_DATABASE_HOST
+              value: {{ include "db.svcName" . | quote }}
+            - name: FUEGO_DATABASE_PORT
+              value: "5432"
+            - name: FUEGO_DATABASE_DBNAME
+              value: {{ .Values.db.pg.dbname | quote }}
+            - name: FUEGO_DATABASE_USERNAME
+              value: {{ .Values.db.pg.user | quote }}
+            - name: FUEGO_DATABASE_PASSWORD
+              value: {{ .Values.db.pg.password | quote }}
+            {{- if .Values.fuego.oidc.enabled }}
+            {{- $discoveryUrl := .Values.fuego.oidc.discoveryUrl }}
             {{- if not $discoveryUrl }}
               {{- $discoveryUrl = include "keycloak.openidDiscoveryUrl" . }}
             {{- end }}
             {{- if $discoveryUrl }}
-            - name: FMXPANEL_OIDC_DISCOVERY_URL
+            - name: FUEGO_OIDC_ENABLE
+              value: "true"
+            - name: FUEGO_OIDC_DISCOVERY_URL
               value: {{ $discoveryUrl | quote }}
+            {{- end }}
             {{- end }}
 {{- end -}}
