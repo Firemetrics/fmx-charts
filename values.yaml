@@ -26,7 +26,7 @@ fuego:
 
 panel:
   enabled: true
-  image: repo.firemetricshealth.com/ghcr/firemetrics/fmx-panel:cc066e1
+  image: repo.firemetricshealth.com/ghcr/firemetrics/fmx-panel:0dfbccf
   oidc:
     discoveryUrl: ""
     clientId: "panel"
