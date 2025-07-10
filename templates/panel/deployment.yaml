@@ -66,4 +66,8 @@ spec:
             - name: FMXPANEL_OIDC_DISCOVERY_URL
               value: {{ $discoveryUrl | quote }}
             {{- end }}
+            {{- if .Values.ingress.enabled }}
+            - name: FMXPANEL_FUEGO_URL
+              value: {{ printf "https://%s" .Values.ingress.host | quote }}
+            {{- end }}
 {{- end -}}
