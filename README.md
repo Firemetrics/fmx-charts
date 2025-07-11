@@ -42,3 +42,42 @@ helm install --namespace fmx --create-namespace --dependency-update \
   fmx .
 ```
 
+## Configuration
+
+You can customize the chart by modifying the `values.yaml` file or by passing additional parameters to the `helm install` command. By default, the chart is configured to deploy the entire Firemetrics ecosystem, including:
+
+- PostgreSQL ([Spilo](https://github.com/zalando/spilo)) database with the Firemetrics extension installed and bootstrapped
+- Keycloak with a pre-configured custom realm (representing a generic OIDC provider)
+- Fuego (FHIR HTTP server)
+- Control Panel (web application for administrators)
+
+But you can also deploy individual components by specifying the `enabled` value in the `provision.<component>` section of the `values.yaml` file. For example, to deploy only Fuego and the Control Panel, you can use the following value overrides:
+
+```yaml
+registryAuth:
+  enabled: true
+  username: "<username>"
+  password: "<password>"
+ingress:
+  enabled: true
+  host: apps.example.com
+database:
+  externalHostname: postgres.example.com
+  dbname: "<dbname>"
+  username: "<username>"
+  password: "<password>"
+  port: 5432
+oidc:
+  externalDiscoveryUrl: https://auth.example.com/.well-known/openid-configuration
+provision:
+  fuego:
+    enabled: true
+  panel:
+    enabled: true
+  spilo:
+    enabled: false
+  keycloak:
+    enabled: false
+```
+
+Obviously, you will need to ensure that the external services (OIDC provider, PostgreSQL database) are properly configured and accessible from your Kubernetes cluster.
