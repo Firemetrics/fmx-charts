@@ -1,12 +1,12 @@
-{{- if and .Values.keycloak.enabled .Values.keycloak.persistence.enabled -}}
+{{- if and .Values.provision.keycloak.enabled .Values.provision.keycloak.persistence.enabled -}}
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: {{ .Values.keycloak.persistence.claimName | quote }}
+  name: {{ .Values.provision.keycloak.persistence.claimName | quote }}
 spec:
   accessModes:
     - ReadWriteOnce
   resources:
     requests:
-      storage: {{ .Values.keycloak.persistence.size | quote }}
+      storage: {{ .Values.provision.keycloak.persistence.size | quote }}
 {{- end -}}

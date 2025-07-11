@@ -1,35 +1,27 @@
-{{- if and .Values.keycloak.enabled .Values.keycloak.importRealm.enabled -}}
+{{- if and .Values.provision.keycloak.enabled .Values.provision.keycloak.importRealm.enabled -}}
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ .Values.keycloak.importRealm.configMapName | quote }}
+  name: {{ .Values.provision.keycloak.importRealm.configMapName | quote }}
 data:
-  {{ .Values.keycloak.importRealm.realmName }}-realm.json: |
+  {{ .Values.provision.keycloak.importRealm.realmName }}-realm.json: |
     {
-      "realm": "{{ .Values.keycloak.importRealm.realmName }}",
+      "realm": "{{ .Values.provision.keycloak.importRealm.realmName }}",
       "enabled": true,
       "defaultDefaultClientScopes": ["basic"],
       "clients": [
-        {{- if .Values.panel.enabled }}
         {
-          "clientId": "{{ .Values.panel.oidc.clientId }}",
+          "clientId": {{ .Values.panel.oidc.clientId | quote }},
           "enabled": true,
           "publicClient": true,
-          {{- if and .Values.ingress.enabled }}
-          "redirectUris": ["https://{{ .Values.ingress.host }}/panel/*"],
-          {{- else }}
-          "redirectUris": [],
-          {{- end }}
+          "redirectUris": ["{{ include "panel.publicUrl" . }}/*"],
           "defaultClientScopes": [
             "basic",
             "attribute-fhir-user",
-            "audience-panel"
-            {{- if .Values.panel.enabled }},
+            "audience-panel",
             "audience-fuego"
-            {{- end }}
           ]
         }
-        {{- end }}
       ],
       "clientScopes": [
         {
@@ -87,8 +79,7 @@ data:
               }
             }
           ]
-        }
-        {{- if .Values.fuego.enabled }},
+        },
         {
           "name": "audience-fuego",
           "protocol": "openid-connect",
@@ -99,21 +90,13 @@ data:
               "protocolMapper": "oidc-audience-mapper",
               "consentRequired": false,
               "config": {
-                "included.custom.audience": "
-                {{- if .Values.ingress.enabled -}}
-                  https://{{ .Values.ingress.host }}/fhir/
-                {{- else -}}
-                  {{ .Values.fuego.oidc.audience }}
-                {{- end -}}
-                ",
+                "included.custom.audience": {{ include "fuego.oidcAudience" . | quote }},
                 "id.token.claim": "false",
                 "access.token.claim": "true"
               }
             }
           ]
-        }
-        {{- end }}
-        {{- if .Values.panel.enabled }},
+        },
         {
           "name": "audience-panel",
           "protocol": "openid-connect",
@@ -124,20 +107,13 @@ data:
               "protocolMapper": "oidc-audience-mapper",
               "consentRequired": false,
               "config": {
-                "included.custom.audience": "
-                {{- if .Values.ingress.enabled -}}
-                  https://{{ .Values.ingress.host }}/panel/
-                {{- else -}}
-                  {{ .Values.panel.oidc.audience }}
-                {{- end -}}
-                ",
+                "included.custom.audience": {{ include "panel.oidcAudience" . | quote }},
                 "id.token.claim": "false",
                 "access.token.claim": "true"
               }
             }
           ]
         }
-        {{- end }}
       ]
     }
 {{- end -}}

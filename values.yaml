@@ -8,43 +8,58 @@ ingress:
   enabled: false
   host: ""
 
-db:
-  image: repo.firemetricshealth.com/ghcr/firemetrics/spilo16:3.3-p2-latest
-  pg:
-    dbname: firemetrics
-    user: postgres
-    password: postgres
-  requestedStorage: 10Gi
+database:
+  dbname: firemetrics
+  username: postgres
+  password: postgres
+  port: 5432
+  # externalHostname is only used if provisioning of Spilo is disabled.
+  externalHostname: ""
+
+oidc:
+  enabled: true
+  # externalDiscoveryUrl is only used if provisioning of Keycloak, realm or ingress is disabled.
+  externalDiscoveryUrl: ""
 
 fuego:
-  enabled: true
-  image: repo.firemetricshealth.com/ghcr/firemetrics/fuego:aa1f58e2
-  oidc:
-    enabled: true
-    discoveryUrl: ""
-    audience: ""
+  # externalUrl is only used if provisioning of Fuego or ingress is disabled.
+  externalUrl: ""
 
 panel:
   enabled: true
-  image: repo.firemetricshealth.com/ghcr/firemetrics/fmx-panel:9f03a4d
+  # externalUrl is only used if provisioning of Panel or ingress is disabled.
+  externalUrl: ""
   oidc:
-    discoveryUrl: ""
     clientId: "panel"
+    # audience is optional. If not set, it will default to the Panel's public URL.
     audience: ""
 
+provision:
+  keycloak:
+    enabled: true
+    publicPath: /auth
+    importRealm:
+      enabled: true
+      configMapName: keycloak-import
+      realmName: firemetrics
+    persistence:
+      enabled: true
+      claimName: keycloak-data
+      size: 1Gi
+  panel:
+    enabled: true
+    image: repo.firemetricshealth.com/ghcr/firemetrics/fmx-panel:2857d16
+    publicPath: "/panel"
+    datasetImportDisabled: false
+  fuego:
+    enabled: true
+    image: repo.firemetricshealth.com/ghcr/firemetrics/fuego:aa1f58e2
+  spilo:
+    enabled: true
+    image: repo.firemetricshealth.com/ghcr/firemetrics/spilo16:3.3-p2-latest
+    requestedStorage: 10Gi
+
 keycloak:
-  enabled: true
-
-  importRealm:
-    enabled: true
-    configMapName: keycloak-import
-    realmName: firemetrics
-
-  persistence:
-    enabled: true
-    claimName: keycloak-data
-    size: 1Gi
-
   production: true
   httpRelativePath: /auth/
   proxyHeaders: xforwarded

@@ -1,0 +1,12 @@
+{{ if .Values.provision.spilo.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "spilo.pvcName" . }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.provision.spilo.requestedStorage | quote }}
+{{- end }}

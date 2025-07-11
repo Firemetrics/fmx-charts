@@ -1,4 +1,4 @@
-{{- if .Values.panel.enabled -}}
+{{- if .Values.provision.panel.enabled -}}
 {{- $name := printf "%s-panel" .Release.Name -}}
 apiVersion: apps/v1
 kind: Deployment
@@ -19,11 +19,8 @@ spec:
         app.kubernetes.io/component: frontend
         app.kubernetes.io/name: {{ include "panel.podLabel" . }}
     spec:
+      {{- if .Values.provision.spilo.enabled }}
       serviceAccountName: {{ include "resourceReaderSaName" . }}
-      {{- if .Values.registryAuth.enabled }}
-      imagePullSecrets:
-        - name: {{ include "registry.secretName" . }}
-      {{ end }}
       initContainers:
         - name: wait-for-db-bootstrap
           image: bitnami/kubectl:latest
@@ -32,42 +29,44 @@ spec:
             - -c
             - |
               echo "Waiting for database bootstrap job to complete..."
-              until kubectl get job/{{ include "db.bootstrapJob" . }} -o jsonpath='{.status.conditions[?(@.type=="Complete")].status}' | grep True; do
+              until kubectl get job/{{ include "spilo.bootstrapJob" . }} -o jsonpath='{.status.conditions[?(@.type=="Complete")].status}' | grep True; do
                 echo "Not complete yet..."
                 sleep 5
               done
               echo "Bootstrap job is complete."
+      {{- end }}
+      {{- if .Values.registryAuth.enabled }}
+      imagePullSecrets:
+        - name: {{ include "registry.secretName" . }}
+      {{ end }}
       containers:
         - name: main
-          image: {{ .Values.panel.image | quote }}
+          image: {{ .Values.provision.panel.image | quote }}
           imagePullPolicy: Always
           ports:
             - name: http
               containerPort: 8000
           env:
+            - name: FMXPANEL_PUBLIC_PATH
+              value: {{ .Values.provision.panel.publicPath | quote }}
             - name: FMXPANEL_DATABASE_URL
               value: {{ include "db.databaseUrl" . | quote }}
             - name: FMXPANEL_OIDC_CLIENT_ID
               value: {{ .Values.panel.oidc.clientId | quote }}
             - name: FMXPANEL_OIDC_AUDIENCE
-              value: "
-                {{- if .Values.ingress.enabled -}}
-                  https://{{ .Values.ingress.host }}/panel/
-                {{- else -}}
-                  {{ .Values.panel.oidc.audience }}
-                {{- end -}}
-              "
+              value: {{ include "panel.oidcAudience" . | quote }}
 
-            {{- $discoveryUrl := .Values.panel.oidc.discoveryUrl }}
-            {{- if not $discoveryUrl }}
-              {{- $discoveryUrl = include "keycloak.openidDiscoveryUrl" . }}
-            {{- end }}
+            {{- $discoveryUrl := include "oidc.discoveryUrl" . }}
             {{- if $discoveryUrl }}
             - name: FMXPANEL_OIDC_DISCOVERY_URL
               value: {{ $discoveryUrl | quote }}
             {{- end }}
             {{- if .Values.ingress.enabled }}
-            - name: FMXPANEL_FUEGO_URL
-              value: {{ printf "https://%s" .Values.ingress.host | quote }}
+            - name: FMXPANEL_FHIR_BASE_URL
+              value: {{ include "fhir.baseUrl" . | quote }}
+            {{- end }}
+            {{- if .Values.provision.panel.datasetImportDisabled }}
+            - name: FMXPANEL_DATASET_IMPORT_DISABLED
+              value: "true"
             {{- end }}
 {{- end -}}

@@ -6,4 +6,4 @@ dependencies:
   - name: keycloak
     version: 24.7.4
     repository: "https://charts.bitnami.com/bitnami"
-    condition: keycloak.enabled
+    condition: provision.keycloak.enabled

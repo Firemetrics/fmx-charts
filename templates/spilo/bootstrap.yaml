@@ -1,7 +1,8 @@
+{{ if .Values.provision.spilo.enabled }}
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ include "db.bootstrapJob" . }}
+  name: {{ include "spilo.bootstrapJob" . }}
 spec:
   template:
     spec:
@@ -12,22 +13,24 @@ spec:
       {{ end }}
       containers:
         - name: main
-          image: {{ .Values.db.image | quote }}
+          image: {{ .Values.provision.spilo.image | quote }}
           env:
             - name: PGHOST
-              value: {{ include "db.svcName" . }}
+              value: {{ include "db.hostname" . }}
             - name: PGUSER
-              value: {{ .Values.db.pg.user | quote }}
+              value: {{ .Values.database.username | quote }}
             - name: PGPASSWORD
-              value: {{ .Values.db.pg.password | quote }}
+              value: {{ .Values.database.password | quote }}
             - name: DATABASE_NAME
-              value: {{ .Values.db.pg.dbname | quote }}
+              value: {{ .Values.database.dbname | quote }}
             - name: DATABASE_URL
               value: {{ include "db.databaseUrl" . | quote }}
           command:
             - /bin/bash
             - -c
             - |
+              set -euo pipefail
+              
               while ! pg_isready > /dev/null 2> /dev/null; do
                 echo "Waiting for Spilo to be ready..."
                 sleep 1
@@ -60,4 +63,4 @@ spec:
               psql -d $DATABASE_NAME -c "ALTER EXTENSION fhirql UPDATE;" && \
               fhirql_migrate && \
               start_background_workers
-
+{{- end }}

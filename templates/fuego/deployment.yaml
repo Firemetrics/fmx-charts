@@ -1,4 +1,4 @@
-{{- if .Values.fuego.enabled -}}
+{{- if .Values.provision.fuego.enabled -}}
 {{- $name := printf "%s-fuego" .Release.Name -}}
 apiVersion: apps/v1
 kind: Deployment
@@ -19,11 +19,8 @@ spec:
         app.kubernetes.io/component: backend
         app.kubernetes.io/name: {{ include "fuego.podLabel" . }}
     spec:
+      {{- if .Values.provision.spilo.enabled }}
       serviceAccountName: {{ include "resourceReaderSaName" . }}
-      {{- if .Values.registryAuth.enabled }}
-      imagePullSecrets:
-        - name: {{ include "registry.secretName" . }}
-      {{ end }}
       initContainers:
         - name: wait-for-db-bootstrap
           image: bitnami/kubectl:latest
@@ -32,14 +29,19 @@ spec:
             - -c
             - |
               echo "Waiting for database bootstrap job to complete..."
-              until kubectl get job/{{ include "db.bootstrapJob" . }} -o jsonpath='{.status.conditions[?(@.type=="Complete")].status}' | grep True; do
+              until kubectl get job/{{ include "spilo.bootstrapJob" . }} -o jsonpath='{.status.conditions[?(@.type=="Complete")].status}' | grep True; do
                 echo "Not complete yet..."
                 sleep 5
               done
               echo "Bootstrap job is complete."
+      {{- end }}
+      {{- if .Values.registryAuth.enabled }}
+      imagePullSecrets:
+        - name: {{ include "registry.secretName" . }}
+      {{ end }}
       containers:
         - name: main
-          image: {{ .Values.fuego.image | quote }}
+          image: {{ .Values.provision.fuego.image | quote }}
           imagePullPolicy: Always
           ports:
             - name: http
@@ -54,20 +56,17 @@ spec:
               value: https://{{ .Values.ingress.host }}
             {{- end }}
             - name: FUEGO_DATABASE_HOST
-              value: {{ include "db.svcName" . | quote }}
+              value: {{ include "db.hostname" . | quote }}
             - name: FUEGO_DATABASE_PORT
-              value: "5432"
+              value: {{ .Values.database.port | quote }}
             - name: FUEGO_DATABASE_DBNAME
-              value: {{ .Values.db.pg.dbname | quote }}
+              value: {{ .Values.database.dbname | quote }}
             - name: FUEGO_DATABASE_USERNAME
-              value: {{ .Values.db.pg.user | quote }}
+              value: {{ .Values.database.username | quote }}
             - name: FUEGO_DATABASE_PASSWORD
-              value: {{ .Values.db.pg.password | quote }}
-            {{- if .Values.fuego.oidc.enabled }}
-            {{- $discoveryUrl := .Values.fuego.oidc.discoveryUrl }}
-            {{- if not $discoveryUrl }}
-              {{- $discoveryUrl = include "keycloak.openidDiscoveryUrl" . }}
-            {{- end }}
+              value: {{ .Values.database.password | quote }}
+            {{- if .Values.oidc.enabled }}
+            {{- $discoveryUrl := include "oidc.discoveryUrl" . }}
             {{- if $discoveryUrl }}
             - name: FUEGO_OIDC_ENABLE
               value: "true"
