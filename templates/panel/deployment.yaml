@@ -19,22 +19,9 @@ spec:
         app.kubernetes.io/component: frontend
         app.kubernetes.io/name: {{ include "panel.podLabel" . }}
     spec:
-      {{- if .Values.provision.spilo.enabled }}
       serviceAccountName: {{ include "resourceReaderSaName" . }}
       initContainers:
-        - name: wait-for-db-bootstrap
-          image: bitnami/kubectl:latest
-          command:
-            - /bin/bash
-            - -c
-            - |
-              echo "Waiting for database bootstrap job to complete..."
-              until kubectl get job/{{ include "spilo.bootstrapJob" . }} -o jsonpath='{.status.conditions[?(@.type=="Complete")].status}' | grep True; do
-                echo "Not complete yet..."
-                sleep 5
-              done
-              echo "Bootstrap job is complete."
-      {{- end }}
+        {{- include "spilo.waitForBootstrapInitContainer" . | nindent 8 }}
       {{- if .Values.registryAuth.enabled }}
       imagePullSecrets:
         - name: {{ include "registry.secretName" . }}

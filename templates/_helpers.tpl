@@ -30,6 +30,23 @@
   {{ .Release.Name }}-spilo-bootstrap
 {{- end }}
 
+{{- define "spilo.waitForBootstrapInitContainer" -}}
+{{- if .Values.provision.spilo.enabled -}}
+- name: wait-for-spilo-bootstrap
+  image: bitnami/kubectl:latest
+  command:
+    - /bin/bash
+    - -c
+    - |
+      echo "Waiting for database bootstrap job to complete..."
+      until kubectl get job/{{ include "spilo.bootstrapJob" . }} -o jsonpath='{.status.conditions[?(@.type=="Complete")].status}' | grep True; do
+        echo "Not complete yet..."
+        sleep 5
+      done
+      echo "Bootstrap job is complete."
+{{- end }}
+{{- end }}
+
 {{- define "db.hostname" }}
   {{- if .Values.provision.spilo.enabled -}}
     {{ include "spilo.svcName" . }}
