@@ -27,7 +27,13 @@ spec:
       {{- if .Values.registryAuth.enabled }}
       imagePullSecrets:
         - name: {{ include "registry.secretName" . }}
-      {{ end }}
+      {{- end }}
+      {{- if .Values.provision.spilo.tolerateLowMemory }}
+      tolerations:
+        - key: "node.kubernetes.io/memory-pressure"
+          operator: "Exists"
+          effect: "NoSchedule"
+      {{- end }}
       containers:
         - name: main
           image: {{ .Values.provision.spilo.image | quote }}

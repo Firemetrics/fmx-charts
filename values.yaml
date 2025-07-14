@@ -48,7 +48,7 @@ provision:
       size: 1Gi
   panel:
     enabled: true
-    image: repo.firemetricshealth.com/ghcr/firemetrics/fmx-panel:e9879f1
+    image: repo.firemetricshealth.com/ghcr/firemetrics/fmx-panel:e3548f6
     publicPath: "/panel"
     datasetImportDisabled: false
   fuego:
@@ -58,6 +58,7 @@ provision:
     enabled: true
     image: repo.firemetricshealth.com/ghcr/firemetrics/spilo16:3.3-p2-latest
     requestedStorage: 10Gi
+    tolerateLowMemory: true
 
 keycloak:
   production: true
