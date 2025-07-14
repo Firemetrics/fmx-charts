@@ -48,7 +48,7 @@ provision:
       size: 1Gi
   panel:
     enabled: true
-    image: repo.firemetricshealth.com/ghcr/firemetrics/fmx-panel:e3548f6
+    image: repo.firemetricshealth.com/ghcr/firemetrics/fmx-panel:59b2e2d
     publicPath: "/panel"
     datasetImportDisabled: false
   fuego:
