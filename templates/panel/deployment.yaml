@@ -42,15 +42,13 @@ spec:
               value: {{ .Values.panel.oidc.clientId | quote }}
             - name: FMXPANEL_OIDC_AUDIENCE
               value: {{ include "panel.oidcAudience" . | quote }}
+            - name: FMXPANEL_FHIR_BASE_URL
+              value: {{ include "fhir.clusterBaseUrl" . | quote }}
 
             {{- $discoveryUrl := include "oidc.discoveryUrl" . }}
             {{- if $discoveryUrl }}
             - name: FMXPANEL_OIDC_DISCOVERY_URL
               value: {{ $discoveryUrl | quote }}
-            {{- end }}
-            {{- if .Values.ingress.enabled }}
-            - name: FMXPANEL_FHIR_BASE_URL
-              value: {{ include "fhir.baseUrl" . | quote }}
             {{- end }}
             {{- if .Values.provision.panel.datasetImportDisabled }}
             - name: FMXPANEL_DATASET_IMPORT_DISABLED

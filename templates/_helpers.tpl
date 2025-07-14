@@ -107,10 +107,18 @@
   {{- end }}
 {{- end }}
 
+{{- define "fuego.clusterUrl" -}}
+  {{- if .Values.provision.fuego.enabled -}}
+    http://{{ include "fuego.svcName" . }}.{{ .Release.Namespace }}.svc.cluster.local
+  {{- else -}}
+    {{ .Values.fuego.externalUrl }}
+  {{- end }}
+{{- end }}
+
 {{- define "fuego.oidcAudience" -}}
   {{ include "fuego.publicUrl" . }}/fhir/
 {{- end }}
 
-{{- define "fhir.baseUrl" -}}
-  {{ include "fuego.publicUrl" . }}/fhir
+{{- define "fhir.clusterBaseUrl" -}}
+  {{ include "fuego.clusterUrl" . }}/fhir
 {{- end }}
