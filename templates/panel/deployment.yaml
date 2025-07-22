@@ -50,8 +50,21 @@ spec:
             - name: FMXPANEL_OIDC_DISCOVERY_URL
               value: {{ $discoveryUrl | quote }}
             {{- end }}
+
             {{- if .Values.provision.panel.datasetImportDisabled }}
             - name: FMXPANEL_DATASET_IMPORT_DISABLED
+              value: "true"
+            {{- end }}
+            {{- if .Values.provision.panel.resourceExplorerDisabled }}
+            - name: FMXPANEL_RESOURCE_EXPLORER_DISABLED
+              value: "true"
+            {{- end }}
+            {{- if .Values.provision.panel.nocodeBuilderDisabled }}
+            - name: FMXPANEL_NOCODE_BUILDER_DISABLED
+              value: "true"
+            {{- end }}
+            {{- if .Values.provision.panel.sqlEditorDisabled }}
+            - name: FMXPANEL_SQL_EDITOR_DISABLED
               value: "true"
             {{- end }}
 {{- end -}}
