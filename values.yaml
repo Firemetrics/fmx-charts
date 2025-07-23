@@ -62,6 +62,17 @@ provision:
     image: repo.firemetricshealth.com/ghcr/firemetrics/spilo16:3.3-p2-latest
     requestedStorage: 10Gi
     tolerateLowMemory: true
+    configuration:
+      bootstrap:
+        dcs:
+          postgresql:
+            parameters:
+              max_locks_per_transaction: 512
+      postgresql:
+        parameters:
+          shared_buffers: 2GB
+          max_locks_per_transaction: 512
+          work_mem: "256MB"
 
 keycloak:
   production: true

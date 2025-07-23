@@ -49,17 +49,8 @@ spec:
             - name: SPILO_PROVIDER
               value: local
             - name: SPILO_CONFIGURATION
-              value: |
-                bootstrap:
-                  dcs:
-                    postgresql:
-                      parameters:
-                        max_locks_per_transaction: 512
-                postgresql:
-                  parameters:
-                    shared_buffers: 2GB
-                    max_locks_per_transaction: 512
-                    work_mem: "256MB"
+              value: |-
+                {{- .Values.provision.spilo.configuration | toYaml | nindent 16 }}
           volumeMounts:
             - name: {{ $dataVolumeName }}
               mountPath: "/home/postgres/pgdata"
