@@ -1,0 +1,8 @@
+{{- if .Values.registryAuth.enabled -}}
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ .Values.podServiceAccountName | default "postgres-pod" }}
+imagePullSecrets:
+  - name: {{ include "registry.secretName" . }}
+{{- end -}}

@@ -9,12 +9,16 @@ ingress:
   host: ""
 
 database:
+  hostname: pg
   dbname: firemetrics
-  username: postgres
-  password: postgres
   port: 5432
-  # externalHostname is only used if provisioning of Spilo is disabled.
-  externalHostname: ""
+  username: firemetrics
+  password: firemetrics
+  existingUserSecret: ""
+
+databaseBootstrapJob:
+  image: repo.firemetricshealth.com/ghcr/firemetrics/spilo16:3.3-p2-latest
+  ttlSecondsAfterFinished: 600
 
 oidc:
   enabled: true
@@ -48,7 +52,7 @@ provision:
       size: 1Gi
   panel:
     enabled: true
-    image: repo.firemetricshealth.com/ghcr/firemetrics/fmx-panel:64ebae4
+    image: repo.firemetricshealth.com/ghcr/firemetrics/fmx-panel:5e24f27
     publicPath: "/panel"
     datasetImportDisabled: false
     resourceExplorerDisabled: false
@@ -57,22 +61,6 @@ provision:
   fuego:
     enabled: true
     image: repo.firemetricshealth.com/ghcr/firemetrics/fuego:aa1f58e2
-  spilo:
-    enabled: true
-    image: repo.firemetricshealth.com/ghcr/firemetrics/spilo16:3.3-p2-latest
-    requestedStorage: 10Gi
-    tolerateLowMemory: true
-    configuration:
-      bootstrap:
-        dcs:
-          postgresql:
-            parameters:
-              max_locks_per_transaction: 512
-      postgresql:
-        parameters:
-          shared_buffers: 2GB
-          max_locks_per_transaction: 512
-          work_mem: "256MB"
 
 keycloak:
   production: true

@@ -14,49 +14,35 @@
   https://{{ .Values.ingress.host }}
 {{- end }}
 
-{{- define "spilo.podLabel" -}}
-  {{ .Release.Name }}-spilo
+{{- define "db.bootstrapJob" -}}
+  {{ .Release.Name }}-db-bootstrap
 {{- end }}
 
-{{- define "spilo.svcName" -}}
-  {{ .Release.Name }}-spilo
-{{- end }}
-
-{{- define "spilo.pvcName" -}}
-  {{ .Release.Name }}-spilo-data
-{{- end }}
-
-{{- define "spilo.bootstrapJob" -}}
-  {{ .Release.Name }}-spilo-bootstrap
-{{- end }}
-
-{{- define "spilo.waitForBootstrapInitContainer" -}}
-{{- if .Values.provision.spilo.enabled -}}
-- name: wait-for-spilo-bootstrap
+{{- define "db.waitForBootstrapInitContainer" -}}
+- name: wait-for-db-bootstrap
   image: bitnami/kubectl:latest
   command:
     - /bin/bash
     - -c
     - |
       echo "Waiting for database bootstrap job to complete..."
-      until kubectl get job/{{ include "spilo.bootstrapJob" . }} -o jsonpath='{.status.conditions[?(@.type=="Complete")].status}' | grep True; do
+      until kubectl get job/{{ include "db.bootstrapJob" . }} -o jsonpath='{.status.conditions[?(@.type=="Complete")].status}' | grep True; do
         echo "Not complete yet..."
         sleep 5
       done
       echo "Bootstrap job is complete."
 {{- end }}
-{{- end }}
 
-{{- define "db.hostname" }}
-  {{- if .Values.provision.spilo.enabled -}}
-    {{ include "spilo.svcName" . }}
+{{- define "db.userSecretName" }}
+  {{- if .Values.database.existingUserSecret -}}
+    {{ .Values.database.existingUserSecret }}
   {{- else -}}
-    {{ .Values.database.externalHostname }}
+    {{ .Release.Name }}-db-user
   {{- end }}
 {{- end }}
 
 {{- define "db.databaseUrl" -}}
-  {{ printf "postgresql://%s:%s@%s:%d/%s" .Values.database.username .Values.database.password (include "db.hostname" .) (.Values.database.port | int) .Values.database.dbname }}
+  {{ printf "postgresql://%s:%s@%s:%d/%s" .Values.database.username .Values.database.password .Values.database.hostname (.Values.database.port | int) .Values.database.dbname }}
 {{- end }}
 
 {{- define "oidc.discoveryUrl" }}

@@ -21,7 +21,7 @@ spec:
     spec:
       serviceAccountName: {{ include "resourceReaderSaName" . }}
       initContainers:
-        {{- include "spilo.waitForBootstrapInitContainer" . | nindent 8 }}
+        {{- include "db.waitForBootstrapInitContainer" . | nindent 8 }}
       {{- if .Values.registryAuth.enabled }}
       imagePullSecrets:
         - name: {{ include "registry.secretName" . }}
@@ -36,8 +36,22 @@ spec:
           env:
             - name: FMXPANEL_PUBLIC_PATH
               value: {{ .Values.provision.panel.publicPath | quote }}
-            - name: FMXPANEL_DATABASE_URL
-              value: {{ include "db.databaseUrl" . | quote }}
+            - name: FMXPANEL_DATABASE_HOST
+              value: {{ .Values.database.hostname | quote }}
+            - name: FMXPANEL_DATABASE_PORT
+              value: {{ .Values.database.port | quote }}
+            - name: FMXPANEL_DATABASE_NAME
+              value: {{ .Values.database.dbname | quote }}
+            - name: FMXPANEL_DATABASE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "db.userSecretName" . }}
+                  key: username
+            - name: FMXPANEL_DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "db.userSecretName" . }}
+                  key: password
             - name: FMXPANEL_OIDC_CLIENT_ID
               value: {{ .Values.panel.oidc.clientId | quote }}
             - name: FMXPANEL_OIDC_AUDIENCE

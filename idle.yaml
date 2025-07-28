@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: idle
+spec:
+  nodeSelector:
+    kubernetes.io/hostname: aks-userpool-33653452-vmss00000i
+  volumes:
+    - name: idle-data
+      persistentVolumeClaim:
+        claimName: pgdata-pg-0
+  containers:
+    - name: alpine
+      image: alpine:latest
+      command: ["/bin/sh"]
+      args: ["-c", "while true; do sleep 10; done"]
+      volumeMounts:
+        - name: idle-data
+          mountPath: /data
