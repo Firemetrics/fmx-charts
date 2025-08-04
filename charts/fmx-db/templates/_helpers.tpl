@@ -3,6 +3,10 @@
 {{- end }}
 
 {{- define "registry.secretName" -}}
-  {{ .Release.Name }}-registry
+  {{- if .Values.registryAuth.existingSecret -}}
+    {{ .Values.registryAuth.existingSecret }}
+  {{- else -}}
+    {{ .Release.Name }}-registry
+  {{- end -}}
 {{- end }}
 

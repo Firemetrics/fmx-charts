@@ -3,6 +3,7 @@ registryAuth:
   server: "repo.firemetricshealth.com"
   username: ""
   password: ""
+  existingSecret: ""
 
 image: repo.firemetricshealth.com/ghcr/firemetrics/spilo16:3.3-p2-latest
 numberOfInstances: 1

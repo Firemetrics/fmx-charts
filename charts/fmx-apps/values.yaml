@@ -3,6 +3,7 @@ registryAuth:
   server: "repo.firemetricshealth.com"
   username: ""
   password: ""
+  existingSecret: ""
 
 ingress:
   enabled: false
