@@ -51,21 +51,6 @@ helm install --namespace fmx --create-namespace --dependency-update \
   apps ./charts/fmx-apps
 ```
 
-## Installation
-
-To install the Firemetrics chart, you can use the following command. Make sure to replace `<username>`, `<password>`, `<admin-password>`, and `<host>` with your actual values.
-
-```bash
-helm install --namespace fmx --create-namespace --dependency-update \
-  --set 'registryAuth.enabled=true' \
-  --set 'registryAuth.username=<username>' \
-  --set 'registryAuth.password=<password>' \
-  --set 'keycloak.auth.adminPassword=<admin-password>' \
-  --set 'ingress.enabled=true' \
-  --set 'ingress.host=<host>' \
-  fmx .
-```
-
 ## Configuration
 
 You can customize the `fmx-apps` chart by modifying the `values.yaml` file or by passing additional parameters to the `helm install` command. By default, the chart is configured to deploy the following components:
