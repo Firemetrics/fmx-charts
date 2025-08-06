@@ -1,4 +1,4 @@
-chartsRepoUrl: "https://nexus.firemetrics.com/repository/helm-firemetrics/"
+chartsRepoUrl: "https://nexus.firemetricshealth.com/repository/helm-firemetrics/"
 
 argoCdNamespace: argocd
 
