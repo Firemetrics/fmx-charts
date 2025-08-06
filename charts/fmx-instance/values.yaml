@@ -48,6 +48,8 @@ components:
         max_locks_per_transaction: "512"
         work_mem: "256MB"
 
+    env: []
+
     valuesOverride: {}
   bootstrap:
     enabled: true

@@ -27,18 +27,19 @@ spec:
         teamId: {{ .Values.components.postgres.teamId | quote }}
 
         {{- with .Values.components.postgres.volume }}
-        volume:
-          {{- . | toYaml | nindent 10 }}
+        volume: {{- . | toYaml | nindent 10 }}
         {{- end }}
 
         {{- with .Values.components.postgres.resources }}
-        resources:
-          {{- . | toYaml | nindent 10 }}
+        resources: {{- . | toYaml | nindent 10 }}
         {{- end }}
 
         {{- with .Values.components.postgres.postgresql }}
-        postgresql:
-          {{- . | toYaml | nindent 10 }}
+        postgresql: {{- . | toYaml | nindent 10 }}
+        {{- end }}
+
+        {{- with .Values.components.postgres.env }}
+        env: {{- . | toYaml | nindent 10 }}
         {{- end }}
       {{- end }}
 

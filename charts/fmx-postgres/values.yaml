@@ -23,5 +23,7 @@ postgresql:
     max_locks_per_transaction: "512"
     work_mem: "256MB"
 
+env: []
+
 databaseName: firemetrics
 superUserName: firemetrics
