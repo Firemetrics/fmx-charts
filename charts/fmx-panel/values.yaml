@@ -1,0 +1,27 @@
+image: ghcr.io/firemetrics/fmx-panel:57f875c
+serviceAccountName: ""
+imagePullSecret: ""
+initContainers: []
+
+datasetImportDisabled: false
+resourceExplorerDisabled: false
+nocodeBuilderDisabled: false
+sqlEditoryDisabled: false
+
+publicUrl: "https://example.com/panel"
+publicPath: "/panel"
+
+database:
+  hostname: postgres
+  dbname: firemetrics
+  port: 5432
+  userSecret: panel-user
+
+oidc:
+  discoveryUrl: ""
+  clientId: "panel"
+  # audience is optional. If not set, it will default to the Panel's public URL.
+  audience: ""
+
+fhir:
+  baseUrl: "https://example.com/fhir"

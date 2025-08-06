@@ -1,0 +1,10 @@
+image: ghcr.io/firemetrics/spilo16:3.3-p2-f0457965
+imagePullSecret: ""
+ttlSecondsAfterFinished: 600
+jobNameOverride: ""
+
+database:
+  hostname: postgres
+  port: 5432
+  dbname: firemetrics
+  userSecret: bootstrap-user

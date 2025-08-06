@@ -1,0 +1,29 @@
+publicPath: /auth
+
+argoCdNamespace: argocd
+
+importRealm:
+  enabled: true
+  realmName: firemetrics
+
+persistence:
+  enabled: true
+  size: 1Gi
+
+panel:
+  publicUrl: ""
+  clientId: "panel"
+  oidcAudience: ""
+
+fuego:
+  oidcAudience: ""
+
+application:
+  nameOverride: ""
+  repoUrl: "https://charts.bitnami.com/bitnami"
+  version: 24.7.4
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+  valuesOverride: {}

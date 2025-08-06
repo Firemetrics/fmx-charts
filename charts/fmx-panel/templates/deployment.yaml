@@ -1,0 +1,81 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "appName" . }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/part-of: {{ include "appName" . }}
+      app.kubernetes.io/component: frontend
+      app.kubernetes.io/name: {{ include "podLabel" . }}
+  template:
+    metadata:
+      name: {{ include "appName" . }}
+      labels:
+        app.kubernetes.io/part-of: {{ include "appName" . }}
+        app.kubernetes.io/component: frontend
+        app.kubernetes.io/name: {{ include "podLabel" . }}
+    spec:
+      {{- with .Values.serviceAccountName }}
+      serviceAccountName: {{ . }}
+      {{- end }}
+      {{- with .Values.initContainers }}
+      initContainers:
+        {{- . | toYaml | nindent 8 }}
+      {{- end }}
+      {{- with .Values.imagePullSecret }}
+      imagePullSecrets:
+        - name: {{ . }}
+      {{- end }}
+      containers:
+        - name: main
+          image: {{ .Values.image | quote }}
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 8000
+          env:
+            - name: FMXPANEL_PUBLIC_PATH
+              value: {{ .Values.publicPath | quote }}
+            - name: FMXPANEL_DATABASE_HOST
+              value: {{ .Values.database.hostname | quote }}
+            - name: FMXPANEL_DATABASE_PORT
+              value: {{ .Values.database.port | quote }}
+            - name: FMXPANEL_DATABASE_NAME
+              value: {{ .Values.database.dbname | quote }}
+            - name: FMXPANEL_DATABASE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.database.userSecret | quote }}
+                  key: username
+            - name: FMXPANEL_DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.database.userSecret | quote }}
+                  key: password
+            - name: FMXPANEL_OIDC_CLIENT_ID
+              value: {{ .Values.oidc.clientId | quote }}
+            - name: FMXPANEL_OIDC_AUDIENCE
+              value: {{ include "oidcAudience" . | quote }}
+            - name: FMXPANEL_FHIR_BASE_URL
+              value: {{ .Values.fhir.baseUrl | quote }}
+
+            - name: FMXPANEL_OIDC_DISCOVERY_URL
+              value: {{ .Values.oidc.discoveryUrl | quote }}
+            {{- if .Values.datasetImportDisabled }}
+            - name: FMXPANEL_DATASET_IMPORT_DISABLED
+              value: "true"
+            {{- end }}
+            {{- if .Values.resourceExplorerDisabled }}
+            - name: FMXPANEL_RESOURCE_EXPLORER_DISABLED
+              value: "true"
+            {{- end }}
+            {{- if .Values.nocodeBuilderDisabled }}
+            - name: FMXPANEL_NOCODE_BUILDER_DISABLED
+              value: "true"
+            {{- end }}
+            {{- if .Values.sqlEditorDisabled }}
+            - name: FMXPANEL_SQL_EDITOR_DISABLED
+              value: "true"
+            {{- end }}

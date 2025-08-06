@@ -1,0 +1,27 @@
+image: ghcr.io/firemetrics/spilo16:3.3-p2-f0457965
+imagePullSecret: ""
+podServiceAccountNameOverride: ""
+numberOfInstances: 1
+clusterNameOerride: ""
+teamId: ""
+
+volume:
+  size: 10Gi
+
+resources:
+  requests:
+    cpu: "10m"
+    memory: "100Mi"
+  limits:
+    cpu: "32"
+    memory: "128Gi"
+
+postgresql:
+  version: "16"
+  parameters:
+    shared_buffers: 2GB
+    max_locks_per_transaction: "512"
+    work_mem: "256MB"
+
+databaseName: firemetrics
+superUserName: firemetrics

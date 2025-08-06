@@ -1,0 +1,19 @@
+publicUrl: ""
+image: ghcr.io/firemetrics/fuego:aa1f58e2
+serviceAccountName: ""
+imagePullSecret: ""
+initContainers: []
+
+database:
+  hostname: postgres
+  dbname: firemetrics
+  port: 5432
+  userSecret: fuego-user
+
+service:
+  enabled: true
+  nameOverride: ""
+
+oidc:
+  enabled: false
+  discoveryUrl: ""

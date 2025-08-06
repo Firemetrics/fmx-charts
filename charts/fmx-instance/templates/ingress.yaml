@@ -1,0 +1,50 @@
+{{- if .Values.components.ingress.enabled -}}
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: {{ include "ingressAppName" . }}
+  namespace: {{ .Values.argoCdNamespace | quote }}
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+
+  source:
+    repoURL: {{ .Values.chartsRepoUrl | quote }}
+    chart: fmx-ingress
+    targetRevision: {{ .Chart.Version | quote }}
+    helm:
+      releaseName: {{ include "ingressAppName" . }}
+      values: |
+      {{- if .Values.components.ingress.valuesOverride }}
+        {{- .Values.components.ingress.valuesOverride | toYaml | nindent 8 }}
+      {{- else }}
+        host: {{ .Values.components.ingress.host | quote }}
+        certManager:
+          {{- .Values.components.ingress.certManager | toYaml | nindent 10 }}
+        tls:
+          {{- .Values.components.ingress.tls | toYaml | nindent 10 }}
+        services:
+          panel:
+            enabled: {{ .Values.components.panel.enabled }}
+            path: {{ .Values.components.panel.publicPath | quote }}
+            name: {{ include "panelAppName" . }}
+          fuego:
+            enabled: {{ .Values.components.fuego.enabled }}
+            path: {{ .Values.components.ingress.fhirPath | quote }}
+            name: {{ include "fuegoAppName" . }}
+          keycloak:
+            enabled: {{ .Values.components.keycloak.enabled }}
+            path: {{ .Values.components.keycloak.publicPath | quote }}
+            name: {{ include "keycloakChildAppName" . | quote }}
+      {{- end }}
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: {{ .Release.Namespace }}
+
+  {{- if .Values.syncPolicy }}
+  syncPolicy:
+    {{- .Values.syncPolicy | toYaml | nindent 4 }}
+  {{- end -}}
+{{- end -}}

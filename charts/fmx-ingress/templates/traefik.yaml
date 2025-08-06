@@ -1,0 +1,85 @@
+{{- $httpRedirectMiddleware := printf "%s-http-redirect" (include "appName" .) -}}
+{{- $rootRedirectMiddleware := printf "%s-root-redirect" (include "appName" .) -}}
+---
+{{- if .Values.tls.enabled }}
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: {{ $httpRedirectMiddleware }}
+spec:
+  redirectScheme:
+    scheme: https
+    permanent: true
+---
+{{- end }}
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: {{ $rootRedirectMiddleware }}
+spec:
+  redirectRegex:
+    regex: ^https?://([^/]+)/(?:\?.*)?$
+    replacement: {{ include "httpScheme" . }}://${1}{{ include "defaultPath" . }}
+    permanent: false
+---
+{{- if .Values.tls.enabled }}
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: {{ include "appName" . }}-insecure
+spec:
+  entryPoints: [web]
+  routes:
+    - match: "Host(`{{ .Values.host }}`)"
+      kind: Rule
+      middlewares:
+        - name: {{ $httpRedirectMiddleware }}
+      services:
+        - name: noop@internal
+          kind: TraefikService
+---
+{{- end }}
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: {{ include "appName" . }}-main
+spec:
+  entryPoints:
+  {{- if .Values.tls.enabled }}
+    - websecure
+  {{- else }}
+    - web
+  {{- end }}
+  {{- if .Values.tls.enabled }}
+  tls:
+    secretName: {{ include "tlsSecretName" . }}
+  {{- end }}
+  routes:
+    {{- if .Values.services.keycloak.enabled }}
+    - match: "Host(`{{ .Values.host }}`) && PathPrefix(`{{ .Values.services.keycloak.path }}`)"
+      kind: Rule
+      services:
+        - name: {{ .Values.services.keycloak.name }}
+          port: http
+    {{- end }}
+    {{- if .Values.services.fuego.enabled }}
+    - match: "Host(`{{ .Values.host }}`) && PathPrefix(`{{ .Values.services.fuego.path }}`)"
+      kind: Rule
+      services:
+        - name: {{ .Values.services.fuego.name }}
+          port: http
+    {{- end }}
+    {{- if .Values.services.panel.enabled }}
+    - match: "Host(`{{ .Values.host }}`) && PathPrefix(`{{ .Values.services.panel.path }}`)"
+      kind: Rule
+      services:
+        - name: {{ .Values.services.panel.name }}
+          port: http
+    {{- end }}
+    - match: "Host(`{{ .Values.host }}`)"
+      kind: Rule
+      middlewares:
+        - name: {{ $rootRedirectMiddleware }}
+      services:
+        - name: noop@internal
+          kind: TraefikService

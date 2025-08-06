@@ -1,0 +1,39 @@
+{{- if .Values.components.bootstrap.enabled -}}
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: {{ include "bootstrapAppName" . }}
+  namespace: {{ .Values.argoCdNamespace | quote }}
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+
+  source:
+    repoURL: {{ .Values.chartsRepoUrl | quote }}
+    chart: fmx-bootstrap
+    targetRevision: {{ .Chart.Version | quote }}
+    helm:
+      releaseName: {{ include "bootstrapAppName" . }}
+      values: |
+      {{- if .Values.components.bootstrap.valuesOverride }}
+        {{- .Values.components.bootstrap.valuesOverride | toYaml | nindent 8 }}
+      {{- else }}
+        image: {{ .Values.spiloImage | quote }}
+        imagePullSecret: {{ .Values.imagePullSecret | quote }}
+        database:
+          dbname: {{ .Values.database.dbname | quote }}
+          port: {{ .Values.database.port }}
+          hostname: {{ include "databaseHostname" . | quote }}
+          userSecret: {{ include "databaseSuperUserSecretName" . | quote }}
+      {{- end }}
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: {{ .Release.Namespace }}
+
+ {{- if .Values.syncPolicy }}
+  syncPolicy:
+    {{- .Values.syncPolicy | toYaml | nindent 4 }}
+  {{- end -}}
+{{- end -}}

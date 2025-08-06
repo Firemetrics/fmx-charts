@@ -1,0 +1,23 @@
+host: ""
+
+services:
+  panel:
+    enabled: true
+    path: /panel
+    name: fmx-panel
+  fuego:
+    enabled: true
+    path: /fhir
+    name: fuego
+  keycloak:
+    enabled: false
+    path: /auth
+    name: keycloak
+
+certManager:
+  enabled: false
+  issuer: letsencrypt
+
+tls:
+  enabled: false
+  existingSecret: ""

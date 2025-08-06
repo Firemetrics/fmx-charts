@@ -1,0 +1,48 @@
+{{- if .Values.components.fuego.enabled -}}
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: {{ include "fuegoAppName" . }}
+  namespace: {{ .Values.argoCdNamespace | quote }}
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+
+  source:
+    repoURL: {{ .Values.chartsRepoUrl | quote }}
+    chart: fuego
+    targetRevision: {{ .Chart.Version | quote }}
+    helm:
+      releaseName: {{ include "fuegoAppName" . }}
+      values: |
+      {{- if .Values.components.fuego.valuesOverride }}
+        {{- .Values.components.fuego.valuesOverride | toYaml | nindent 8 }}
+      {{- else }}
+        image: {{ .Values.components.fuego.image | quote }}
+        imagePullSecret: {{ .Values.imagePullSecret | quote }}
+        database:
+          dbname: {{ .Values.database.dbname | quote }}
+          port: {{ .Values.database.port }}
+          hostname: {{ include "databaseHostname" . | quote }}
+          userSecret: {{ include "databaseSuperUserSecretName" . | quote }}
+
+        publicUrl: {{ include "fuegoUrl" . | quote }}
+        serviceAccountName: {{ include "resourceReaderSaName" . | quote }}
+        initContainers:
+          {{- include "waitForBootstrapInitContainer" . | nindent 10 }}
+
+        oidc:
+          enabled: true
+          discoveryUrl: {{ include "oidcDiscoveryUrl" . | quote }}
+      {{- end }}
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: {{ .Release.Namespace }}
+
+  {{- if .Values.syncPolicy }}
+  syncPolicy:
+    {{- .Values.syncPolicy | toYaml | nindent 4 }}
+  {{- end -}}
+{{- end -}}

@@ -1,0 +1,53 @@
+{{- if .Values.components.postgres.enabled -}}
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: {{ include "postgresAppName" . }}
+  namespace: {{ .Values.argoCdNamespace | quote }}
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+
+  source:
+    repoURL: {{ .Values.chartsRepoUrl | quote }}
+    chart: fmx-postgres
+    targetRevision: {{ .Chart.Version | quote }}
+    helm:
+      releaseName: {{ include "postgresAppName" . }}
+      values: |
+      {{- if .Values.components.postgres.valuesOverride }}
+        {{- .Values.components.postgres.valuesOverride | toYaml | nindent 8 }}
+      {{- else }}
+        image: {{ .Values.spiloImage | quote }}
+        imagePullSecret: {{ .Values.imagePullSecret | quote }}
+        podServiceAccountNameOverride: {{ .Values.components.postgres.podServiceAccountNameOverride | quote }}
+        numberOfInstances: {{ .Values.components.postgres.numberOfInstances }}
+        clusterNameOerride: {{ .Values.components.postgres.clusterNameOverride | quote }}
+        teamId: {{ .Values.components.postgres.teamId | quote }}
+
+        {{- with .Values.components.postgres.volume }}
+        volume:
+          {{- . | toYaml | nindent 10 }}
+        {{- end }}
+
+        {{- with .Values.components.postgres.resources }}
+        resources:
+          {{- . | toYaml | nindent 10 }}
+        {{- end }}
+
+        {{- with .Values.components.postgres.postgresql }}
+        postgresql:
+          {{- . | toYaml | nindent 10 }}
+        {{- end }}
+      {{- end }}
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: {{ .Release.Namespace }}
+
+  {{- if .Values.syncPolicy }}
+  syncPolicy:
+    {{- .Values.syncPolicy | toYaml | nindent 4 }}
+  {{- end -}}
+{{- end -}}

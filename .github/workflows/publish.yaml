@@ -1,0 +1,21 @@
+name: Publish charts
+
+on:
+  push:
+    tags:
+      - "v[0-9]+.[0-9]+.[0-9]+"
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Package and upload charts
+        env:
+          HELM_REPO_URL: ${{ secrets.HELM_REPO_URL }}
+          HELM_REPO_USERNAME: ${{ secrets.HELM_REPO_USERNAME }}
+          HELM_REPO_PASSWORD: ${{ secrets.HELM_REPO_PASSWORD }}
+        run: ./scripts/package-and-upload-charts.sh
+

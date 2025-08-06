@@ -1,0 +1,58 @@
+{{- if .Values.components.keycloak.enabled -}}
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: {{ include "keycloakAppName" . }}
+  namespace: {{ .Values.argoCdNamespace | quote }}
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+
+  source:
+    repoURL: {{ .Values.chartsRepoUrl | quote }}
+    chart: fmx-keycloak
+    targetRevision: {{ .Chart.Version | quote }}
+    helm:
+      releaseName: {{ include "keycloakAppName" . }}
+      values: |
+      {{- if .Values.components.keycloak.valuesOverride }}
+        {{- .Values.components.keycloak.valuesOverride | toYaml | nindent 8 }}
+      {{- else }}
+        argoCdNamespace: {{ .Values.argoCdNamespace | quote }}
+
+        publicPath: {{ .Values.components.keycloak.publicPath | quote }}
+
+        panel:
+          publicUrl: {{ include "panelUrl" . | quote }}
+          clientId: {{ .Values.components.panel.oidc.clientId | quote }}
+          oidcAudience: {{ include "panelOidcAudience" . | quote }}
+
+        fuego:
+          oidcAudience: {{ include "fuegoOidcAudience" . | quote }}
+
+        persistence:
+          {{- .Values.components.keycloak.persistence | toYaml | nindent 10 }}
+
+        importRealm:
+          {{- .Values.components.keycloak.importRealm | toYaml | nindent 10 }}
+
+        application:
+          nameOverride: {{ include "keycloakChildAppName" . | quote }}
+          repoUrl: {{ .Values.components.keycloak.chartsRepoUrl | quote }}
+          version: {{ .Values.components.keycloak.version | quote }}
+          {{- if .Values.syncPolicy }}
+          syncPolicy:
+            {{- .Values.syncPolicy | toYaml | nindent 12 }}
+          {{- end }}
+      {{- end }}
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: {{ .Release.Namespace }}
+
+  {{- if .Values.syncPolicy }}
+  syncPolicy:
+    {{- .Values.syncPolicy | toYaml | nindent 4 }}
+  {{- end -}}
+{{- end -}}

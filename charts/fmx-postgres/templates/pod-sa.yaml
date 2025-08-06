@@ -1,0 +1,8 @@
+{{- if .Values.imagePullSecret -}}
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ .Values.podServiceAccountNameOverride | default "postgres-pod" }}
+imagePullSecrets:
+  - name: {{ .Values.imagePullSecret }}
+{{- end -}}

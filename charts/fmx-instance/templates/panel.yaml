@@ -1,0 +1,59 @@
+{{- if .Values.components.panel.enabled -}}
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: {{ include "panelAppName" . }}
+  namespace: {{ .Values.argoCdNamespace | quote }}
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+
+  source:
+    repoURL: {{ .Values.chartsRepoUrl | quote }}
+    chart: fmx-panel
+    targetRevision: {{ .Chart.Version | quote }}
+    helm:
+      releaseName: {{ include "panelAppName" . }}
+      values: |
+      {{- if .Values.components.panel.valuesOverride }}
+        {{- .Values.components.panel.valuesOverride | toYaml | nindent 8 }}
+      {{- else }}
+        image: {{ .Values.components.panel.image | quote }}
+        imagePullSecret: {{ .Values.imagePullSecret | quote }}
+        publicUrl: {{ include "panelUrl" . | quote }}
+        publicPath: {{ .Values.components.panel.publicPath | quote }}
+
+        fhir:
+          baseUrl: {{ include "internalFhirBaseUrl" . | quote }}
+
+        database:
+          dbname: {{ .Values.database.dbname | quote }}
+          port: {{ .Values.database.port }}
+          hostname: {{ include "databaseHostname" . | quote }}
+          userSecret: {{ include "databaseSuperUserSecretName" . | quote }}
+
+        serviceAccountName: {{ include "resourceReaderSaName" . | quote }}
+        initContainers:
+          {{- include "waitForBootstrapInitContainer" . | nindent 10 }}
+
+        oidc:
+          discoveryUrl: {{ include "oidcDiscoveryUrl" . | quote }}
+          clientId: {{ .Values.components.panel.oidc.clientId | quote }}
+          audience: {{ include "panelOidcAudience" . | quote }}
+
+        datasetImportDisabled: {{ .Values.components.panel.datasetImportDisabled }}
+        resourceExplorerDisabled: {{ .Values.components.panel.resourceExplorerDisabled }}
+        nocodeBuilderDisabled: {{ .Values.components.panel.nocodeBuilderDisabled }}
+        sqlEditoryDisabled: {{ .Values.components.panel.sqlEditoryDisabled }}
+      {{- end }}
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: {{ .Release.Namespace }}
+
+  {{- if .Values.syncPolicy }}
+  syncPolicy:
+    {{- .Values.syncPolicy | toYaml | nindent 4 }}
+  {{- end -}}
+{{- end -}}

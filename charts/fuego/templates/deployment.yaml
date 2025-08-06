@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "appName" . }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/part-of: {{ include "appName" . }}
+      app.kubernetes.io/component: backend
+      app.kubernetes.io/name: {{ include "podLabel" . }}
+  template:
+    metadata:
+      name: {{ include "appName" . }}
+      labels:
+        app.kubernetes.io/part-of: {{ include "appName" . }}
+        app.kubernetes.io/component: backend
+        app.kubernetes.io/name: {{ include "podLabel" . }}
+    spec:
+      {{- with .Values.serviceAccountName }}
+      serviceAccountName: {{ . }}
+      {{- end }}
+      {{- with .Values.initContainers }}
+      initContainers:
+        {{- . | toYaml | nindent 8 }}
+      {{- end }}
+      {{- with .Values.imagePullSecret }}
+      imagePullSecrets:
+        - name: {{ . }}
+      {{- end }}
+      containers:
+        - name: main
+          image: {{ .Values.image | quote }}
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 3000
+          env:
+            - name: FUEGO_SERVER_INTERFACE
+              value: "0.0.0.0"
+            - name: FUEGO_SERVER_PORT
+              value: "3000"
+            {{- with .Values.publicUrl }}
+            - name: FUEGO_SERVER_PUBLIC_URL
+              value: {{ . | quote }}
+            {{- end }}
+            - name: FUEGO_DATABASE_HOST
+              value: {{ .Values.database.hostname | quote }}
+            - name: FUEGO_DATABASE_PORT
+              value: {{ .Values.database.port | quote }}
+            - name: FUEGO_DATABASE_DBNAME
+              value: {{ .Values.database.dbname | quote }}
+            - name: FUEGO_DATABASE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.database.userSecret | quote }}
+                  key: username
+            - name: FUEGO_DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.database.userSecret | quote }}
+                  key: password
+            {{- if .Values.oidc.enabled }}
+            - name: FUEGO_OIDC_ENABLE
+              value: "true"
+            - name: FUEGO_OIDC_DISCOVERY_URL
+              value: {{ .Values.oidc.discoveryUrl | quote }}
+            {{- end }}

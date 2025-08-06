@@ -1,0 +1,94 @@
+chartsRepoUrl: "https://nexus.firemetrics.com/repository/helm-firemetrics/"
+
+argoCdNamespace: argocd
+
+syncPolicy:
+  automated:
+    prune: true
+    selfHeal: true
+
+spiloImage: ghcr.io/firemetrics/spilo16:3.3-p2-f0457965
+imagePullSecret: ""
+
+oidc:
+  # discoveryUrlOverride can be used to specify an external OIDC provider.
+  discoveryUrlOverride: ""
+
+database:
+  dbname: firemetrics
+  port: 5432
+  superUserName: firemetrics
+  hostnameOverride: ""
+  existingSuperUserSecret: ""
+
+components:
+  postgres:
+    enabled: true
+
+    podServiceAccountNameOverride: ""
+    numberOfInstances: 1
+    clusterNameOerride: ""
+    teamId: ""
+
+    volume:
+      size: 10Gi
+
+    resources:
+      requests:
+        cpu: "10m"
+        memory: "100Mi"
+      limits:
+        cpu: "32"
+        memory: "128Gi"
+
+    postgresql:
+      version: "16"
+      parameters:
+        shared_buffers: 2GB
+        max_locks_per_transaction: "512"
+        work_mem: "256MB"
+
+    valuesOverride: {}
+  bootstrap:
+    enabled: true
+    valuesOverride: {}
+  fuego:
+    enabled: true
+    image: ghcr.io/firemetrics/fuego:aa1f58e2
+    valuesOverride: {}
+  panel:
+    enabled: true
+    image: ghcr.io/firemetrics/fmx-panel:57f875c
+    publicPath: /panel
+    datasetImportDisabled: false
+    resourceExplorerDisabled: false
+    nocodeBuilderDisabled: false
+    sqlEditoryDisabled: false
+    oidc:
+      clientId: panel
+      # audience is optional. If not set, it will default to the Panel's public URL.
+      audience: ""
+    valuesOverride: {}
+  keycloak:
+    enabled: true
+    chartsRepoUrl: "https://charts.bitnami.com/bitnami"
+    version: 24.7.4
+    publicPath: /auth
+    importRealm:
+      enabled: true
+      realmName: firemetrics
+    persistence:
+      enabled: true
+      size: 1Gi
+    valuesOverride: {}
+  ingress:
+    enabled: true
+    host: "example.com"
+    fhirPath: /fhir
+    certManager:
+      enabled: false
+      issuer: letsencrypt
+    tls:
+      enabled: false
+      existingSecret: ""
+    valuesOverride: {}
