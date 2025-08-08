@@ -7,9 +7,9 @@ spec:
   project: default
 
   source:
-    repoURL: {{ .Values.application.repoUrl | quote }}
+    repoURL: {{ .Values.application.chartRepoUrl | quote }}
     chart: keycloak
-    targetRevision: {{ .Values.application.version | quote }}
+    targetRevision: {{ .Values.application.chartVersion | quote }}
     helm:
       releaseName: {{ include "childAppName" . | quote }}
       values: |
@@ -57,7 +57,6 @@ spec:
     server: https://kubernetes.default.svc
     namespace: {{ .Release.Namespace }}
 
-  {{- if .Values.application.syncPolicy }}
-  syncPolicy:
-    {{- .Values.application.syncPolicy | toYaml | nindent 4 }}
+  {{- with .Values.application.syncPolicy }}
+  syncPolicy: {{- . | toYaml | nindent 4 }}
   {{- end }}

@@ -20,8 +20,8 @@ fuego:
 
 application:
   nameOverride: ""
-  repoUrl: "https://charts.bitnami.com/bitnami"
-  version: 24.7.4
+  chartRepoUrl: "https://charts.bitnami.com/bitnami"
+  chartVersion: "24.7.4"
   syncPolicy:
     automated:
       prune: true

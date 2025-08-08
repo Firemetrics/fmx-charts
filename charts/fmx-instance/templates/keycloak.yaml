@@ -10,7 +10,7 @@ spec:
   project: default
 
   source:
-    repoURL: {{ .Values.chartsRepoUrl | quote }}
+    repoURL: {{ .Values.chartRepoUrl | quote }}
     chart: fmx-keycloak
     targetRevision: {{ .Chart.Version | quote }}
     helm:
@@ -39,11 +39,10 @@ spec:
 
         application:
           nameOverride: {{ include "keycloakChildAppName" . | quote }}
-          repoUrl: {{ .Values.components.keycloak.chartsRepoUrl | quote }}
+          repoUrl: {{ .Values.components.keycloak.chartRepoUrl | quote }}
           version: {{ .Values.components.keycloak.version | quote }}
-          {{- if .Values.syncPolicy }}
-          syncPolicy:
-            {{- .Values.syncPolicy | toYaml | nindent 12 }}
+          {{- with .Values.syncPolicy }}
+          syncPolicy: {{- . | toYaml | nindent 12 }}
           {{- end }}
       {{- end }}
 
@@ -51,8 +50,7 @@ spec:
     server: https://kubernetes.default.svc
     namespace: {{ .Release.Namespace }}
 
-  {{- if .Values.syncPolicy }}
-  syncPolicy:
-    {{- .Values.syncPolicy | toYaml | nindent 4 }}
+  {{- with .Values.syncPolicy }}
+  syncPolicy: {{- . | toYaml | nindent 4 }}
   {{- end -}}
 {{- end -}}

@@ -1,0 +1,50 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: {{ include "childAppName" . }}
+  namespace: {{ .Values.argoCdNamespace | quote }}
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+
+  source:
+    repoURL: {{ .Values.application.chartRepoUrl | quote }}
+    chart: minio-tenant
+    targetRevision: {{ .Values.application.chartVersion | quote }}
+    helm:
+      releaseName: {{ include "childAppName" . }}
+      values: |
+      {{- if .Values.application.valuesOverride }}
+        {{- .Values.application.valuesOverride | toYaml | nindent 8 }}
+      {{- else }}
+        tenant:
+          name: {{ include "tenantName" . | quote }}
+          configSecret:
+            {{- with .Values.auth.secretNameOverride }}
+            name: {{ . | quote }}
+            {{- end }}
+            {{- with .Values.auth.existingSecret }}
+            existingSecret: {{ . }}
+            {{- end }}
+            accessKey: {{ .Values.auth.accessKey | quote }}
+            secretKey: {{ .Values.auth.secretKey | quote }}
+          {{- if .Values.application.pools }}
+          pools:
+            - servers: {{ .Values.servers }}
+              name: {{ .Values.poolName | quote }}
+              volumesPerServer: {{ .Values.volumesPerServer }}
+              size: {{ .Values.size }}
+          {{- if .Values.backup.enabled }}
+          buckets:
+            - name: {{ .Values.backup.bucketName | quote }}
+          {{- end }}
+      {{- end }}
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: {{ .Release.Namespace }}
+
+  {{- with .Values.application.syncPolicy }}
+  syncPolicy: {{- . | toYaml | nindent 4 }}
+  {{- end -}}

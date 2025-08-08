@@ -1,0 +1,40 @@
+{{- if .Values.components.minio.enabled -}}
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: {{ include "minioAppName" . }}
+  namespace: {{ .Values.argoCdNamespace | quote }}
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+
+  source:
+    repoURL: {{ .Values.chartRepoUrl | quote }}
+    chart: fmx-minio
+    targetRevision: {{ .Chart.Version | quote }}
+    helm:
+      releaseName: {{ include "minioAppName" . }}
+      values: |
+      {{- if .Values.components.minio.valuesOverride }}
+        {{- .Values.components.minio.valuesOverride | toYaml | nindent 8 }}
+      {{- else }}
+        size: {{ .Values.components.minio.size | quote }}
+        backup:
+          enabled: {{ .Values.components.minio.backup.enabled }}
+        application:
+          chartRepoUrl: {{ .Values.components.minio.chartRepoUrl | quote }}
+          chartVersion: {{ .Values.components.minio.chartVersion | quote }}
+          {{- with .Values.syncPolicy }}
+          syncPolicy: {{- . | toYaml | nindent 12 }}
+          {{- end }}
+      {{- end }}
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: {{ .Release.Namespace }}
+
+  {{- with .Values.syncPolicy }}
+  syncPolicy: {{- . | toYaml | nindent 4 }}
+  {{- end -}}
+{{- end -}}

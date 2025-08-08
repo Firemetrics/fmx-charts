@@ -30,6 +30,10 @@
   {{ include "appName" . }}-ingress
 {{- end -}}
 
+{{- define "minioAppName" -}}
+  {{ include "appName" . }}-minio
+{{- end -}}
+
 {{- define "databaseHostname" -}}
   {{- if .Values.database.hostnameOverride -}}
     {{ .Values.database.hostnameOverride }}

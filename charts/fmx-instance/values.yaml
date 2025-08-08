@@ -1,4 +1,4 @@
-chartsRepoUrl: "https://nexus.firemetricshealth.com/repository/helm-firemetrics/"
+chartRepoUrl: "https://nexus.firemetricshealth.com/repository/helm-firemetrics/"
 
 argoCdNamespace: argocd
 
@@ -6,9 +6,6 @@ syncPolicy:
   automated:
     prune: true
     selfHeal: true
-
-spiloImage: ghcr.io/firemetrics/spilo16:3.3-p2-f0457965
-imagePullSecret: ""
 
 oidc:
   # discoveryUrlOverride can be used to specify an external OIDC provider.
@@ -20,6 +17,12 @@ database:
   superUserName: firemetrics
   hostnameOverride: ""
   existingSuperUserSecret: ""
+
+# imagePullSecret is the name of the Kubernetes secret used to pull images from the ghcr.io registry.
+imagePullSecret: ""
+
+# spiloImage is the image used for the Postgres cluster and the bootstrap job.
+spiloImage: ghcr.io/firemetrics/spilo16:3.3-p2-f0457965
 
 components:
   postgres:
@@ -51,13 +54,16 @@ components:
     env: []
 
     valuesOverride: {}
+
   bootstrap:
     enabled: true
     valuesOverride: {}
+
   fuego:
     enabled: true
     image: ghcr.io/firemetrics/fuego:aa1f58e2
     valuesOverride: {}
+
   panel:
     enabled: true
     image: ghcr.io/firemetrics/fmx-panel:57f875c
@@ -71,9 +77,10 @@ components:
       # audience is optional. If not set, it will default to the Panel's public URL.
       audience: ""
     valuesOverride: {}
+
   keycloak:
     enabled: true
-    chartsRepoUrl: "https://charts.bitnami.com/bitnami"
+    chartRepoUrl: "https://charts.bitnami.com/bitnami"
     version: 24.7.4
     publicPath: /auth
     importRealm:
@@ -83,6 +90,14 @@ components:
       enabled: true
       size: 1Gi
     valuesOverride: {}
+
+  minio:
+    enabled: false
+    chartRepoUrl: "https://operator.min.io"
+    chartVersion: "4.3.7"
+    size: "10Gi"
+    valuesOverride: {}
+
   ingress:
     enabled: true
     host: "example.com"

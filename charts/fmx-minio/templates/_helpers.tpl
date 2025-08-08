@@ -1,0 +1,20 @@
+{{- define "appName" -}}
+  {{ .Release.Name }}
+{{- end }}
+
+{{- define "childAppName" -}}
+  {{- if .Values.application.nameOverride -}}
+    {{ .Values.application.nameOverride }}
+  {{- else -}}
+    {{ include "appName" . }}-child
+  {{- end -}}
+{{- end }}
+
+{{- define "tenantName" -}}
+  {{- if .Values.tenantNameOverride -}}
+    {{ .Values.tenantNameOverride }}
+  {{- else -}}
+    {{ include "appName" . }}
+  {{- end -}}
+{{- end }}
+

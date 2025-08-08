@@ -1,0 +1,31 @@
+argoCdNamespace: argocd
+
+# tenantNameOverride is optional. Defaults to the release's name.
+tenantNameOverride: ""
+
+poolName: pool-0
+servers: 1
+volumesPerServer: 1
+size: "10Gi"
+
+auth:
+  secretNameOverride: ""
+  accessKey: minio
+  secretKey: minio123
+  # existingSecret: true
+
+backup:
+  enabled: true
+  bucketName: backup
+
+application:
+  nameOverride: ""
+  chartRepoUrl: "https://operator.min.io"
+  chartVersion: "4.3.7"
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+
+  valuesOverride: {}

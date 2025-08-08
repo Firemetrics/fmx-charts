@@ -10,7 +10,7 @@ spec:
   project: default
 
   source:
-    repoURL: {{ .Values.chartsRepoUrl | quote }}
+    repoURL: {{ .Values.chartRepoUrl | quote }}
     chart: fmx-postgres
     targetRevision: {{ .Chart.Version | quote }}
     helm:
@@ -47,8 +47,7 @@ spec:
     server: https://kubernetes.default.svc
     namespace: {{ .Release.Namespace }}
 
-  {{- if .Values.syncPolicy }}
-  syncPolicy:
-    {{- .Values.syncPolicy | toYaml | nindent 4 }}
+  {{- with .Values.syncPolicy }}
+  syncPolicy: {{- . | toYaml | nindent 4 }}
   {{- end -}}
 {{- end -}}
