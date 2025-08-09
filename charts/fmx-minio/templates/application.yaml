@@ -33,6 +33,7 @@ spec:
               name: {{ .Values.poolName | quote }}
               volumesPerServer: {{ .Values.volumesPerServer }}
               size: {{ .Values.size }}
+          {{- end }}
           {{- if .Values.backup.enabled }}
           buckets:
             - name: {{ .Values.backup.bucketName | quote }}
@@ -45,4 +46,4 @@ spec:
 
   {{- with .Values.application.syncPolicy }}
   syncPolicy: {{- . | toYaml | nindent 4 }}
-  {{- end -}}
+  {{- end }}
