@@ -21,7 +21,7 @@ backup:
 application:
   nameOverride: ""
   chartRepoUrl: "https://operator.min.io"
-  chartVersion: "4.3.7"
+  chartVersion: "7.1.1"
 
   syncPolicy:
     automated:

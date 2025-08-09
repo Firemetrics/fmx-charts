@@ -6,7 +6,7 @@
   {{- if .Values.application.nameOverride -}}
     {{ .Values.application.nameOverride }}
   {{- else -}}
-    {{ include "appName" . }}-child
+    {{ include "appName" . }}-tenant
   {{- end -}}
 {{- end }}
 

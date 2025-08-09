@@ -10,7 +10,7 @@ spec:
 
   source:
     repoURL: {{ .Values.application.chartRepoUrl | quote }}
-    chart: minio-tenant
+    chart: tenant
     targetRevision: {{ .Values.application.chartVersion | quote }}
     helm:
       releaseName: {{ include "childAppName" . }}

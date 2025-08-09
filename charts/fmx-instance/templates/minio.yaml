@@ -28,7 +28,6 @@ spec:
           bucketName: {{ .Values.backup.bucketName | quote }}
         application:
           chartRepoUrl: {{ .Values.components.minio.chartRepoUrl | quote }}
-          chartVersion: {{ .Values.components.minio.chartVersion | quote }}
           {{- with .Values.syncPolicy }}
           syncPolicy: {{- . | toYaml | nindent 12 }}
           {{- end }}
