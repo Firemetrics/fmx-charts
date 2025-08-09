@@ -13,8 +13,15 @@ fi
 
 CHARTS_DIR="./charts"
 
+# Detect sed in-place flag syntax
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  SED_INPLACE=("sed" "-i" "")
+else
+  SED_INPLACE=("sed" "-i")
+fi
+
 for chart in "$CHARTS_DIR"/*/; do
-  sed -i "s/^version:.*/version: $TARGET_VERSION/" "$chart/Chart.yaml"
+  "${SED_INPLACE[@]}" -e "s/^version:.*/version: $TARGET_VERSION/" "$chart/Chart.yaml"
 done
 
 git add "$CHARTS_DIR"
