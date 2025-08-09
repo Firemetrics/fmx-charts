@@ -19,7 +19,7 @@ database:
   existingSuperUserSecret: ""
 
 backup:
-  enabled: true
+  enabled: false
   bucketName: "backup"
   region: "auto"
   accessKey: "user"
