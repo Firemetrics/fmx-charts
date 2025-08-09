@@ -30,7 +30,7 @@ backup:
 imagePullSecret: ""
 
 # spiloImage is the image used for the Postgres cluster and the bootstrap job.
-spiloImage: ghcr.io/firemetrics/spilo16:3.3-p2-f0457965
+spiloImage: ghcr.io/firemetrics/spilo17:4.0-p2-f0457965
 
 components:
   postgres:
@@ -53,7 +53,7 @@ components:
         memory: "128Gi"
 
     postgresql:
-      version: "16"
+      version: "17"
       parameters:
         shared_buffers: 2GB
         max_locks_per_transaction: "512"
