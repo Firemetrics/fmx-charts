@@ -27,13 +27,11 @@ spec:
             {{- end }}
             accessKey: {{ .Values.configSecret.accessKey | quote }}
             secretKey: {{ .Values.configSecret.secretKey | quote }}
-          {{- if .Values.application.pools }}
           pools:
             - servers: {{ .Values.servers }}
               name: {{ .Values.poolName | quote }}
               volumesPerServer: {{ .Values.volumesPerServer }}
               size: {{ .Values.size }}
-          {{- end }}
           {{- if .Values.backup.enabled }}
           buckets:
             - name: {{ .Values.backup.bucketName | quote }}
