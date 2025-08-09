@@ -20,6 +20,8 @@ spec:
       {{- else }}
         tenant:
           name: {{ include "tenantName" . | quote }}
+          certificate:
+            requestAutoCert: false
           configSecret:
             name: {{ include "configSecretName" . | quote }}
             {{- with .Values.configSecret.existingSecret }}
