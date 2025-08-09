@@ -22,8 +22,8 @@ backup:
   enabled: false
   bucketName: "backup"
   region: "auto"
-  accessKey: "user"
-  secretKey: "user123"
+  accessKey: "minio"
+  secretKey: "minio123"
   endpoint: "http://minio"
 
 # imagePullSecret is the name of the Kubernetes secret used to pull images from the ghcr.io registry.
