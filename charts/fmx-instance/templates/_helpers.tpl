@@ -128,3 +128,7 @@
 {{- define "internalFhirBaseUrl" -}}
   {{ include "internalFuegoUrl" . }}{{ .Values.components.ingress.fhirPath }}
 {{- end -}}
+
+{{- define "backupTargetSecretName" -}}
+  {{ include "appName" . }}-backup-target
+{{- end -}}

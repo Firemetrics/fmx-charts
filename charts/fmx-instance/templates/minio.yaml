@@ -1,4 +1,4 @@
-{{- if .Values.components.minio.enabled -}}
+{{- if and .Values.components.minio.enabled .Values.backup.enabled -}}
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -20,8 +20,12 @@ spec:
         {{- .Values.components.minio.valuesOverride | toYaml | nindent 8 }}
       {{- else }}
         size: {{ .Values.components.minio.size | quote }}
+        configSecret:
+          accessKey: {{ .Values.backup.accessKey | quote }}
+          secretKey: {{ .Values.backup.secretKey | quote }}
         backup:
-          enabled: {{ .Values.components.minio.backup.enabled }}
+          enabled: true
+          bucketName: {{ .Values.backup.bucketName | quote }}
         application:
           chartRepoUrl: {{ .Values.components.minio.chartRepoUrl | quote }}
           chartVersion: {{ .Values.components.minio.chartVersion | quote }}

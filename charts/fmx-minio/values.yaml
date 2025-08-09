@@ -8,8 +8,8 @@ servers: 1
 volumesPerServer: 1
 size: "10Gi"
 
-auth:
-  secretNameOverride: ""
+configSecret:
+  nameOverride: ""
   accessKey: minio
   secretKey: minio123
   # existingSecret: true

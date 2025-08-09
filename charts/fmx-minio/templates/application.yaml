@@ -21,14 +21,12 @@ spec:
         tenant:
           name: {{ include "tenantName" . | quote }}
           configSecret:
-            {{- with .Values.auth.secretNameOverride }}
-            name: {{ . | quote }}
-            {{- end }}
-            {{- with .Values.auth.existingSecret }}
+            name: {{ include "configSecretName" . | quote }}
+            {{- with .Values.configSecret.existingSecret }}
             existingSecret: {{ . }}
             {{- end }}
-            accessKey: {{ .Values.auth.accessKey | quote }}
-            secretKey: {{ .Values.auth.secretKey | quote }}
+            accessKey: {{ .Values.configSecret.accessKey | quote }}
+            secretKey: {{ .Values.configSecret.secretKey | quote }}
           {{- if .Values.application.pools }}
           pools:
             - servers: {{ .Values.servers }}

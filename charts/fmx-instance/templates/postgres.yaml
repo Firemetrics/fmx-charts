@@ -38,8 +38,50 @@ spec:
         postgresql: {{- . | toYaml | nindent 10 }}
         {{- end }}
 
-        {{- with .Values.components.postgres.env }}
-        env: {{- . | toYaml | nindent 10 }}
+        {{- if or .Values.backup.enabled .Values.components.postgres.extraEnv }}
+        env:
+        {{- if .Values.backup.enabled }}
+          - name: USE_WALG_BACKUP
+            value: "true"
+          - name: USE_WALG_RESTORE
+            value: "true"
+          - name: WALG_DISABLE_S3_SSE
+            value: "true"
+          - name: AWS_S3_FORCE_PATH_STYLE
+            value: "true"
+          - name: BACKUP_NUM_TO_RETAIN
+            value: "5"
+          - name: WAL_S3_BUCKET
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "backupTargetSecretName" . | quote }}
+                key: bucketName
+          - name: AWS_REGION
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "backupTargetSecretName" . | quote }}
+                key: region
+          - name: AWS_ACCESS_KEY_ID
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "backupTargetSecretName" . | quote }}
+                key: accessKey
+          - name: AWS_SECRET_ACCESS_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "backupTargetSecretName" . | quote }}
+                key: secretKey
+          - name: AWS_ENDPOINT
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "backupTargetSecretName" . | quote }}
+                key: endpoint
+        {{- end }}
+
+        {{- with .Values.components.postgres.extraEnv }}
+          {{- . | toYaml | nindent 10 }}
+        {{- end }}
+
         {{- end }}
       {{- end }}
 

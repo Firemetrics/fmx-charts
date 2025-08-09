@@ -18,6 +18,14 @@ database:
   hostnameOverride: ""
   existingSuperUserSecret: ""
 
+backup:
+  enabled: true
+  bucketName: "backup"
+  region: "auto"
+  accessKey: "user"
+  secretKey: "user123"
+  endpoint: "http://minio"
+
 # imagePullSecret is the name of the Kubernetes secret used to pull images from the ghcr.io registry.
 imagePullSecret: ""
 
@@ -51,7 +59,7 @@ components:
         max_locks_per_transaction: "512"
         work_mem: "256MB"
 
-    env: []
+    extraEnv: []
 
     valuesOverride: {}
 
