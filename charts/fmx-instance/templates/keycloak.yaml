@@ -39,7 +39,7 @@ spec:
 
         application:
           nameOverride: {{ include "keycloakChildAppName" . | quote }}
-          repoUrl: {{ .Values.components.keycloak.chartRepoUrl | quote }}
+          chartRepoUrl: {{ .Values.components.keycloak.chartRepoUrl | quote }}
           version: {{ .Values.components.keycloak.version | quote }}
           {{- with .Values.syncPolicy }}
           syncPolicy: {{- . | toYaml | nindent 12 }}
