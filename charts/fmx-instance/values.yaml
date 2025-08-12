@@ -89,7 +89,7 @@ components:
   keycloak:
     enabled: true
     chartRepoUrl: "https://charts.bitnami.com/bitnami"
-    version: 24.7.4
+    chartVersion: 24.7.4
     publicPath: /auth
     importRealm:
       enabled: true
