@@ -1,4 +1,4 @@
-{{- if .Values.components.panel.enabled -}}
+{{- if and .Values.components.panel.enabled .Values.oidc.enabled -}}
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:

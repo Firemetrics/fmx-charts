@@ -8,6 +8,7 @@ syncPolicy:
     selfHeal: true
 
 oidc:
+  enabled: true
   # discoveryUrlOverride can be used to specify an external OIDC provider.
   discoveryUrlOverride: ""
 

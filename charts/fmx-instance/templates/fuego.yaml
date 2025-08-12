@@ -33,7 +33,7 @@ spec:
           {{- include "waitForBootstrapInitContainer" . | nindent 10 }}
 
         oidc:
-          enabled: true
+          enabled: {{ .Values.oidc.enabled }}
           discoveryUrl: {{ include "oidcDiscoveryUrl" . | quote }}
       {{- end }}
 
