@@ -28,9 +28,6 @@ spec:
           userSecret: {{ include "databaseSuperUserSecretName" . | quote }}
 
         publicUrl: {{ include "fuegoUrl" . | quote }}
-        serviceAccountName: {{ include "resourceReaderSaName" . | quote }}
-        initContainers:
-          {{- include "waitForBootstrapInitContainer" . | nindent 10 }}
 
         oidc:
           enabled: {{ .Values.oidc.enabled }}

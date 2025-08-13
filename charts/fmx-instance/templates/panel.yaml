@@ -33,10 +33,6 @@ spec:
           hostname: {{ include "databaseHostname" . | quote }}
           userSecret: {{ include "databaseSuperUserSecretName" . | quote }}
 
-        serviceAccountName: {{ include "resourceReaderSaName" . | quote }}
-        initContainers:
-          {{- include "waitForBootstrapInitContainer" . | nindent 10 }}
-
         oidc:
           discoveryUrl: {{ include "oidcDiscoveryUrl" . | quote }}
           clientId: {{ .Values.components.panel.oidc.clientId | quote }}

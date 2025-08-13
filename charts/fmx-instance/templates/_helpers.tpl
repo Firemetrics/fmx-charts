@@ -86,10 +86,6 @@
   {{ include "ingressBaseUrl" . }}{{ .Values.components.keycloak.publicPath }}
 {{- end -}}
 
-{{- define "resourceReaderSaName" -}}
-  {{ include "appName" . }}-resource-reader
-{{- end -}}
-
 {{- define "databaseSuperUserSecretName" -}}
   {{- if .Values.database.existingSuperUserSecret -}}
     {{ .Values.database.existingSuperUserSecret }}
@@ -104,25 +100,6 @@
   {{- else -}}
     {{ include "keycloakPublicUrl" . }}/realms/{{ .Values.components.keycloak.importRealm.realmName }}/.well-known/openid-configuration
   {{- end -}}
-{{- end -}}
-
-{{- define "bootstrapJob" -}}
-  {{ include "bootstrapAppName" . }}-{{ .Release.Revision }}
-{{- end -}}
-
-{{- define "waitForBootstrapInitContainer" -}}
-- name: wait-for-bootstrap
-  image: bitnami/kubectl:1.33.3
-  command:
-    - /bin/bash
-    - -c
-    - |
-      echo "Waiting for bootstrap job to complete..."
-      until kubectl get job/{{ include "bootstrapJob" . }} -o jsonpath='{.status.conditions[?(@.type=="Complete")].status}' | grep True; do
-        echo "Not complete yet..."
-        sleep 5
-      done
-      echo "Bootstrap job is complete."
 {{- end -}}
 
 {{- define "fuegoOidcAudience" -}}
