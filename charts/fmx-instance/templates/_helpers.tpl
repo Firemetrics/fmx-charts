@@ -132,3 +132,11 @@
 {{- define "backupTargetSecretName" -}}
   {{ include "appName" . }}-backup-target
 {{- end -}}
+
+{{- define "postgresClusterName" -}}
+  {{- if .Values.components.postgres.clusterNameOverride -}}
+    {{ .Values.components.postgres.clusterNameOverride }}
+  {{- else -}}
+    {{ include "appName" . }}
+  {{- end -}}
+{{- end -}}
