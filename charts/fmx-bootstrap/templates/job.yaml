@@ -3,7 +3,6 @@ kind: Job
 metadata:
   name: {{ include "jobName" . }}
 spec:
-  ttlSecondsAfterFinished: {{ .Values.ttlSecondsAfterFinished }}
   template:
     spec:
       restartPolicy: OnFailure
