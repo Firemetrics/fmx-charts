@@ -26,6 +26,7 @@ spec:
           port: {{ .Values.database.port }}
           hostname: {{ include "databaseHostname" . | quote }}
           userSecret: {{ include "databaseSuperUserSecretName" . | quote }}
+        firemetrics: {{- .Values.components.bootstrap.firemetrics | toYaml | nindent 10 }}
       {{- end }}
 
   destination:

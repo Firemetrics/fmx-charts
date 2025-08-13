@@ -66,6 +66,8 @@ components:
 
   bootstrap:
     enabled: true
+    firemetrics:
+      workerCount: 1
     valuesOverride: {}
 
   fuego:
