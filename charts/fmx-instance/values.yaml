@@ -39,7 +39,7 @@ components:
 
     podServiceAccountNameOverride: ""
     numberOfInstances: 1
-    clusterNameOerride: ""
+    clusterNameOverride: ""
     teamId: ""
 
     volume:

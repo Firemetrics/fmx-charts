@@ -23,7 +23,7 @@ spec:
         imagePullSecret: {{ .Values.imagePullSecret | quote }}
         podServiceAccountNameOverride: {{ .Values.components.postgres.podServiceAccountNameOverride | quote }}
         numberOfInstances: {{ .Values.components.postgres.numberOfInstances }}
-        clusterNameOerride: {{ include "postgresClusterName" . | quote }}
+        clusterNameOverride: {{ include "postgresClusterName" . | quote }}
         teamId: {{ .Values.components.postgres.teamId | quote }}
 
         {{- with .Values.components.postgres.volume }}

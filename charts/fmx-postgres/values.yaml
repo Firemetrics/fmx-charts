@@ -2,7 +2,7 @@ image: ghcr.io/firemetrics/spilo16:3.3-p2-f0457965
 imagePullSecret: ""
 podServiceAccountNameOverride: ""
 numberOfInstances: 1
-clusterNameOerride: ""
+clusterNameOverride: ""
 teamId: ""
 
 volume:
