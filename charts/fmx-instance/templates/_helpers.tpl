@@ -34,11 +34,19 @@
   {{ include "appName" . }}-minio
 {{- end -}}
 
+{{- define "postgresClusterName" -}}
+  {{- if .Values.components.postgres.clusterNameOverride -}}
+    {{ .Values.components.postgres.clusterNameOverride }}
+  {{- else -}}
+    {{ include "appName" . }}
+  {{- end -}}
+{{- end -}}
+
 {{- define "databaseHostname" -}}
   {{- if .Values.database.hostnameOverride -}}
     {{ .Values.database.hostnameOverride }}
   {{- else -}}
-    {{ include "postgresAppName" . }}
+    {{ include "postgresClusterName" . }}
   {{- end -}}
 {{- end -}}
 
@@ -131,12 +139,4 @@
 
 {{- define "backupTargetSecretName" -}}
   {{ include "appName" . }}-backup-target
-{{- end -}}
-
-{{- define "postgresClusterName" -}}
-  {{- if .Values.components.postgres.clusterNameOverride -}}
-    {{ .Values.components.postgres.clusterNameOverride }}
-  {{- else -}}
-    {{ include "appName" . }}
-  {{- end -}}
 {{- end -}}
