@@ -6,6 +6,6 @@
   {{- if .Values.jobNameOverride -}}
     {{ .Values.jobNameOverride }}
   {{- else -}}
-    {{ include "appName" . }}
+    {{ include "appName" . }}-{{ .Release.Revision }}
   {{- end -}}
 {{- end }}

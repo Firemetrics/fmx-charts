@@ -107,7 +107,7 @@
 {{- end -}}
 
 {{- define "bootstrapJob" -}}
-  {{ include "bootstrapAppName" . }}
+  {{ include "bootstrapAppName" . }}-{{ .Release.Revision }}
 {{- end -}}
 
 {{- define "waitForBootstrapInitContainer" -}}

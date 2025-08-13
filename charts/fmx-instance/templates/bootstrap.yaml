@@ -21,6 +21,7 @@ spec:
       {{- else }}
         image: {{ .Values.spiloImage | quote }}
         imagePullSecret: {{ .Values.imagePullSecret | quote }}
+        jobNameOverride: {{ include "bootstrapJob" . | quote }}
         database:
           dbname: {{ .Values.database.dbname | quote }}
           port: {{ .Values.database.port }}
