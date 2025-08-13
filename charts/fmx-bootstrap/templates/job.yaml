@@ -13,7 +13,6 @@ spec:
       {{ end }}
       containers:
         - name: main
-          restartPolicy: OnFailure
           image: {{ .Values.image | quote }}
           env:
             - name: PGHOST

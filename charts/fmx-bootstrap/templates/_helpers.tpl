@@ -6,6 +6,6 @@
   {{- if .Values.jobNameOverride -}}
     {{ .Values.jobNameOverride }}
   {{- else -}}
-    {{ include "appName" . }}-{{ .Release.Revision }}
+    {{ include "appName" . }}-{{ .Chart.Version | replace "+" "_" }}
   {{- end -}}
 {{- end }}
