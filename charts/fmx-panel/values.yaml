@@ -1,4 +1,4 @@
-image: ghcr.io/firemetrics/fmx-panel:84c29ad
+image: ghcr.io/firemetrics/fmx-panel:b563401
 serviceAccountName: ""
 imagePullSecret: ""
 initContainers: []
@@ -21,6 +21,7 @@ database:
   userSecret: panel-user
 
 oidc:
+  enabled: false
   discoveryUrl: ""
   clientId: "panel"
   # audience is optional. If not set, it will default to the Panel's public URL.

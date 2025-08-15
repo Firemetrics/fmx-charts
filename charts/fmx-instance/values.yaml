@@ -80,7 +80,7 @@ components:
 
   panel:
     enabled: true
-    image: ghcr.io/firemetrics/fmx-panel:84c29ad
+    image: ghcr.io/firemetrics/fmx-panel:b563401
     env: []
     volumes: []
     volumeMounts: []

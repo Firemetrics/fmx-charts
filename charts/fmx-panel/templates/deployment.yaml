@@ -60,15 +60,9 @@ spec:
                 secretKeyRef:
                   name: {{ .Values.database.userSecret | quote }}
                   key: password
-            - name: FMXPANEL_OIDC_CLIENT_ID
-              value: {{ .Values.oidc.clientId | quote }}
-            - name: FMXPANEL_OIDC_AUDIENCE
-              value: {{ include "oidcAudience" . | quote }}
             - name: FMXPANEL_FHIR_BASE_URL
               value: {{ .Values.fhir.baseUrl | quote }}
 
-            - name: FMXPANEL_OIDC_DISCOVERY_URL
-              value: {{ .Values.oidc.discoveryUrl | quote }}
             {{- if .Values.datasetImportDisabled }}
             - name: FMXPANEL_DATASET_IMPORT_DISABLED
               value: "true"
@@ -84,6 +78,16 @@ spec:
             {{- if .Values.sqlEditorDisabled }}
             - name: FMXPANEL_SQL_EDITOR_DISABLED
               value: "true"
+            {{- end }}
+            {{- if .Values.oidc.enabled }}
+            - name: FMXPANEL_OIDC_ENABLED
+              value: true
+            - name: FMXPANEL_OIDC_DISCOVERY_URL
+              value: {{ .Values.oidc.discoveryUrl | quote }}
+            - name: FMXPANEL_OIDC_CLIENT_ID
+              value: {{ .Values.oidc.clientId | quote }}
+            - name: FMXPANEL_OIDC_AUDIENCE
+              value: {{ include "oidcAudience" . | quote }}
             {{- end }}
             {{- with .Values.env }}
               {{- . | toYaml | nindent 12 }}

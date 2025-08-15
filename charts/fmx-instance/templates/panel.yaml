@@ -1,4 +1,4 @@
-{{- if and .Values.components.panel.enabled .Values.oidc.enabled -}}
+{{- if .Values.components.panel.enabled -}}
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -45,6 +45,7 @@ spec:
           userSecret: {{ include "databaseSuperUserSecretName" . | quote }}
 
         oidc:
+          enabled: {{ .Values.oidc.enabled }}
           discoveryUrl: {{ include "oidcDiscoveryUrl" . | quote }}
           clientId: {{ .Values.components.panel.oidc.clientId | quote }}
           audience: {{ include "panelOidcAudience" . | quote }}
