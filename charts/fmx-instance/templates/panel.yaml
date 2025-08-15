@@ -52,7 +52,7 @@ spec:
         datasetImportDisabled: {{ .Values.components.panel.datasetImportDisabled }}
         resourceExplorerDisabled: {{ .Values.components.panel.resourceExplorerDisabled }}
         nocodeBuilderDisabled: {{ .Values.components.panel.nocodeBuilderDisabled }}
-        sqlEditoryDisabled: {{ .Values.components.panel.sqlEditoryDisabled }}
+        sqlEditorDisabled: {{ .Values.components.panel.sqlEditorDisabled }}
       {{- end }}
 
   destination:

@@ -88,7 +88,7 @@ components:
     datasetImportDisabled: false
     resourceExplorerDisabled: false
     nocodeBuilderDisabled: false
-    sqlEditoryDisabled: false
+    sqlEditorDisabled: false
     oidc:
       clientId: panel
       # audience is optional. If not set, it will default to the Panel's public URL.

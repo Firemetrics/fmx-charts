@@ -9,7 +9,7 @@ volumeMounts: []
 datasetImportDisabled: false
 resourceExplorerDisabled: false
 nocodeBuilderDisabled: false
-sqlEditoryDisabled: false
+sqlEditorDisabled: false
 
 publicUrl: "https://example.com/panel"
 publicPath: "/panel"
