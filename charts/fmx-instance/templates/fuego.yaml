@@ -21,6 +21,17 @@ spec:
       {{- else }}
         image: {{ .Values.components.fuego.image | quote }}
         imagePullSecret: {{ .Values.imagePullSecret | quote }}
+
+        {{- with .Values.components.fuego.env }}
+        env: {{ . | toYaml | nindent 10 }}
+        {{- end }}
+        {{- with .Values.components.fuego.volumes }}
+        volumes: {{ . | toYaml | nindent 10 }}
+        {{- end }}
+        {{- with .Values.components.fuego.volumeMounts }}
+        volumeMounts: {{ . | toYaml | nindent 10 }}
+        {{- end }}
+
         database:
           dbname: {{ .Values.database.dbname | quote }}
           port: {{ .Values.database.port }}

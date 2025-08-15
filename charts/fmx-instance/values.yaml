@@ -73,11 +73,17 @@ components:
   fuego:
     enabled: true
     image: ghcr.io/firemetrics/fuego:aa1f58e2
+    env: []
+    volumes: []
+    volumeMounts: []
     valuesOverride: {}
 
   panel:
     enabled: true
     image: ghcr.io/firemetrics/fmx-panel:57f875c
+    env: []
+    volumes: []
+    volumeMounts: []
     publicPath: /panel
     datasetImportDisabled: false
     resourceExplorerDisabled: false

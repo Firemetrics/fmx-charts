@@ -21,6 +21,17 @@ spec:
       {{- else }}
         image: {{ .Values.components.panel.image | quote }}
         imagePullSecret: {{ .Values.imagePullSecret | quote }}
+
+        {{- with .Values.components.panel.env }}
+        env: {{ . | toYaml | nindent 10 }}
+        {{- end }}
+        {{- with .Values.components.panel.volumes }}
+        volumes: {{ . | toYaml | nindent 10 }}
+        {{- end }}
+        {{- with .Values.components.panel.volumeMounts }}
+        volumeMounts: {{ . | toYaml | nindent 10 }}
+        {{- end }}
+
         publicUrl: {{ include "panelUrl" . | quote }}
         publicPath: {{ .Values.components.panel.publicPath | quote }}
 
