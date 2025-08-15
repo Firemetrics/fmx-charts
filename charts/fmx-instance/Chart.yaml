@@ -1,4 +1,4 @@
 apiVersion: v2
 name: fmx-instance
 description:
-version: 0.1.14
+version: 0.1.15
