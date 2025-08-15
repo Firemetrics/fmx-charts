@@ -28,6 +28,9 @@ spec:
       imagePullSecrets:
         - name: {{ . }}
       {{- end }}
+      {{- with .Values.volumes }}
+      volumes: {{- . | toYaml | nindent 8 }}
+      {{- end }}
       containers:
         - name: main
           image: {{ .Values.image | quote }}
@@ -35,6 +38,9 @@ spec:
           ports:
             - name: http
               containerPort: 8000
+          {{- with .Values.volumeMounts }}
+          volumeMounts: {{- . | toYaml | nindent 12 }}
+          {{- end }}
           env:
             - name: FMXPANEL_PUBLIC_PATH
               value: {{ .Values.publicPath | quote }}
@@ -78,4 +84,7 @@ spec:
             {{- if .Values.sqlEditorDisabled }}
             - name: FMXPANEL_SQL_EDITOR_DISABLED
               value: "true"
+            {{- end }}
+            {{- with .Values.env }}
+              {{- . | toYaml | nindent 12 }}
             {{- end }}
