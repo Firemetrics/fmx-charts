@@ -96,7 +96,7 @@ spec:
                 echo "Role $BOOTSTRAP_DB_USERNAME already exists."
               else
                 echo "Creating role $BOOTSTRAP_DB_USERNAME..."
-                psql -c "CREATE ROLE \"$BOOTSTRAP_DB_USERNAME\" LOGIN PASSWORD '$BOOTSTRAP_DB_PASSWORD'"
+                psql -c "CREATE ROLE $BOOTSTRAP_DB_USERNAME LOGIN PASSWORD '$BOOTSTRAP_DB_PASSWORD'"
               fi
 
               psql -d "$BOOTSTRAP_DB_NAME" -c "GRANT CONNECT ON DATABASE $BOOTSTRAP_DB_NAME TO $BOOTSTRAP_DB_USERNAME"
