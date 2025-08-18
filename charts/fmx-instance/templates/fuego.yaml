@@ -24,7 +24,7 @@ spec:
 
         {{- with .Values.components.fuego.securityContext }}
         securityContext: {{- . | toYaml | nindent 10 }}
-        {{- end -}}
+        {{- end }}
 
         {{- with .Values.components.fuego.env }}
         env: {{ . | toYaml | nindent 10 }}

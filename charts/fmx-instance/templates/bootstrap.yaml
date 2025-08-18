@@ -21,9 +21,11 @@ spec:
       {{- else }}
         image: {{ .Values.spiloImage | quote }}
         imagePullSecret: {{ .Values.imagePullSecret | quote }}
+
         {{- with .Values.components.bootstrap.securityContext }}
         securityContext: {{- . | toYaml | nindent 10 }}
-        {{- end -}}
+        {{- end }}
+
         database:
           dbname: {{ .Values.database.dbname | quote }}
           port: {{ .Values.database.port }}

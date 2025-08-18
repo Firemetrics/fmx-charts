@@ -23,13 +23,13 @@ spec:
         imagePullSecret: {{ .Values.imagePullSecret | quote }}
 
         {{- with .Values.components.panel.env }}
-        env: {{ . | toYaml | nindent 10 }}
+        env: {{- . | toYaml | nindent 10 }}
         {{- end }}
         {{- with .Values.components.panel.volumes }}
-        volumes: {{ . | toYaml | nindent 10 }}
+        volumes: {{- . | toYaml | nindent 10 }}
         {{- end }}
         {{- with .Values.components.panel.volumeMounts }}
-        volumeMounts: {{ . | toYaml | nindent 10 }}
+        volumeMounts: {{- . | toYaml | nindent 10 }}
         {{- end }}
 
         publicUrl: {{ include "panelUrl" . | quote }}
@@ -37,7 +37,7 @@ spec:
 
         {{- with .Values.components.panel.securityContext }}
         securityContext: {{- . | toYaml | nindent 10 }}
-        {{- end -}}
+        {{- end }}
 
         fhir:
           baseUrl: {{ include "internalFhirBaseUrl" . | quote }}
