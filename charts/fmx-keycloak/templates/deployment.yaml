@@ -1,0 +1,187 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "appName" . }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/part-of: {{ include "appName" . }}
+      app.kubernetes.io/component: backend
+      app.kubernetes.io/name: {{ include "podLabel" . }}
+  template:
+    metadata:
+      name: {{ include "appName" . }}
+      labels:
+        app.kubernetes.io/part-of: {{ include "appName" . }}
+        app.kubernetes.io/component: backend
+        app.kubernetes.io/name: {{ include "podLabel" . }}
+    spec:
+      {{- with .Values.serviceAccountName }}
+      serviceAccountName: {{ . }}
+      {{- end }}
+      {{- with .Values.imagePullSecret }}
+      imagePullSecrets:
+        - name: {{ . }}
+      {{- end }}
+
+      {{- $importVolume := "keycloak-import" }}
+
+      {{- if or .Values.importRealm.enabled .Values.volumes }}
+      volumes:
+        {{- if .Values.importRealm.enabled }}
+        - name: {{ $importVolume }}
+          configMap:
+            name: {{ include "importRealmConfigMapName" . | quote }}
+        {{- end }}
+        {{- with .Values.volumes }}
+          {{- . | toYaml | nindent 8 }}
+        {{- end }}
+      {{- end }}
+
+      {{- if or .Values.bootstrap.enabled .Values.initContainers }}
+      initContainers:
+
+        {{- if .Values.bootstrap.enabled }}
+        - name: bootstrap
+          image: {{ .Values.bootstrap.image | quote }}
+          env:
+            - name: PGHOST
+              value: {{ .Values.database.hostname | quote }}
+            - name: PGPORT
+              value: {{ .Values.database.port | quote }}
+            - name: PGUSER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.bootstrap.databaseUserSecret.name | quote }}
+                  key: {{ .Values.bootstrap.databaseUserSecret.usernameKey | quote }}
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.bootstrap.databaseUserSecret.name | quote }}
+                  key: {{ .Values.bootstrap.databaseUserSecret.passwordKey | quote }}
+            - name: BOOTSTRAP_DB_NAME
+              value: {{ .Values.database.dbname | quote }}
+            - name: BOOTSTRAP_DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "databaseUserSecretName" . | quote }}
+                  key: {{ .Values.database.userSecret.usernameKey | quote }}
+            - name: BOOTSTRAP_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "databaseUserSecretName" . | quote }}
+                  key: {{ .Values.database.userSecret.passwordKey | quote }}
+          command:
+            - /bin/bash
+            - -c
+            - |
+              set -euo pipefail
+
+              while ! pg_isready &>/dev/null; do
+                echo "Waiting for Postgres to be ready..."
+                sleep 1
+              done
+
+              # Create database if missing
+              if psql -tAc "SELECT 1 FROM pg_database WHERE datname = '$BOOTSTRAP_DB_NAME'" | grep -q 1; then
+                echo "Database $BOOTSTRAP_DB_NAME already exists."
+              else
+                echo "Creating database $BOOTSTRAP_DB_NAME..."
+                psql -c "CREATE DATABASE $BOOTSTRAP_DB_NAME"
+              fi
+
+              # Create role if missing
+              if psql -tAc "SELECT 1 FROM pg_roles WHERE rolname = '$BOOTSTRAP_DB_USERNAME'" | grep -q 1; then
+                echo "Role $BOOTSTRAP_DB_USERNAME already exists."
+              else
+                echo "Creating role $BOOTSTRAP_DB_USERNAME..."
+                psql -c "CREATE ROLE \"$BOOTSTRAP_DB_USERNAME\" LOGIN PASSWORD '$BOOTSTRAP_DB_PASSWORD'"
+              fi
+
+              psql -d "$BOOTSTRAP_DB_NAME" -c "GRANT CONNECT ON DATABASE $BOOTSTRAP_DB_NAME TO $BOOTSTRAP_DB_USERNAME"
+              psql -d "$BOOTSTRAP_DB_NAME" -c "GRANT USAGE, CREATE ON SCHEMA public TO $BOOTSTRAP_DB_USERNAME"
+              psql -d "$BOOTSTRAP_DB_NAME" -c "ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO $BOOTSTRAP_DB_USERNAME"
+              psql -d "$BOOTSTRAP_DB_NAME" -c "ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON SEQUENCES TO $BOOTSTRAP_DB_USERNAME"
+        {{- end }}
+
+        {{- with .Values.initContainers }}
+          {{- . | toYaml | nindent 8 }}
+        {{- end }}
+      {{- end }}
+
+      containers:
+        - name: main
+          image: {{ .Values.image | quote }}
+
+          ports:
+            - name: http
+              containerPort: {{ include "podHttpPort" . }}
+              protocol: TCP
+
+          args:
+            - start
+            {{- if .Values.importRealm.enabled }}
+            - "--import-realm"
+            {{- end }}
+
+          {{- with .Values.securityContext }}
+          securityContext: {{- . | toYaml | nindent 12 }}
+          {{- end }}
+
+          {{- if or .Values.importRealm.enabled .Values.volumeMounts }}
+          volumeMounts:
+            {{- if .Values.importRealm.enabled }}
+            - name: {{ $importVolume }}
+              mountPath: /opt/keycloak/data/import
+            {{- end }}
+            {{- with .Values.volumeMounts }}
+              {{- . | toYaml | nindent 12 }}
+            {{- end }}
+          {{- end }}
+
+          env:
+            - name: KC_HOSTNAME
+              value: {{ .Values.hostname | quote }}
+
+            - name: KC_DB
+              value: postgres
+            - name: KC_DB_URL_HOST
+              value: {{ .Values.database.hostname | quote }}
+            - name: KC_DB_URL_PORT
+              value: {{ .Values.database.port | quote }}
+            - name: KC_DB_URL_DATABASE
+              value: {{ .Values.database.dbname | quote }}
+            - name: KC_DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "databaseUserSecretName" . | quote }}
+                  key: {{ .Values.database.userSecret.usernameKey | quote }}
+            - name: KC_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "databaseUserSecretName" . | quote }}
+                  key: {{ .Values.database.userSecret.passwordKey | quote }}
+
+            - name: KC_HTTP_ENABLED
+              value: "true"
+            - name: KC_HTTP_PORT
+              value: {{ include "podHttpPort" . | quote }}
+            - name: KC_HTTP_RELATIVE_PATH
+              value: "{{ .Values.publicPath }}/"
+            - name: KC_PROXY_HEADERS
+              value: xforwarded
+
+            - name: KC_BOOTSTRAP_ADMIN_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "adminSecretName" . | quote }}
+                  key: {{ .Values.adminSecret.usernameKey | quote }}
+            - name: KC_BOOTSTRAP_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "adminSecretName" . | quote }}
+                  key: {{ .Values.adminSecret.passwordKey | quote }}
+            {{- with .Values.env }}
+              {{- . | toYaml | nindent 12 }}
+            {{- end }}

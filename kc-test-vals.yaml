@@ -1,0 +1,31 @@
+hostname: deploy-test.firemetricshealth.com
+
+database:
+  hostname: fmx-temp
+
+bootstrap:
+  enabled: true
+  image: ghcr.io/firemetrics/spilo17:4.0-p2-f0457965
+  databaseUserSecret:
+    name: firemetrics.fmx-temp.credentials.postgresql.acid.zalan.do
+
+service:
+  enabled: true
+  nameOverride: ""
+
+importRealm:
+  enabled: true
+  realmName: firemetrics
+
+persistence:
+  enabled: false
+
+panel:
+  publicUrl: "https://deploy-test.firemetricshealth.com/panel"
+  oidcAudience: "https://deploy-test.firemetricshealth.com/panel/"
+
+fuego:
+  oidcAudience: "https://deploy-test.firemetricshealth.com/fhir/"
+
+application:
+  enabled: false

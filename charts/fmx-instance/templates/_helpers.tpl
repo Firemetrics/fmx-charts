@@ -22,10 +22,6 @@
   {{ include "appName" . }}-keycloak
 {{- end -}}
 
-{{- define "keycloakChildAppName" -}}
-  {{ include "keycloakAppName" . }}-child
-{{- end -}}
-
 {{- define "ingressAppName" -}}
   {{ include "appName" . }}-ingress
 {{- end -}}

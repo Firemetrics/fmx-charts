@@ -1,6 +1,44 @@
+hostname: example.com
 publicPath: /auth
+image: quay.io/keycloak/keycloak:26.3.2
+imagePullSecret: ""
+initContainers: []
+env: []
+volumes: []
+volumeMounts: []
+securityContext: {}
 
 argoCdNamespace: argocd
+
+database:
+  hostname: postgres
+  port: 5432
+  dbname: keycloak
+  userSecret:
+    nameOverride: ""
+    username: keycloak
+    usernameKey: username
+    passwordKey: password
+    existingSecret: false
+
+bootstrap:
+  enabled: true
+  image: ghcr.io/zalando/spilo-17:4.0-p2
+  databaseUserSecret:
+    name: keycloak-bootstrap-user
+    usernameKey: username
+    passwordKey: password
+
+adminSecret:
+  username: "user"
+  usernameKey: "username"
+  passwordKey: "password"
+  nameOverride: ""
+  existingSecret: false
+
+service:
+  enabled: true
+  nameOverride: ""
 
 importRealm:
   enabled: true
@@ -13,17 +51,7 @@ persistence:
 panel:
   publicUrl: ""
   clientId: "panel"
-  oidcAudience: ""
+  oidcAudience: "panel"
 
 fuego:
-  oidcAudience: ""
-
-application:
-  nameOverride: ""
-  chartRepoUrl: "https://charts.bitnami.com/bitnami"
-  chartVersion: "24.7.4"
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
-  valuesOverride: {}
+  oidcAudience: "fuego"

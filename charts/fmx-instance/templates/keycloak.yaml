@@ -21,7 +21,33 @@ spec:
       {{- else }}
         argoCdNamespace: {{ .Values.argoCdNamespace | quote }}
 
+        hostname: {{ .Values.components.ingress.host | quote }}
         publicPath: {{ .Values.components.keycloak.publicPath | quote }}
+
+        image: {{ .Values.components.keycloak.image | quote }}
+        {{- with .Values.components.keycloak.env }}
+        env: {{- . | toYaml | nindent 10 }}
+        {{- end }}
+        {{- with .Values.components.keycloak.volumes }}
+        volumes: {{- . | toYaml | nindent 10 }}
+        {{- end }}
+        {{- with .Values.components.keycloak.volumeMounts }}
+        volumeMounts: {{- . | toYaml | nindent 10 }}
+        {{- end }}
+        {{- with .Values.components.keycloak.securityContext }}
+        securityContext: {{- . | toYaml | nindent 10 }}
+        {{- end }}
+
+        database:
+          dbname: {{ .Values.database.dbname | quote }}
+          port: {{ .Values.database.port }}
+          hostname: {{ include "databaseHostname" . | quote }}
+
+        bootstrap:
+          enabled: true
+          image: {{ .Values.spiloImage | quote }}
+          databaseUserSecret:
+            name: {{ include "databaseSuperUserSecretName" . | quote }}
 
         panel:
           publicUrl: {{ include "panelUrl" . | quote }}
@@ -31,19 +57,8 @@ spec:
         fuego:
           oidcAudience: {{ include "fuegoOidcAudience" . | quote }}
 
-        persistence:
-          {{- .Values.components.keycloak.persistence | toYaml | nindent 10 }}
-
         importRealm:
           {{- .Values.components.keycloak.importRealm | toYaml | nindent 10 }}
-
-        application:
-          nameOverride: {{ include "keycloakChildAppName" . | quote }}
-          chartRepoUrl: {{ .Values.components.keycloak.chartRepoUrl | quote }}
-          chartVersion: {{ .Values.components.keycloak.chartVersion | quote }}
-          {{- with .Values.syncPolicy }}
-          syncPolicy: {{- . | toYaml | nindent 12 }}
-          {{- end }}
       {{- end }}
 
   destination:

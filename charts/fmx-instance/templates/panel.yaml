@@ -31,13 +31,12 @@ spec:
         {{- with .Values.components.panel.volumeMounts }}
         volumeMounts: {{- . | toYaml | nindent 10 }}
         {{- end }}
-
-        publicUrl: {{ include "panelUrl" . | quote }}
-        publicPath: {{ .Values.components.panel.publicPath | quote }}
-
         {{- with .Values.components.panel.securityContext }}
         securityContext: {{- . | toYaml | nindent 10 }}
         {{- end }}
+
+        publicUrl: {{ include "panelUrl" . | quote }}
+        publicPath: {{ .Values.components.panel.publicPath | quote }}
 
         fhir:
           baseUrl: {{ include "internalFhirBaseUrl" . | quote }}

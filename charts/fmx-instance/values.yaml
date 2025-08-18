@@ -103,15 +103,15 @@ components:
 
   keycloak:
     enabled: true
-    chartRepoUrl: "https://charts.bitnami.com/bitnami"
-    chartVersion: 24.7.4
+    image: "quay.io/keycloak/keycloak:26.3.2"
+    env: []
+    volumes: []
+    volumeMounts: []
+    securityContext: {}
     publicPath: /auth
     importRealm:
       enabled: true
       realmName: firemetrics
-    persistence:
-      enabled: true
-      size: 1Gi
     valuesOverride: {}
 
   minio:

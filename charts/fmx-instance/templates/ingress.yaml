@@ -36,7 +36,7 @@ spec:
           keycloak:
             enabled: {{ .Values.components.keycloak.enabled }}
             path: {{ .Values.components.keycloak.publicPath | quote }}
-            name: {{ include "keycloakChildAppName" . | quote }}
+            name: {{ include "keycloakAppName" . | quote }}
       {{- end }}
 
   destination:

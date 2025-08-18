@@ -2,66 +2,51 @@
   {{ .Release.Name }}
 {{- end }}
 
-{{- define "childAppName" -}}
-  {{- if .Values.application.nameOverride -}}
-    {{ .Values.application.nameOverride }}
-  {{- else -}}
-    {{ include "appName" . }}-child
-  {{- end -}}
-{{- end }}
-
 {{- define "importRealmConfigMapName" -}}
   {{ include "appName" . }}-import-realm
 {{- end }}
 
-{{- define "dataPvcName" -}}
-  {{ include "appName" . }}-data
-{{- end }}
+{{- define "podLabel" -}}
+  {{ include "appName" . }}
+{{- end -}}
 
-{{- define "panel.publicUrl" -}}
-  {{- if and .Values.ingress.enabled .Values.provision.panel.enabled -}}
-    {{ include "ingress.publicUrl" . }}{{ .Values.provision.panel.publicPath }}
+{{- define "svcName" -}}
+  {{- if .Values.service.nameOverride -}}
+    {{ .Values.service.nameOverride }}
   {{- else -}}
-    {{ .Values.panel.externalUrl }}
-  {{- end }}
-{{- end }}
+    {{ include "appName" . }}
+  {{- end -}}
+{{- end -}}
 
-{{- define "panel.oidcAudience" -}}
-  {{- if .Values.panel.oidc.audience -}}
-    {{ .Values.panel.oidc.audience }}
+{{- define "adminSecretName" -}}
+  {{- if .Values.adminSecret.nameOverride -}}
+    {{ .Values.adminSecret.nameOverride }}
   {{- else -}}
-    {{ include "panel.publicUrl" . }}/
-  {{- end }}
-{{- end }}
+    {{ include "appName" . }}-admin
+  {{- end -}}
+{{- end -}}
 
-{{- define "fuego.podLabel" -}}
-  {{ .Release.Name }}-fuego
-{{- end }}
-
-{{- define "fuego.svcName" -}}
-  {{ .Release.Name }}-fuego
-{{- end }}
-
-{{- define "fuego.publicUrl" -}}
-  {{- if and .Values.ingress.enabled .Values.provision.fuego.enabled -}}
-    {{ include "ingress.publicUrl" . }}
+{{- define "databaseUserSecretName" -}}
+  {{- if .Values.database.userSecret.nameOverride -}}
+    {{ .Values.database.userSecret.nameOverride }}
   {{- else -}}
-    {{ .Values.fuego.externalUrl }}
-  {{- end }}
-{{- end }}
+    {{ include "appName" . }}-db-user
+  {{- end -}}
+{{- end -}}
 
-{{- define "fuego.clusterUrl" -}}
-  {{- if .Values.provision.fuego.enabled -}}
-    http://{{ include "fuego.svcName" . }}.{{ .Release.Namespace }}.svc.cluster.local
+{{- define "randomPassword" -}}
+  {{- $secretData := (lookup "v1" "Secret" .context.Release.Namespace .secret).data -}}
+  {{- if $secretData -}}
+    {{- if hasKey $secretData .key -}}
+      {{ index $secretData .key | b64dec }}
+    {{- else -}}
+      {{- printf "\nPASSWORDS ERROR: The secret \"%s\" does not contain the key \"%s\"\n" .secret .key | fail -}}
+    {{- end -}}
   {{- else -}}
-    {{ .Values.fuego.externalUrl }}
-  {{- end }}
+    {{ randAlphaNum 16 }}
+  {{- end -}}
 {{- end }}
 
-{{- define "fuego.oidcAudience" -}}
-  {{ include "fuego.publicUrl" . }}/fhir/
-{{- end }}
-
-{{- define "fhir.clusterBaseUrl" -}}
-  {{ include "fuego.clusterUrl" . }}/fhir
+{{- define "podHttpPort" -}}
+  8080
 {{- end }}
