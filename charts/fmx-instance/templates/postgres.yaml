@@ -25,9 +25,9 @@ spec:
         numberOfInstances: {{ .Values.components.postgres.numberOfInstances }}
         clusterNameOverride: {{ include "postgresClusterName" . | quote }}
         teamId: {{ .Values.components.postgres.teamId | quote }}
-        spiloRunAsUser: {{ .Values.spiloRunAsUser }}
-        spiloRunAsGroup: {{ .Values.spiloRunAsGroup }}
-        spiloFSGroup: {{ .Values.spiloFSGroup }}
+        spiloRunAsUser: {{ .Values.components.postgres.spiloRunAsUser }}
+        spiloRunAsGroup: {{ .Values.components.postgres.spiloRunAsGroup }}
+        spiloFSGroup: {{ .Values.components.postgres.spiloFSGroup }}
 
         {{- with .Values.components.postgres.volume }}
         volume: {{- . | toYaml | nindent 10 }}
