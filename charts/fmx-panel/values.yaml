@@ -2,6 +2,7 @@ image: ghcr.io/firemetrics/fmx-panel:ec65075
 serviceAccountName: ""
 imagePullSecret: ""
 initContainers: []
+securityContext: {}
 env: []
 volumes: []
 volumeMounts: []

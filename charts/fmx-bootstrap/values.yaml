@@ -1,6 +1,7 @@
 image: ghcr.io/firemetrics/spilo16:3.3-p2-f0457965
 imagePullSecret: ""
 jobNameOverride: ""
+securityContext: {}
 
 database:
   hostname: postgres
