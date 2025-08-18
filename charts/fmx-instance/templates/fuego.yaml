@@ -21,6 +21,11 @@ spec:
       {{- else }}
         image: {{ .Values.components.fuego.image | quote }}
         imagePullSecret: {{ .Values.imagePullSecret | quote }}
+
+        {{- with .Values.components.fuego.securityContext }}
+        securityContext: {{- . | toYaml | nindent 10 }}
+        {{- end -}}
+
         database:
           dbname: {{ .Values.database.dbname | quote }}
           port: {{ .Values.database.port }}

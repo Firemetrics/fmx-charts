@@ -4,6 +4,9 @@ podServiceAccountNameOverride: ""
 numberOfInstances: 1
 clusterNameOverride: ""
 teamId: ""
+spiloRunAsUser: 101
+spiloRunAsGroup: 103
+spiloFSGroup: 103
 
 volume:
   size: 10Gi

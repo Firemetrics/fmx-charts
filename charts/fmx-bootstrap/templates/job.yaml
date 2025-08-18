@@ -10,13 +10,12 @@ spec:
       imagePullSecrets:
         - name: {{ . }}
       {{ end }}
-      securityContext:
-        {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
         - name: main
-          securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
           image: {{ .Values.image | quote }}
+          {{- with .Values.securityContext }}
+          securityContext: {{- . | toYaml | nindent 12 }}
+          {{- end }}
           env:
             - name: PGHOST
               value: {{ .Values.database.hostname | quote }}

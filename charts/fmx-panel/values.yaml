@@ -2,6 +2,7 @@ image: ghcr.io/firemetrics/fmx-panel:57f875c
 serviceAccountName: ""
 imagePullSecret: ""
 initContainers: []
+securityContext: {}
 
 datasetImportDisabled: false
 resourceExplorerDisabled: false

@@ -10,6 +10,9 @@ spec:
   volume: {{ .Values.volume | toYaml | nindent 4 }}
   resources: {{ .Values.resources | toYaml | nindent 4 }}
   enableMasterLoadBalancer: {{ .Values.enableMasterLoadBalancer }}
+  spiloRunAsUser: {{ .Values.spiloRunAsUser }}
+  spiloRunAsGroup: {{ .Values.spiloRunAsGroup }}
+  spiloFSGroup: {{ .Values.spiloFSGroup }}
   users:
     {{ .Values.superUserName }}:
       - superuser

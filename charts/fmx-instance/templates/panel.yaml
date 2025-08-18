@@ -24,6 +24,10 @@ spec:
         publicUrl: {{ include "panelUrl" . | quote }}
         publicPath: {{ .Values.components.panel.publicPath | quote }}
 
+        {{- with .Values.components.panel.securityContext }}
+        securityContext: {{- . | toYaml | nindent 10 }}
+        {{- end -}}
+
         fhir:
           baseUrl: {{ include "internalFhirBaseUrl" . | quote }}
 

@@ -4,6 +4,15 @@ serviceAccountName: ""
 imagePullSecret: ""
 initContainers: []
 
+securityContext:
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+      - ALL
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true
+  runAsUser: 1000
+
 database:
   hostname: postgres
   dbname: firemetrics
