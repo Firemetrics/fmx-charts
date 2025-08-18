@@ -77,18 +77,24 @@ components:
   fuego:
     enabled: true
     image: ghcr.io/firemetrics/fuego:aa1f58e2
+    env: []
+    volumes: []
+    volumeMounts: []
     securityContext: {}
     valuesOverride: {}
 
   panel:
     enabled: true
-    image: ghcr.io/firemetrics/fmx-panel:57f875c
+    image: ghcr.io/firemetrics/fmx-panel:ec65075
+    env: []
+    volumes: []
+    volumeMounts: []
     securityContext: {}
     publicPath: /panel
     datasetImportDisabled: false
     resourceExplorerDisabled: false
     nocodeBuilderDisabled: false
-    sqlEditoryDisabled: false
+    sqlEditorDisabled: false
     oidc:
       clientId: panel
       # audience is optional. If not set, it will default to the Panel's public URL.

@@ -3,6 +3,9 @@ image: ghcr.io/firemetrics/fuego:aa1f58e2
 serviceAccountName: ""
 imagePullSecret: ""
 initContainers: []
+env: []
+volumes: []
+volumeMounts: []
 
 securityContext:
   allowPrivilegeEscalation: false

@@ -26,6 +26,16 @@ spec:
         securityContext: {{- . | toYaml | nindent 10 }}
         {{- end -}}
 
+        {{- with .Values.components.fuego.env }}
+        env: {{ . | toYaml | nindent 10 }}
+        {{- end }}
+        {{- with .Values.components.fuego.volumes }}
+        volumes: {{ . | toYaml | nindent 10 }}
+        {{- end }}
+        {{- with .Values.components.fuego.volumeMounts }}
+        volumeMounts: {{ . | toYaml | nindent 10 }}
+        {{- end }}
+
         database:
           dbname: {{ .Values.database.dbname | quote }}
           port: {{ .Values.database.port }}

@@ -1,4 +1,4 @@
-{{- if and .Values.components.panel.enabled .Values.oidc.enabled -}}
+{{- if .Values.components.panel.enabled -}}
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -21,6 +21,17 @@ spec:
       {{- else }}
         image: {{ .Values.components.panel.image | quote }}
         imagePullSecret: {{ .Values.imagePullSecret | quote }}
+
+        {{- with .Values.components.panel.env }}
+        env: {{ . | toYaml | nindent 10 }}
+        {{- end }}
+        {{- with .Values.components.panel.volumes }}
+        volumes: {{ . | toYaml | nindent 10 }}
+        {{- end }}
+        {{- with .Values.components.panel.volumeMounts }}
+        volumeMounts: {{ . | toYaml | nindent 10 }}
+        {{- end }}
+
         publicUrl: {{ include "panelUrl" . | quote }}
         publicPath: {{ .Values.components.panel.publicPath | quote }}
 
@@ -38,6 +49,7 @@ spec:
           userSecret: {{ include "databaseSuperUserSecretName" . | quote }}
 
         oidc:
+          enabled: {{ .Values.oidc.enabled }}
           discoveryUrl: {{ include "oidcDiscoveryUrl" . | quote }}
           clientId: {{ .Values.components.panel.oidc.clientId | quote }}
           audience: {{ include "panelOidcAudience" . | quote }}
@@ -45,7 +57,7 @@ spec:
         datasetImportDisabled: {{ .Values.components.panel.datasetImportDisabled }}
         resourceExplorerDisabled: {{ .Values.components.panel.resourceExplorerDisabled }}
         nocodeBuilderDisabled: {{ .Values.components.panel.nocodeBuilderDisabled }}
-        sqlEditoryDisabled: {{ .Values.components.panel.sqlEditoryDisabled }}
+        sqlEditorDisabled: {{ .Values.components.panel.sqlEditorDisabled }}
       {{- end }}
 
   destination:
