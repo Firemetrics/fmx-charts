@@ -23,7 +23,6 @@ spec:
         imagePullSecret: {{ .Values.imagePullSecret | quote }}
         podServiceAccountNameOverride: {{ .Values.components.postgres.podServiceAccountNameOverride | quote }}
         numberOfInstances: {{ .Values.components.postgres.numberOfInstances }}
-        clusterNameOverride: {{ include "postgresClusterName" . | quote }}
         teamId: {{ .Values.components.postgres.teamId | quote }}
         spiloRunAsUser: {{ .Values.components.postgres.spiloRunAsUser }}
         spiloRunAsGroup: {{ .Values.components.postgres.spiloRunAsGroup }}
