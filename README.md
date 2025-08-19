@@ -34,8 +34,8 @@ kubectl -n my-namespace create secret generic keycoak-db-user \
   --from-literal password=password
 
 kubectl -n my-namespace create secret generic fuego-oidc-client \
-  --from-literal username=user \
-  --from-literal password=password
+  --from-literal id=fuego \
+  --from-literal secret=secret
 ```
 
 Then create an Argo CD application for the `fmx-instance` chart:
