@@ -1,0 +1,9 @@
+{{- if and .Values.caCertsConfigMap.enabled (not .Values.caCertsConfigMap.existingConfigMap) -}}
+apiVersion: v1
+metadata:
+  name: {{ include "caCertsConfigMapName" . | quote }}
+kind: ConfigMap
+data:
+  {{ .Values.caCertsConfigMap.fileName }}: |
+    {{- .Values.caCertsConfigMap.data | nindent 4 }}
+{{- end -}}

@@ -9,6 +9,13 @@ tls:
     enabled: false
     issuer: letsencrypt
 
+caCertsConfigMap:
+  enabled: false
+  nameOverride: ""
+  fileName: ca-certificates.crt
+  data: ""
+  existingConfigMap: false
+
 chartRepoUrl: "https://nexus.firemetricshealth.com/repository/helm-firemetrics/"
 
 argoCdNamespace: argocd

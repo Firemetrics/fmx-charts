@@ -45,3 +45,8 @@ oidc:
     idKey: "id"
     secretKey: "secret"
     existingSecret: false
+
+caCertsConfigMap:
+  enabled: false
+  name: "ca-certs"
+  fileName: "ca-certificates.crt"

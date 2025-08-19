@@ -58,6 +58,11 @@ spec:
         oidc:
           enabled: {{ .Values.oidc.enabled }}
           discoveryUrl: {{ include "oidcDiscoveryUrl" . | quote }}
+
+        caCertsConfigMap:
+          enabled: {{ .Values.caCertsConfigMap.enabled }}
+          name: {{ include "caCertsConfigMapName" . | quote }}
+          fileName: {{ .Values.caCertsConfigMap.fileName | quote }}
       {{- end }}
 
   destination:

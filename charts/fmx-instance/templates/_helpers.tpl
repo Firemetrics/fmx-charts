@@ -121,3 +121,11 @@
     {{ include "appName" . }}-tls-cert
   {{- end -}}
 {{- end -}}
+
+{{- define "caCertsConfigMapName" -}}
+  {{- if .Values.caCertsConfigMap.nameOverride -}}
+    {{ .Values.caCertsConfigMap.nameOverride }}
+  {{- else -}}
+    {{ include "appName" . }}-ca-certs
+  {{- end -}}
+{{- end -}}

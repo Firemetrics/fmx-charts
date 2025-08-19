@@ -30,3 +30,8 @@ oidc:
 
 fhir:
   baseUrl: "https://example.com/fhir"
+
+caCertsConfigMap:
+  enabled: false
+  name: "ca-certs"
+  fileName: "ca-certificates.crt"

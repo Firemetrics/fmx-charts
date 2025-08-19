@@ -57,6 +57,11 @@ spec:
         resourceExplorerDisabled: {{ .Values.components.panel.resourceExplorerDisabled }}
         nocodeBuilderDisabled: {{ .Values.components.panel.nocodeBuilderDisabled }}
         sqlEditorDisabled: {{ .Values.components.panel.sqlEditorDisabled }}
+
+        caCertsConfigMap:
+          enabled: {{ .Values.caCertsConfigMap.enabled }}
+          name: {{ include "caCertsConfigMapName" . | quote }}
+          fileName: {{ .Values.caCertsConfigMap.fileName | quote }}
       {{- end }}
 
   destination:

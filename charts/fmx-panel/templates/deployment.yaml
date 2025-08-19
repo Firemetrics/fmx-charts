@@ -1,3 +1,5 @@
+{{- $caCertsVolumeName := "ca-certs" -}}
+{{- $caCertsPath := printf "/etc/ssl/certs/%s" .Values.caCertsConfigMap.fileName -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -20,29 +22,52 @@ spec:
       {{- with .Values.serviceAccountName }}
       serviceAccountName: {{ . }}
       {{- end }}
+
       {{- with .Values.initContainers }}
       initContainers:
         {{- . | toYaml | nindent 8 }}
       {{- end }}
+
       {{- with .Values.imagePullSecret }}
       imagePullSecrets:
         - name: {{ . }}
       {{- end }}
-      {{- with .Values.volumes }}
-      volumes: {{- . | toYaml | nindent 8 }}
+
+      {{- if or .Values.caCertsConfigMap.enabled .Values.volumes }}
+      volumes:
+        - name: {{ $caCertsVolumeName }}
+          configMap:
+            defaultMode: 0644
+            name: {{ .Values.caCertsConfigMap.name | quote }}
+
+        {{- with .Values.volumes }}
+          {{- . | toYaml | nindent 8 }}
+        {{- end }}
       {{- end }}
+
       containers:
         - name: main
           image: {{ .Values.image | quote }}
-          {{- with .Values.securityContext }}
-          securityContext: {{- . | toYaml | nindent 12 }}
-          {{- end }}
           ports:
             - name: http
               containerPort: 8000
-          {{- with .Values.volumeMounts }}
-          volumeMounts: {{- . | toYaml | nindent 12 }}
+
+          {{- with .Values.securityContext }}
+          securityContext: {{- . | toYaml | nindent 12 }}
           {{- end }}
+
+          {{- if or .Values.caCertsConfigMap.enabled .Values.volumeMounts }}
+          volumeMounts:
+            - name: {{ $caCertsVolumeName }}
+              mountPath: {{ $caCertsPath }}
+              readOnly: true
+              subPath: {{ .Values.caCertsConfigMap.fileName | quote }}
+
+            {{- with .Values.volumeMounts }}
+              {{- . | toYaml | nindent 12 }}
+            {{- end }}
+          {{- end }}
+
           env:
             - name: FMXPANEL_PUBLIC_PATH
               value: {{ .Values.publicPath | quote }}
@@ -69,18 +94,22 @@ spec:
             - name: FMXPANEL_DATASET_IMPORT_DISABLED
               value: "true"
             {{- end }}
+
             {{- if .Values.resourceExplorerDisabled }}
             - name: FMXPANEL_RESOURCE_EXPLORER_DISABLED
               value: "true"
             {{- end }}
+
             {{- if .Values.nocodeBuilderDisabled }}
             - name: FMXPANEL_NOCODE_BUILDER_DISABLED
               value: "true"
             {{- end }}
+
             {{- if .Values.sqlEditorDisabled }}
             - name: FMXPANEL_SQL_EDITOR_DISABLED
               value: "true"
             {{- end }}
+
             {{- if .Values.oidc.enabled }}
             - name: FMXPANEL_OIDC_ENABLED
               value: "true"
@@ -91,6 +120,14 @@ spec:
             - name: FMXPANEL_OIDC_AUDIENCE
               value: {{ include "oidcAudience" . | quote }}
             {{- end }}
+
+            {{- if .Values.caCertsConfigMap.enabled }}
+            - name: REQUESTS_CA_BUNDLE
+              value: {{ $caCertsPath }}
+            - name: SSL_CERT_FILE
+              value: {{ $caCertsPath }}
+            {{- end }}
+
             {{- with .Values.env }}
               {{- . | toYaml | nindent 12 }}
             {{- end }}
