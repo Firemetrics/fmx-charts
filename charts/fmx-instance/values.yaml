@@ -77,7 +77,7 @@ components:
 
   fuego:
     enabled: true
-    image: ghcr.io/firemetrics/fuego:aa1f58e2
+    image: ghcr.io/firemetrics/fuego:dfb02edc
     env: []
     volumes: []
     volumeMounts: []
