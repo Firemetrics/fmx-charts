@@ -21,7 +21,7 @@ spec:
       {{- else }}
         argoCdNamespace: {{ .Values.argoCdNamespace | quote }}
 
-        hostname: {{ .Values.components.ingress.host | quote }}
+        hostname: {{ .Values.hostname | quote }}
         publicPath: {{ .Values.components.keycloak.publicPath | quote }}
 
         image: {{ .Values.components.keycloak.image | quote }}

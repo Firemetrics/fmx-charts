@@ -19,7 +19,7 @@ spec:
       {{- if .Values.components.ingress.valuesOverride }}
         {{- .Values.components.ingress.valuesOverride | toYaml | nindent 8 }}
       {{- else }}
-        host: {{ .Values.components.ingress.host | quote }}
+        host: {{ .Values.hostname | quote }}
         certManager:
           {{- .Values.components.ingress.certManager | toYaml | nindent 10 }}
         tls:

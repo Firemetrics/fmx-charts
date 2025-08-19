@@ -1,3 +1,5 @@
+hostname: "example.com"
+
 chartRepoUrl: "https://nexus.firemetricshealth.com/repository/helm-firemetrics/"
 
 argoCdNamespace: argocd
@@ -121,7 +123,6 @@ components:
 
   ingress:
     enabled: true
-    host: "example.com"
     fhirPath: /fhir
     certManager:
       enabled: false

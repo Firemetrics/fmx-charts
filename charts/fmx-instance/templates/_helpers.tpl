@@ -47,7 +47,7 @@
 {{- end -}}
 
 {{- define "ingressBaseUrl" -}}
-  {{ include "ingressHttpScheme" . }}://{{ .Values.components.ingress.host }}
+  {{ include "ingressHttpScheme" . }}://{{ .Values.hostaname }}
 {{- end -}}
 
 {{- define "panelUrl" -}}
