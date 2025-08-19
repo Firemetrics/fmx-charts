@@ -80,6 +80,10 @@ spec:
                 secretKeyRef:
                   name: {{ include "oidcClientSecretName" . | quote }}
                   key: {{ .Values.oidc.clientSecret.secretKey | quote }}
+            {{- if .Values.caCertsConfigMap.enabled }}
+            - name: CURL_CA_BUNDLE
+              value: {{ $caCertsPath }}
+            {{- end }}
           command:
             - sh
             - -c
