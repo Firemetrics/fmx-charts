@@ -20,17 +20,98 @@ spec:
       {{- with .Values.serviceAccountName }}
       serviceAccountName: {{ . }}
       {{- end }}
-      {{- with .Values.initContainers }}
-      initContainers:
-        {{- . | toYaml | nindent 8 }}
-      {{- end }}
+
       {{- with .Values.imagePullSecret }}
       imagePullSecrets:
         - name: {{ . }}
       {{- end }}
+
       {{- with .Values.volumes }}
       volumes: {{- . | toYaml | nindent 8 }}
       {{- end }}
+
+      {{- if or .Values.bootstrapKeycloak.enabled .Values.initContainers }}
+      initContainers:
+
+        {{- if .Values.bootstrapKeycloak.enabled }}
+        - name: bootstrap-keycloak
+          image: {{ .Values.bootstrapKeycloak.image | quote }}
+          env:
+            - name: KEYCLOAK_URL
+              value: {{ .Values.bootstrapKeycloak.url | quote }}
+            - name: KEYCLOAK_REALM
+              value: {{ .Values.bootstrapKeycloak.realm | quote }}
+            - name: KEYCLOAK_ADMIN_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.bootstrapKeycloak.adminUserSecret.name | quote }}
+                  key: {{ .Values.bootstrapKeycloak.adminUserSecret.usernameKey | quote }}
+            - name: KEYCLOAK_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.bootstrapKeycloak.adminUserSecret.name | quote }}
+                  key: {{ .Values.bootstrapKeycloak.adminUserSecret.passwordKey | quote }}
+            - name: CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "oidcClientSecretName" . | quote }}
+                  key: {{ .Values.oidc.clientSecret.idKey | quote }}
+            - name: CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "oidcClientSecretName" . | quote }}
+                  key: {{ .Values.oidc.clientSecret.secretKey | quote }}
+          command:
+            - sh
+            - -c
+            - |
+              set -euo pipefail
+              apk add --no-cache curl jq >/dev/null
+
+              echo "Fetching admin token..."
+              TOKEN=$(curl -sS -X POST \
+                -d "client_id=admin-cli" \
+                -d "username=$KEYCLOAK_ADMIN_USERNAME" \
+                -d "password=$KEYCLOAK_ADMIN_PASSWORD" \
+                -d "grant_type=password" \
+                "$KEYCLOAK_URL/realms/master/protocol/openid-connect/token" \
+                | jq -r .access_token)
+
+              if [ -z "$TOKEN" ] || [ "$TOKEN" = "null" ]; then
+                echo "Failed to obtain admin token"
+                exit 1
+              fi
+
+              STATUS=$(curl -sS -o /dev/null -w "%{http_code}" \
+                -X POST "$KEYCLOAK_URL/admin/realms/$KEYCLOAK_REALM/clients" \
+                -H "Authorization: Bearer $TOKEN" \
+                -H "Content-Type: application/json" \
+                -d '{
+                  "clientId": "'$CLIENT_ID'",
+                  "secret": "'$CLIENT_SECRET'",
+                  "enabled": true,
+                  "publicClient": false,
+                  "serviceAccountsEnabled": true,
+                  "directAccessGrantsEnabled": false,
+                  "standardFlowEnabled": false,
+                  "authorizationServicesEnabled": false
+                }')
+
+              if [ "$STATUS" -eq 201 ]; then
+                echo "Client created successfully."
+              elif [ "$STATUS" -eq 409 ]; then
+                echo "Client already exists, continuing..."
+              else
+                echo "Failed to create client (HTTP $STATUS)"
+                exit 1
+              fi
+        {{- end }}
+
+        {{- with .Values.initContainers }}
+          {{- . | toYaml | nindent 8 }}
+        {{- end }}
+      {{- end }}
+
       containers:
         - name: main
           image: {{ .Values.image | quote }}
@@ -48,10 +129,8 @@ spec:
               value: "0.0.0.0"
             - name: FUEGO_SERVER_PORT
               value: "3000"
-            {{- with .Values.publicUrl }}
             - name: FUEGO_SERVER_PUBLIC_URL
-              value: {{ . | quote }}
-            {{- end }}
+              value: {{ .Values.publicUrl | quote }}
             - name: FUEGO_DATABASE_HOST
               value: {{ .Values.database.hostname | quote }}
             - name: FUEGO_DATABASE_PORT
@@ -73,6 +152,16 @@ spec:
               value: "true"
             - name: FUEGO_OIDC_DISCOVERY_URL
               value: {{ .Values.oidc.discoveryUrl | quote }}
+            - name: FUEGO_OIDC_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "oidcClientSecretName" . | quote }}
+                  key: {{ .Values.oidc.clientSecret.idKey | quote }}
+            - name: FUEGO_OIDC_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "oidcClientSecretName" . | quote }}
+                  key: {{ .Values.oidc.clientSecret.secretKey | quote }}
             {{- end }}
             {{- with .Values.env }}
               {{- . | toYaml | nindent 12 }}

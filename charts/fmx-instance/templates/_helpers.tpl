@@ -86,7 +86,7 @@
   {{- if .Values.oidc.discoveryUrlOverride -}}
     {{ .Values.oidc.discoveryUrlOverride }}
   {{- else -}}
-    {{ include "keycloakPublicUrl" . }}/realms/{{ .Values.components.keycloak.importRealm.realmName }}/.well-known/openid-configuration
+    {{ include "keycloakPublicUrl" . }}/realms/{{ .Values.oidc.keycloakRealm }}/.well-known/openid-configuration
   {{- end -}}
 {{- end -}}
 
@@ -104,4 +104,8 @@
 
 {{- define "backupTargetSecretName" -}}
   {{ include "appName" . }}-backup-target
+{{- end -}}
+
+{{- define "keycloakAdminSecretName" -}}
+  {{ include "appName" . }}-keycloak-admin
 {{- end -}}

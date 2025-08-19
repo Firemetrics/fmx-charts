@@ -57,8 +57,14 @@ spec:
         fuego:
           oidcAudience: {{ include "fuegoOidcAudience" . | quote }}
 
+        adminSecret:
+          nameOverride: {{ include "keycloakAdminSecretName" . | quote }}
+
+        {{- if .Values.components.keycloak.importRealm }}
         importRealm:
-          {{- .Values.components.keycloak.importRealm | toYaml | nindent 10 }}
+          enabled: true
+          realmName: {{- .Values.oidc.keycloakRealm | quote }}
+        {{- end }}
       {{- end }}
 
   destination:

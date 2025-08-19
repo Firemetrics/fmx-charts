@@ -1,11 +1,21 @@
-publicUrl: ""
-image: ghcr.io/firemetrics/fuego:aa1f58e2
+publicUrl: "http://example.com/fhir"
+image: ghcr.io/firemetrics/fuego:dfb02edc
 serviceAccountName: ""
 imagePullSecret: ""
 initContainers: []
 env: []
 volumes: []
 volumeMounts: []
+
+bootstrapKeycloak:
+  enabled: false
+  image: alpine:3.22.1
+  url: "https://example.com/auth"
+  realm: "firemetrics"
+  adminUserSecret:
+    name: fuego-bootstrap-user
+    usernameKey: username
+    passwordKey: password
 
 securityContext:
   allowPrivilegeEscalation: false
@@ -29,3 +39,9 @@ service:
 oidc:
   enabled: false
   discoveryUrl: ""
+  clientSecret:
+    nameOverride: ""
+    id: "fuego"
+    idKey: "id"
+    secretKey: "secret"
+    existingSecret: false

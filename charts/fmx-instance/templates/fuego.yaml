@@ -29,11 +29,22 @@ spec:
         {{- with .Values.components.fuego.env }}
         env: {{ . | toYaml | nindent 10 }}
         {{- end }}
+
         {{- with .Values.components.fuego.volumes }}
         volumes: {{ . | toYaml | nindent 10 }}
         {{- end }}
+
         {{- with .Values.components.fuego.volumeMounts }}
         volumeMounts: {{ . | toYaml | nindent 10 }}
+        {{- end }}
+
+        {{- if .Values.components.keycloak.enabled }}
+        bootstrapKeycloak:
+          enabled: true
+          url: {{ include "keycloakPublicUrl" . | quote }}
+          realm: {{ .Values.oidc.keycloakRealm | quote }}
+          adminUserSecret:
+            name: {{ include "keycloakAdminSecretName" . | quote }}
         {{- end }}
 
         database:
