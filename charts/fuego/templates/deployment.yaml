@@ -46,6 +46,15 @@ spec:
         {{- if .Values.bootstrapKeycloak.enabled }}
         - name: bootstrap-keycloak
           image: {{ .Values.bootstrapKeycloak.image | quote }}
+
+          {{- if .Values.caCertsConfigMap.enabled }}
+          volumeMounts:
+            - name: {{ $caCertsVolumeName }}
+              mountPath: {{ $caCertsPath }}
+              readOnly: true
+              subPath: {{ .Values.caCertsConfigMap.fileName | quote }}
+          {{- end }}
+
           env:
             - name: KEYCLOAK_URL
               value: {{ .Values.bootstrapKeycloak.url | quote }}
