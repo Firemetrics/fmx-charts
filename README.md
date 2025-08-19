@@ -25,14 +25,14 @@ kubectl -n my-namespace create secret docker-registry \
 Create generic secrets:
 
 ```bash
-kubectl -n my-namespace create secret generic keycoak-admin \
+kubectl -n my-namespace create secret generic keycloak-admin \
   --from-literal username=user \
   --from-literal password=password
 ```
 
 ```bash
-kubectl -n my-namespace create secret generic keycoak-db-user \
-  --from-literal username=user \
+kubectl -n my-namespace create secret generic keycloak-db-user \
+  --from-literal username=keycloak \
   --from-literal password=password
 ```
 
