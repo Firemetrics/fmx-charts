@@ -27,19 +27,15 @@ Create generic secrets:
 ```bash
 kubectl -n my-namespace create secret generic keycloak-admin \
   --from-literal username=user \
-  --from-literal password=password
-```
+  --from-literal password="$(openssl rand -base64 24)"
 
-```bash
 kubectl -n my-namespace create secret generic keycloak-db-user \
   --from-literal username=keycloak \
-  --from-literal password=password
-```
+  --from-literal password="$(openssl rand -base64 24)"
 
-```bash
 kubectl -n my-namespace create secret generic fuego-oidc-client \
   --from-literal id=fuego \
-  --from-literal secret=secret
+  --from-literal secret="$(openssl rand -base64 24)"
 ```
 
 Then create an Argo CD application for the `fmx-instance` chart:
