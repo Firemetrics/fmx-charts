@@ -19,11 +19,10 @@ spec:
       {{- if .Values.components.ingress.valuesOverride }}
         {{- .Values.components.ingress.valuesOverride | toYaml | nindent 8 }}
       {{- else }}
-        host: {{ .Values.hostname | quote }}
-        certManager:
-          {{- .Values.components.ingress.certManager | toYaml | nindent 10 }}
+        hostname: {{ .Values.hostname | quote }}
         tls:
-          {{- .Values.components.ingress.tls | toYaml | nindent 10 }}
+          enabled: {{ .Values.tls.enabled }}
+          secretName: {{ include "tlsCertSecretName" . | quote }}
         services:
           panel:
             enabled: {{ .Values.components.panel.enabled }}

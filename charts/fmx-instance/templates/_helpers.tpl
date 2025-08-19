@@ -38,20 +38,20 @@
   {{- end -}}
 {{- end -}}
 
-{{- define "ingressHttpScheme" -}}
-  {{- if .Values.components.ingress.tls.enabled -}}
+{{- define "httpScheme" -}}
+  {{- if .Values.tls.enabled -}}
     https
   {{- else -}}
     http
   {{- end -}}
 {{- end -}}
 
-{{- define "ingressBaseUrl" -}}
-  {{ include "ingressHttpScheme" . }}://{{ .Values.hostaname }}
+{{- define "baseUrl" -}}
+  {{ include "httpScheme" . }}://{{ .Values.hostname }}
 {{- end -}}
 
 {{- define "panelUrl" -}}
-  {{ include "ingressBaseUrl" . }}{{ .Values.components.panel.publicPath }}
+  {{ include "baseUrl" . }}{{ .Values.components.panel.publicPath }}
 {{- end -}}
 
 {{- define "panelOidcAudience" -}}
@@ -63,7 +63,7 @@
 {{- end }}
 
 {{- define "fuegoUrl" -}}
-  {{ include "ingressBaseUrl" . }}
+  {{ include "baseUrl" . }}
 {{- end -}}
 
 {{- define "fhirPath" -}}
@@ -71,11 +71,11 @@
 {{- end -}}
 
 {{- define "fhirBaseUrl" -}}
-  {{ include "ingressBaseUrl" . }}{{ include "fhirPath" . }}
+  {{ include "fuegoUrl" . }}{{ include "fhirPath" . }}
 {{- end -}}
 
 {{- define "keycloakPublicUrl" -}}
-  {{ include "ingressBaseUrl" . }}{{ .Values.components.keycloak.publicPath }}
+  {{ include "baseUrl" . }}{{ .Values.components.keycloak.publicPath }}
 {{- end -}}
 
 {{- define "databaseSuperUserSecretName" -}}
@@ -112,4 +112,12 @@
 
 {{- define "keycloakAdminSecretName" -}}
   {{ include "appName" . }}-keycloak-admin
+{{- end -}}
+
+{{- define "tlsCertSecretName" -}}
+  {{- if .Values.tls.certSecret.nameOverride -}}
+    {{ .Values.tls.certSecret.nameOverride }}
+  {{- else -}}
+    {{ include "appName" . }}-tls-cert
+  {{- end -}}
 {{- end -}}

@@ -19,11 +19,3 @@
     {{ .Values.services.fuego.path }}
   {{- end }}
 {{- end -}}
-
-{{- define "tlsSecretName" -}}
-  {{- if .Values.tls.existingSecret -}}
-    {{ .Values.tls.existingSecret }}
-  {{- else -}}
-    {{ include "appName" . }}-tls
-  {{- end -}}
-{{- end -}}

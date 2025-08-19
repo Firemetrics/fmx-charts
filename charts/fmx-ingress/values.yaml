@@ -1,4 +1,8 @@
-host: ""
+hostname: "example.com"
+
+tls:
+  enabled: false
+  secretName: "tls-cert"
 
 services:
   panel:
@@ -13,11 +17,3 @@ services:
     enabled: false
     path: /auth
     name: keycloak
-
-certManager:
-  enabled: false
-  issuer: letsencrypt
-
-tls:
-  enabled: false
-  existingSecret: ""

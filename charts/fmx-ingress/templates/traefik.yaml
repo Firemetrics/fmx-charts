@@ -11,6 +11,21 @@ spec:
     scheme: https
     permanent: true
 ---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: {{ include "appName" . }}-insecure
+spec:
+  entryPoints: [web]
+  routes:
+    - match: "Host(`{{ .Values.hostname }}`)"
+      kind: Rule
+      middlewares:
+        - name: {{ $httpRedirectMiddleware }}
+      services:
+        - name: noop@internal
+          kind: TraefikService
+---
 {{- end }}
 apiVersion: traefik.io/v1alpha1
 kind: Middleware
@@ -22,23 +37,6 @@ spec:
     replacement: {{ include "httpScheme" . }}://${1}{{ include "defaultPath" . }}
     permanent: false
 ---
-{{- if .Values.tls.enabled }}
-apiVersion: traefik.io/v1alpha1
-kind: IngressRoute
-metadata:
-  name: {{ include "appName" . }}-insecure
-spec:
-  entryPoints: [web]
-  routes:
-    - match: "Host(`{{ .Values.host }}`)"
-      kind: Rule
-      middlewares:
-        - name: {{ $httpRedirectMiddleware }}
-      services:
-        - name: noop@internal
-          kind: TraefikService
----
-{{- end }}
 apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
 metadata:
@@ -52,31 +50,31 @@ spec:
   {{- end }}
   {{- if .Values.tls.enabled }}
   tls:
-    secretName: {{ include "tlsSecretName" . }}
+    secretName: {{ .Values.tls.secretName | quote }}
   {{- end }}
   routes:
     {{- if .Values.services.keycloak.enabled }}
-    - match: "Host(`{{ .Values.host }}`) && PathPrefix(`{{ .Values.services.keycloak.path }}`)"
+    - match: "Host(`{{ .Values.hostname }}`) && PathPrefix(`{{ .Values.services.keycloak.path }}`)"
       kind: Rule
       services:
         - name: {{ .Values.services.keycloak.name }}
           port: http
     {{- end }}
     {{- if .Values.services.fuego.enabled }}
-    - match: "Host(`{{ .Values.host }}`) && PathPrefix(`{{ .Values.services.fuego.path }}`)"
+    - match: "Host(`{{ .Values.hostname }}`) && PathPrefix(`{{ .Values.services.fuego.path }}`)"
       kind: Rule
       services:
         - name: {{ .Values.services.fuego.name }}
           port: http
     {{- end }}
     {{- if .Values.services.panel.enabled }}
-    - match: "Host(`{{ .Values.host }}`) && PathPrefix(`{{ .Values.services.panel.path }}`)"
+    - match: "Host(`{{ .Values.hostname }}`) && PathPrefix(`{{ .Values.services.panel.path }}`)"
       kind: Rule
       services:
         - name: {{ .Values.services.panel.name }}
           port: http
     {{- end }}
-    - match: "Host(`{{ .Values.host }}`)"
+    - match: "Host(`{{ .Values.hostname }}`)"
       kind: Rule
       middlewares:
         - name: {{ $rootRedirectMiddleware }}

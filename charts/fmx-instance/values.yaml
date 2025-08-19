@@ -1,5 +1,14 @@
 hostname: "example.com"
 
+tls:
+  enabled: false
+  certSecret:
+    nameOverride: ""
+    existingSecret: false
+  certManager:
+    enabled: false
+    issuer: letsencrypt
+
 chartRepoUrl: "https://nexus.firemetricshealth.com/repository/helm-firemetrics/"
 
 argoCdNamespace: argocd
@@ -123,10 +132,4 @@ components:
 
   ingress:
     enabled: true
-    certManager:
-      enabled: false
-      issuer: letsencrypt
-    tls:
-      enabled: false
-      existingSecret: ""
     valuesOverride: {}
