@@ -28,11 +28,15 @@ Create generic secrets:
 kubectl -n my-namespace create secret generic keycoak-admin \
   --from-literal username=user \
   --from-literal password=password
+```
 
+```bash
 kubectl -n my-namespace create secret generic keycoak-db-user \
   --from-literal username=user \
   --from-literal password=password
+```
 
+```bash
 kubectl -n my-namespace create secret generic fuego-oidc-client \
   --from-literal id=fuego \
   --from-literal secret=secret
