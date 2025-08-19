@@ -123,7 +123,6 @@ components:
 
   ingress:
     enabled: true
-    fhirPath: /fhir
     certManager:
       enabled: false
       issuer: letsencrypt

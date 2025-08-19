@@ -31,7 +31,7 @@ spec:
             name: {{ include "panelAppName" . }}
           fuego:
             enabled: {{ .Values.components.fuego.enabled }}
-            path: {{ .Values.components.ingress.fhirPath | quote }}
+            path: {{ include "fhirPath" . | quote }}
             name: {{ include "fuegoAppName" . }}
           keycloak:
             enabled: {{ .Values.components.keycloak.enabled }}

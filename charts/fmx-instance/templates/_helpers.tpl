@@ -66,8 +66,12 @@
   {{ include "ingressBaseUrl" . }}
 {{- end -}}
 
+{{- define "fhirPath" -}}
+  /fhir
+{{- end -}}
+
 {{- define "fhirBaseUrl" -}}
-  {{ include "ingressBaseUrl" . }}{{ .Values.components.ingress.fhirPath }}
+  {{ include "ingressBaseUrl" . }}{{ include "fhirPath" . }}
 {{- end -}}
 
 {{- define "keycloakPublicUrl" -}}
@@ -91,7 +95,7 @@
 {{- end -}}
 
 {{- define "fuegoOidcAudience" -}}
-  {{ include "fuegoUrl" . }}{{ .Values.components.ingress.fhirPath }}/
+  {{ include "fuegoUrl" . }}{{ include "fhirPath" . }}/
 {{- end -}}
 
 {{- define "internalFuegoUrl" -}}
@@ -99,7 +103,7 @@
 {{- end -}}
 
 {{- define "internalFhirBaseUrl" -}}
-  {{ include "internalFuegoUrl" . }}{{ .Values.components.ingress.fhirPath }}
+  {{ include "internalFuegoUrl" . }}{{ include "fhirPath" . }}
 {{- end -}}
 
 {{- define "backupTargetSecretName" -}}
