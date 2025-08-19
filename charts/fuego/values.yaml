@@ -9,7 +9,7 @@ volumeMounts: []
 
 bootstrapKeycloak:
   enabled: false
-  image: alpine:3.22.1
+  image: curlimages/curl:8.15.0
   url: "https://example.com/auth"
   realm: "firemetrics"
   adminUserSecret:

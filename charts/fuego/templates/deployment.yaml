@@ -76,7 +76,6 @@ spec:
             - -c
             - |
               set -euo pipefail
-              apk add --no-cache curl jq >/dev/null
 
               echo "Fetching admin token..."
               TOKEN=$(curl -sS -X POST \
@@ -85,7 +84,7 @@ spec:
                 -d "password=$KEYCLOAK_ADMIN_PASSWORD" \
                 -d "grant_type=password" \
                 "$KEYCLOAK_URL/realms/master/protocol/openid-connect/token" \
-                | jq -r .access_token)
+                | sed -n 's/.*"access_token":"\([^"]*\)".*/\1/p')
 
               if [ -z "$TOKEN" ] || [ "$TOKEN" = "null" ]; then
                 echo "Failed to obtain admin token"
