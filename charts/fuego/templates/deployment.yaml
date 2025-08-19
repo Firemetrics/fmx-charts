@@ -1,5 +1,5 @@
 {{- $caCertsVolumeName := "ca-certs" -}}
-{{- $caCertsPath := printf "/etc/ssl/certs/%s" .Values.caCertsConfigMap.fileName -}}
+{{- $caCertsPath := "/etc/ssl/certs/ca-certificates.crt" -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -49,8 +49,8 @@ spec:
 
           {{- if .Values.caCertsConfigMap.enabled }}
           volumeMounts:
-            - name: {{ $caCertsVolumeName }}
-              mountPath: {{ $caCertsPath }}
+            - name: {{ $caCertsVolumeName | quote }}
+              mountPath: {{ $caCertsPath | quote }}
               readOnly: true
               subPath: {{ .Values.caCertsConfigMap.fileName | quote }}
           {{- end }}
@@ -82,7 +82,7 @@ spec:
                   key: {{ .Values.oidc.clientSecret.secretKey | quote }}
             {{- if .Values.caCertsConfigMap.enabled }}
             - name: CURL_CA_BUNDLE
-              value: {{ $caCertsPath }}
+              value: {{ $caCertsPath | quote }}
             {{- end }}
           command:
             - sh
@@ -146,8 +146,8 @@ spec:
 
           {{- if or .Values.caCertsConfigMap.enabled .Values.volumeMounts }}
           volumeMounts:
-            - name: {{ $caCertsVolumeName }}
-              mountPath: {{ $caCertsPath }}
+            - name: {{ $caCertsVolumeName | quote }}
+              mountPath: {{ $caCertsPath | quote }}
               readOnly: true
               subPath: {{ .Values.caCertsConfigMap.fileName | quote }}
 

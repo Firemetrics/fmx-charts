@@ -1,5 +1,5 @@
 {{- $caCertsVolumeName := "ca-certs" -}}
-{{- $caCertsPath := printf "/etc/ssl/certs/%s" .Values.caCertsConfigMap.fileName -}}
+{{- $caCertsPath := "/etc/ssl/certs/ca-certificates.crt" -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -35,7 +35,7 @@ spec:
 
       {{- if or .Values.caCertsConfigMap.enabled .Values.volumes }}
       volumes:
-        - name: {{ $caCertsVolumeName }}
+        - name: {{ $caCertsVolumeName | quote }}
           configMap:
             defaultMode: 0644
             name: {{ .Values.caCertsConfigMap.name | quote }}
@@ -58,8 +58,8 @@ spec:
 
           {{- if or .Values.caCertsConfigMap.enabled .Values.volumeMounts }}
           volumeMounts:
-            - name: {{ $caCertsVolumeName }}
-              mountPath: {{ $caCertsPath }}
+            - name: {{ $caCertsVolumeName | quote }}
+              mountPath: {{ $caCertsPath | quote }}
               readOnly: true
               subPath: {{ .Values.caCertsConfigMap.fileName | quote }}
 
@@ -123,9 +123,9 @@ spec:
 
             {{- if .Values.caCertsConfigMap.enabled }}
             - name: REQUESTS_CA_BUNDLE
-              value: {{ $caCertsPath }}
+              value: {{ $caCertsPath | quote }}
             - name: SSL_CERT_FILE
-              value: {{ $caCertsPath }}
+              value: {{ $caCertsPath | quote }}
             {{- end }}
 
             {{- with .Values.env }}
