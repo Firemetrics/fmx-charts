@@ -25,15 +25,19 @@ spec:
         publicPath: {{ .Values.components.keycloak.publicPath | quote }}
 
         image: {{ .Values.components.keycloak.image | quote }}
+
         {{- with .Values.components.keycloak.env }}
         env: {{- . | toYaml | nindent 10 }}
         {{- end }}
+
         {{- with .Values.components.keycloak.volumes }}
         volumes: {{- . | toYaml | nindent 10 }}
         {{- end }}
+
         {{- with .Values.components.keycloak.volumeMounts }}
         volumeMounts: {{- . | toYaml | nindent 10 }}
         {{- end }}
+
         {{- with .Values.components.keycloak.securityContext }}
         securityContext: {{- . | toYaml | nindent 10 }}
         {{- end }}
