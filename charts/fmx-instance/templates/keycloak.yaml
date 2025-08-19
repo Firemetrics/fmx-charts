@@ -43,7 +43,7 @@ spec:
         {{- end }}
 
         database:
-          dbname: {{ .Values.database.dbname | quote }}
+          dbname: {{ .Values.components.keycloak.databaseName | quote }}
           port: {{ .Values.database.port }}
           hostname: {{ include "databaseHostname" . | quote }}
 

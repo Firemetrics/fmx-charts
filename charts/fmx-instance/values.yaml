@@ -123,6 +123,7 @@ components:
   keycloak:
     enabled: true
     image: "quay.io/keycloak/keycloak:26.3.2"
+    databaseName: keycloak
     env: []
     volumes: []
     volumeMounts: []
