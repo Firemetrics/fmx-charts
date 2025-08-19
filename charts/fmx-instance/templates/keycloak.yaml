@@ -67,7 +67,7 @@ spec:
         {{- if .Values.components.keycloak.importRealm }}
         importRealm:
           enabled: true
-          realmName: {{- .Values.oidc.keycloakRealm | quote }}
+          realmName: {{ .Values.oidc.keycloakRealm | quote }}
         {{- end }}
       {{- end }}
 
