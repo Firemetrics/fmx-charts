@@ -15,26 +15,22 @@ database:
   port: 5432
   dbname: keycloak
   userSecret:
-    nameOverride: ""
-    username: keycloak
+    name: keycloak-db-user
     usernameKey: username
     passwordKey: password
-    existingSecret: false
 
 bootstrap:
   enabled: true
   image: ghcr.io/zalando/spilo-17:4.0-p2
   databaseUserSecret:
-    name: keycloak-bootstrap-user
+    name: keycloak-bootstrap-db-user
     usernameKey: username
     passwordKey: password
 
 adminSecret:
-  username: "user"
-  usernameKey: "username"
-  passwordKey: "password"
-  nameOverride: ""
-  existingSecret: false
+  name: "keycloak-admin"
+  usernameKey: username
+  passwordKey: password
 
 service:
   enabled: true

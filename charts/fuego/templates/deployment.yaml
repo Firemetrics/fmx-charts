@@ -73,12 +73,12 @@ spec:
             - name: CLIENT_ID
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "oidcClientSecretName" . | quote }}
+                  name: {{ .Values.oidc.clientSecret.name | quote }}
                   key: {{ .Values.oidc.clientSecret.idKey | quote }}
             - name: CLIENT_SECRET
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "oidcClientSecretName" . | quote }}
+                  name: {{ .Values.oidc.clientSecret.name | quote }}
                   key: {{ .Values.oidc.clientSecret.secretKey | quote }}
             {{- if .Values.caCertsConfigMap.enabled }}
             - name: CURL_CA_BUNDLE
@@ -188,12 +188,12 @@ spec:
             - name: FUEGO_OIDC_CLIENT_ID
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "oidcClientSecretName" . | quote }}
+                  name: {{ .Values.oidc.clientSecret.name | quote }}
                   key: {{ .Values.oidc.clientSecret.idKey | quote }}
             - name: FUEGO_OIDC_CLIENT_SECRET
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "oidcClientSecretName" . | quote }}
+                  name: {{ .Values.oidc.clientSecret.name | quote }}
                   key: {{ .Values.oidc.clientSecret.secretKey | quote }}
             {{- end }}
 

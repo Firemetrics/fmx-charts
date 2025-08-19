@@ -100,6 +100,10 @@ components:
     volumes: []
     volumeMounts: []
     securityContext: {}
+    oidcClientSecret:
+      name: fuego-oidc-client
+      idKey: id
+      secretKey: secret
     valuesOverride: {}
 
   panel:
@@ -130,6 +134,14 @@ components:
     securityContext: {}
     publicPath: /auth
     importRealm: true
+    databaseUserSecret:
+      name: keycloak-db-user
+      usernameKey: username
+      passwordKey: password
+    adminSecret:
+      name: keycloak-admin
+      usernameKey: username
+      passwordKey: password
     valuesOverride: {}
 
   minio:

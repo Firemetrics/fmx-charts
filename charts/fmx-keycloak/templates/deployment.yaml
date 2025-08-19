@@ -65,12 +65,12 @@ spec:
             - name: BOOTSTRAP_DB_USERNAME
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "databaseUserSecretName" . | quote }}
+                  name: {{ .Values.database.userSecret.name | quote }}
                   key: {{ .Values.database.userSecret.usernameKey | quote }}
             - name: BOOTSTRAP_DB_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "databaseUserSecretName" . | quote }}
+                  name: {{ .Values.database.userSecret.name | quote }}
                   key: {{ .Values.database.userSecret.passwordKey | quote }}
           command:
             - /bin/bash
@@ -155,12 +155,12 @@ spec:
             - name: KC_DB_USERNAME
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "databaseUserSecretName" . | quote }}
+                  name: {{ .Values.database.userSecret.name | quote }}
                   key: {{ .Values.database.userSecret.usernameKey | quote }}
             - name: KC_DB_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "databaseUserSecretName" . | quote }}
+                  name: {{ .Values.database.userSecret.name | quote }}
                   key: {{ .Values.database.userSecret.passwordKey | quote }}
 
             - name: KC_HTTP_ENABLED
@@ -175,12 +175,12 @@ spec:
             - name: KC_BOOTSTRAP_ADMIN_USERNAME
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "adminSecretName" . | quote }}
+                  name: {{ .Values.adminSecret.name | quote }}
                   key: {{ .Values.adminSecret.usernameKey | quote }}
             - name: KC_BOOTSTRAP_ADMIN_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "adminSecretName" . | quote }}
+                  name: {{ .Values.adminSecret.name | quote }}
                   key: {{ .Values.adminSecret.passwordKey | quote }}
             {{- with .Values.env }}
               {{- . | toYaml | nindent 12 }}

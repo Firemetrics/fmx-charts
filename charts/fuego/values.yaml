@@ -13,7 +13,7 @@ bootstrapKeycloak:
   url: "https://example.com/auth"
   realm: "firemetrics"
   adminUserSecret:
-    name: fuego-bootstrap-user
+    name: keycloak-admin
     usernameKey: username
     passwordKey: password
 
@@ -40,11 +40,9 @@ oidc:
   enabled: false
   discoveryUrl: ""
   clientSecret:
-    nameOverride: ""
-    id: "fuego"
+    name: "fuego-oidc-client"
     idKey: "id"
     secretKey: "secret"
-    existingSecret: false
 
 caCertsConfigMap:
   enabled: false

@@ -16,10 +16,26 @@ The following cluster components are required for the Firemetrics ecosystem to f
 Create a secret for access to the `ghcr.io` registry:
 
 ```bash
-kubectl -n <namespace> create secret docker-registry \
+kubectl -n my-namespace create secret docker-registry \
   --docker-username user \
-  --docker-password <token> \
+  --docker-password token \
   docker-registry
+```
+
+Create generic secrets:
+
+```bash
+kubectl -n my-namespace create secret generic keycoak-admin \
+  --from-literal username=user \
+  --from-literal password=password
+
+kubectl -n my-namespace create secret generic keycoak-db-user \
+  --from-literal username=user \
+  --from-literal password=password
+
+kubectl -n my-namespace create secret generic fuego-oidc-client \
+  --from-literal username=user \
+  --from-literal password=password
 ```
 
 Then create an Argo CD application for the `fmx-instance` chart:
@@ -30,8 +46,9 @@ argocd app create fmx \
   --helm-chart fmx-instance \
   --revision 'x.x.x' \
   --dest-server https://kubernetes.default.svc \
-  --dest-namespace <namespace> \
-  --parameter imagePullSecret=docker-registry
-argocd app sync fmx
+  --dest-namespace my-namespace \
+  --parameter imagePullSecret=docker-registry \
+  --sync-policy automated \
+  --auto-prune \
+  --self-heal
 ```
-

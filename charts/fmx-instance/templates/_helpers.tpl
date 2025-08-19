@@ -110,10 +110,6 @@
   {{ include "appName" . }}-backup-target
 {{- end -}}
 
-{{- define "keycloakAdminSecretName" -}}
-  {{ include "appName" . }}-keycloak-admin
-{{- end -}}
-
 {{- define "tlsCertSecretName" -}}
   {{- if .Values.tls.certSecret.nameOverride -}}
     {{ .Values.tls.certSecret.nameOverride }}

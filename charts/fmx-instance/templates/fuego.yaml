@@ -43,8 +43,7 @@ spec:
           enabled: true
           url: {{ include "keycloakPublicUrl" . | quote }}
           realm: {{ .Values.oidc.keycloakRealm | quote }}
-          adminUserSecret:
-            name: {{ include "keycloakAdminSecretName" . | quote }}
+          adminUserSecret: {{- .Values.components.keycloak.adminSecret | toYaml | nindent 12 }}
         {{- end }}
 
         database:
@@ -58,6 +57,7 @@ spec:
         oidc:
           enabled: {{ .Values.oidc.enabled }}
           discoveryUrl: {{ include "oidcDiscoveryUrl" . | quote }}
+          clientSecret: {{ .Values.components.fuego.oidcClientSecret | toYaml | nindent 12 }}
 
         caCertsConfigMap:
           enabled: {{ .Values.caCertsConfigMap.enabled }}

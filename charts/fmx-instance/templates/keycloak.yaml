@@ -46,6 +46,7 @@ spec:
           dbname: {{ .Values.components.keycloak.databaseName | quote }}
           port: {{ .Values.database.port }}
           hostname: {{ include "databaseHostname" . | quote }}
+          userSecret: {{- .Values.components.keycloak.databaseUserSecret | toYaml | nindent 12 }}
 
         bootstrap:
           enabled: true
@@ -61,8 +62,7 @@ spec:
         fuego:
           oidcAudience: {{ include "fuegoOidcAudience" . | quote }}
 
-        adminSecret:
-          nameOverride: {{ include "keycloakAdminSecretName" . | quote }}
+        adminSecret: {{- .Values.components.keycloak.adminSecret | toYaml | nindent 10 }}
 
         {{- if .Values.components.keycloak.importRealm }}
         importRealm:
