@@ -78,11 +78,15 @@
   {{ include "baseUrl" . }}{{ .Values.components.keycloak.publicPath }}
 {{- end -}}
 
+{{- define "databaseSuperUserName" -}}
+  postgres
+{{- end -}}
+
 {{- define "databaseSuperUserSecretName" -}}
   {{- if .Values.database.existingSuperUserSecret -}}
     {{ .Values.database.existingSuperUserSecret }}
   {{- else -}}
-    {{ .Values.database.superUserName }}.{{ include "databaseHostname" . }}.credentials.postgresql.acid.zalan.do
+    {{ include "databaseSuperUserName" . }}.{{ include "databaseHostname" . }}.credentials.postgresql.acid.zalan.do
   {{- end -}}
 {{- end -}}
 

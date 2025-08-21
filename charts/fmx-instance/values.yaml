@@ -34,7 +34,6 @@ oidc:
 database:
   dbname: firemetrics
   port: 5432
-  superUserName: firemetrics
   hostnameOverride: ""
   existingSuperUserSecret: ""
 

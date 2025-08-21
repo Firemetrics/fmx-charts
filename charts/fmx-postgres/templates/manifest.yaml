@@ -13,12 +13,6 @@ spec:
   spiloRunAsUser: {{ .Values.spiloRunAsUser }}
   spiloRunAsGroup: {{ .Values.spiloRunAsGroup }}
   spiloFSGroup: {{ .Values.spiloFSGroup }}
-  users:
-    {{ .Values.superUserName }}:
-      - superuser
-      - createdb
-  databases:
-    {{ .Values.databaseName }}: {{ .Values.superUserName }}
   {{- with .Values.env }}
   env: {{ . | toYaml | nindent 4 }}
   {{- end }}
