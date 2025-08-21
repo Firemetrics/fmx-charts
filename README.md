@@ -17,6 +17,7 @@ Create a secret for access to the `ghcr.io` registry:
 
 ```bash
 kubectl -n my-namespace create secret docker-registry \
+  --docker-server ghcr.io \
   --docker-username user \
   --docker-password token \
   docker-registry
