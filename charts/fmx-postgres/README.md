@@ -1,6 +1,6 @@
 # fmx-postgres
 
-![Version: 0.1.33](https://img.shields.io/badge/Version-0.1.33-informational?style=flat-square)
+![Version: 0.1.34](https://img.shields.io/badge/Version-0.1.34-informational?style=flat-square)
 
 ## Values
 
