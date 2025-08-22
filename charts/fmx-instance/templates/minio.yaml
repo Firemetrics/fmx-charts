@@ -20,7 +20,7 @@ spec:
         {{- .Values.components.minio.valuesOverride | toYaml | nindent 8 }}
       {{- else }}
         size: {{ .Values.components.minio.size | quote }}
-        adminSecret: {{- .Values.backup.userSecret | toYaml | nindent 10 }}
+        configSecretName: {{- .Values.components.minio.configSecretName | quote }}
         backup:
           enabled: true
           bucketName: {{ .Values.backup.bucketName | quote }}

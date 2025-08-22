@@ -24,7 +24,7 @@ spec:
             requestAutoCert: false
           configSecret:
             existingSecret: true
-            name: {{ include "configSecretName" . | quote }}
+            name: {{ .Values.configSecretName | quote }}
           pools:
             - servers: {{ .Values.servers }}
               name: {{ .Values.poolName | quote }}

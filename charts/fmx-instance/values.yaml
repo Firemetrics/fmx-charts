@@ -233,6 +233,8 @@ components:
     chartRepoUrl: "https://operator.min.io"
     # -- The size of the MinIO data volume.
     size: "10Gi"
+    # -- The configuration secret for MinIO.
+    configSecretName: "minio-config"
     # -- Override the values for the MinIO Helm chart.
     valuesOverride: {}
 

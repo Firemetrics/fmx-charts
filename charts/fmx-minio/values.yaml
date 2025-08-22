@@ -8,10 +8,7 @@ servers: 1
 volumesPerServer: 1
 size: "10Gi"
 
-adminSecret:
-  name: "minio-admin"
-  accessKeyKey: accessKey
-  secretKeyKey: secretKey
+configSecretName: "minio-config"
 
 backup:
   enabled: true

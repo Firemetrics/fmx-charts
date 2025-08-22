@@ -18,7 +18,3 @@
   {{- end -}}
 {{- end }}
 
-{{- define "configSecretName" -}}
-  {{ include "appName" . }}-config
-{{- end }}
-
