@@ -7,9 +7,13 @@ Helm charts for deploying the Firemetrics ecosystem.
 The following cluster components are required for the Firemetrics ecosystem to function properly:
 
 - [Argo CD](https://argo-cd.readthedocs.io/en/stable/)
-- [Cert-Manager](https://cert-manager.io/docs/installation/)
 - [Traefik ingress controller](https://doc.traefik.io/traefik/getting-started/quick-start-with-kubernetes/).
 - [Postgres Operator](https://github.com/zalando/postgres-operator/blob/master/docs/quickstart.md#deployment-options)
+
+Depending on the configuration, you may also need the following components:
+
+- [Cert-Manager](https://cert-manager.io/docs/installation/)
+- [MinIO-Operator](https://artifacthub.io/packages/helm/minio-operator/operator)
 
 ## Installation
 
