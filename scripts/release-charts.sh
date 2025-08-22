@@ -24,6 +24,8 @@ for chart in "$CHARTS_DIR"/*/; do
   "${SED_INPLACE[@]}" -e "s/^version:.*/version: $TARGET_VERSION/" "$chart/Chart.yaml"
 done
 
+helm-docs
+
 git add "$CHARTS_DIR"
 git commit -m "v$TARGET_VERSION"
 git tag "v$TARGET_VERSION"
