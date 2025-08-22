@@ -53,6 +53,7 @@
 | components.keycloak.volumeMounts | list | `[]` | Extra volume mounts for the Keycloak pods. |
 | components.keycloak.volumes | list | `[]` | Extra volumes for the Keycloak pods. |
 | components.minio.chartRepoUrl | string | `"https://operator.min.io"` | The image used for the MinIO pods. |
+| components.minio.configSecretName | string | `"minio-config"` | The configuration secret for MinIO. |
 | components.minio.enabled | bool | `false` | Enable the MinIO component. |
 | components.minio.size | string | `"10Gi"` | The size of the MinIO data volume. |
 | components.minio.valuesOverride | object | `{}` | Override the values for the MinIO Helm chart. |
