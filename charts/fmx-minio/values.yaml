@@ -8,11 +8,10 @@ servers: 1
 volumesPerServer: 1
 size: "10Gi"
 
-configSecret:
-  nameOverride: ""
-  accessKey: minio
-  secretKey: minio123
-  # existingSecret: true
+adminSecret:
+  name: "minio-admin"
+  accessKeyKey: accessKey
+  secretKeyKey: secretKey
 
 backup:
   enabled: true

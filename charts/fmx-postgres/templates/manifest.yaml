@@ -13,9 +13,45 @@ spec:
   spiloRunAsUser: {{ .Values.spiloRunAsUser }}
   spiloRunAsGroup: {{ .Values.spiloRunAsGroup }}
   spiloFSGroup: {{ .Values.spiloFSGroup }}
-  {{- with .Values.env }}
-  env: {{ . | toYaml | nindent 4 }}
+
+  {{- if or .Values.backup.enabled .Values.env }}
+  env:
+
+  {{- if .Values.backup.enabled }}
+    - name: USE_WALG_BACKUP
+      value: "true"
+    - name: USE_WALG_RESTORE
+      value: "true"
+    - name: WALG_DISABLE_S3_SSE
+      value: "true"
+    - name: AWS_S3_FORCE_PATH_STYLE
+      value: "true"
+    - name: BACKUP_NUM_TO_RETAIN
+      value: "5"
+    - name: WAL_S3_BUCKET
+      value: {{ .Values.backup.bucketName | quote }}
+    - name: AWS_REGION
+      value: {{ .Values.backup.region | quote }}
+    - name: AWS_ENDPOINT
+      value: {{ .Values.backup.endpoint | quote }}
+    - name: AWS_ACCESS_KEY_ID
+      valueFrom:
+        secretKeyRef:
+          name: {{ .Values.backup.userSecret.name | quote }}
+          key: {{ .Values.backup.userSecret.accessKeyKey | quote }}
+    - name: AWS_SECRET_ACCESS_KEY
+      valueFrom:
+        secretKeyRef:
+          name: {{ .Values.backup.userSecret.name | quote }}
+          key: {{ .Values.backup.userSecret.secretKeyKey | quote }}
   {{- end }}
+
+  {{- with .Values.env }}
+    {{- . | toYaml | nindent 4 }}
+  {{- end }}
+
+  {{- end }}
+
   {{- with .Values.allowedSourceRanges }}
   allowedSourceRanges: {{ . | toYaml | nindent 4 }}
   {{- end }}

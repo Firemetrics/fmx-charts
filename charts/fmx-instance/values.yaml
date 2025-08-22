@@ -66,11 +66,14 @@ backup:
   # -- The S3 bucket region used for WAL archiving.
   region: "auto"
   # -- The S3 bucket endpoint used for WAL archiving.
-  accessKey: "minio"
-  # -- The S3 bucket access key used for WAL archiving.
-  secretKey: "minio123"
-  # -- The S3 bucket endpoint used for WAL archiving.
   endpoint: "http://minio"
+  userSecret:
+    # -- The secret containing the S3 user credentials for WAL archiving.
+    name: backup-bucket-user
+    # -- The key in the secret containing the S3 access key.
+    accessKeyKey: accessKey
+    # -- The key in the secret containing the S3 secret key.
+    secretKeyKey: secretKey
 
 # -- The image pull secret used for the Firemetrics instance.
 imagePullSecret: ""

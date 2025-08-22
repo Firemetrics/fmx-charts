@@ -110,10 +110,6 @@
   {{ include "internalFuegoUrl" . }}{{ include "fhirPath" . }}
 {{- end -}}
 
-{{- define "backupTargetSecretName" -}}
-  {{ include "appName" . }}-backup-target
-{{- end -}}
-
 {{- define "tlsCertSecretName" -}}
   {{- if .Values.tls.nameOverride -}}
     {{ .Values.tls.nameOverride }}

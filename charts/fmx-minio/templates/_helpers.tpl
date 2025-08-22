@@ -19,10 +19,6 @@
 {{- end }}
 
 {{- define "configSecretName" -}}
-  {{- if .Values.configSecret.nameOverride -}}
-    {{ .Values.configSecret.nameOverride }}
-  {{- else -}}
-    {{ include "appName" . }}
-  {{- end -}}
+  {{ include "appName" . }}-config
 {{- end }}
 

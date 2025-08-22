@@ -26,4 +26,21 @@ postgresql:
     max_locks_per_transaction: "512"
     work_mem: "256MB"
 
+backup:
+  # -- Enable WAL archiving for the Postgres cluster.
+  enabled: false
+  # -- The name of the S3 bucket used for WAL archiving.
+  bucketName: "backup"
+  # -- The S3 bucket region used for WAL archiving.
+  region: "auto"
+  # -- The S3 bucket endpoint used for WAL archiving.
+  endpoint: "http://minio"
+  userSecret:
+    # -- The secret containing the S3 user credentials for WAL archiving.
+    name: backup-bucket-user
+    # -- The key in the secret containing the S3 access key.
+    accessKeyKey: accessKey
+    # -- The key in the secret containing the S3 secret key.
+    secretKeyKey: secretKey
+
 env: []

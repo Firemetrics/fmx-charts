@@ -23,12 +23,8 @@ spec:
           certificate:
             requestAutoCert: false
           configSecret:
+            existingSecret: true
             name: {{ include "configSecretName" . | quote }}
-            {{- with .Values.configSecret.existingSecret }}
-            existingSecret: {{ . }}
-            {{- end }}
-            accessKey: {{ .Values.configSecret.accessKey | quote }}
-            secretKey: {{ .Values.configSecret.secretKey | quote }}
           pools:
             - servers: {{ .Values.servers }}
               name: {{ .Values.poolName | quote }}
