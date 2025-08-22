@@ -1,0 +1,43 @@
+# fuego
+
+![Version: 0.1.32](https://img.shields.io/badge/Version-0.1.32-informational?style=flat-square)
+
+## Values
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+| bootstrapKeycloak.adminUserSecret.name | string | `"keycloak-admin"` |  |
+| bootstrapKeycloak.adminUserSecret.passwordKey | string | `"password"` |  |
+| bootstrapKeycloak.adminUserSecret.usernameKey | string | `"username"` |  |
+| bootstrapKeycloak.enabled | bool | `false` |  |
+| bootstrapKeycloak.image | string | `"curlimages/curl:8.15.0"` |  |
+| bootstrapKeycloak.realm | string | `"firemetrics"` |  |
+| bootstrapKeycloak.url | string | `"https://example.com/auth"` |  |
+| caCertsConfigMap.enabled | bool | `false` |  |
+| caCertsConfigMap.fileName | string | `"ca-certificates.crt"` |  |
+| caCertsConfigMap.name | string | `"ca-certs"` |  |
+| database.dbname | string | `"firemetrics"` |  |
+| database.hostname | string | `"postgres"` |  |
+| database.port | int | `5432` |  |
+| database.userSecret | string | `"fuego-user"` |  |
+| env | list | `[]` |  |
+| image | string | `"ghcr.io/firemetrics/fuego:dfb02edc"` |  |
+| imagePullSecret | string | `""` |  |
+| initContainers | list | `[]` |  |
+| oidc.clientSecret.idKey | string | `"id"` |  |
+| oidc.clientSecret.name | string | `"fuego-oidc-client"` |  |
+| oidc.clientSecret.secretKey | string | `"secret"` |  |
+| oidc.discoveryUrl | string | `""` |  |
+| oidc.enabled | bool | `false` |  |
+| publicUrl | string | `"http://example.com/fhir"` |  |
+| securityContext.allowPrivilegeEscalation | bool | `false` |  |
+| securityContext.capabilities.drop[0] | string | `"ALL"` |  |
+| securityContext.readOnlyRootFilesystem | bool | `true` |  |
+| securityContext.runAsNonRoot | bool | `true` |  |
+| securityContext.runAsUser | int | `1000` |  |
+| service.enabled | bool | `true` |  |
+| service.nameOverride | string | `""` |  |
+| serviceAccountName | string | `""` |  |
+| volumeMounts | list | `[]` |  |
+| volumes | list | `[]` |  |
+

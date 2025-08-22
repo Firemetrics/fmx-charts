@@ -1,70 +1,105 @@
+# -- The hostname for the Firemetrics instance.
 hostname: "example.com"
 
 tls:
+  # -- Enable TLS for the Firemetrics instance.
   enabled: false
+
+  # -- Name of the Kubernetes secret containing the TLS certificate and key. Defaults to "{prefix}-tls-cert".
   secretNameOverride: ""
+  # -- Disable automatic creation of the TLS secret.
   existingSecret: false
+
   certManager:
+    # -- Enable cert-manager integration for automatic TLS certificate management.
     enabled: false
+    # -- Name of the cert-manager ClusterIssuer to use for TLS certificate issuance.
     issuer: letsencrypt
 
 caCertsConfigMap:
+  # -- Enable the creation of a ConfigMap containing CA certificates.
   enabled: false
+  # -- Name of the ConfigMap containing CA certificates. Defaults to "{prefix}-ca-certs".
   nameOverride: ""
+  # -- The file name of the CA certificates in the ConfigMap.
   fileName: ca-certificates.crt
+  # -- The content of the CA certificates. If empty, `caCertsConfigMap.existingConfigMap` must be set to true.
   data: ""
+  # -- Disable automatic creation of the CA certificates ConfigMap.
   existingConfigMap: false
 
+# -- The URL of the Firemetrics Helm charts repository.
 chartRepoUrl: "https://nexus.firemetricshealth.com/repository/helm-firemetrics/"
 
+# -- The namespace where Argo CD is installed.
 argoCdNamespace: argocd
 
+# -- The sync policy used for all applications created by this chart.
 syncPolicy:
   automated:
     prune: true
     selfHeal: true
 
 oidc:
+  # -- Enable OIDC authentication for the Firemetrics instance.
   enabled: true
-  # discoveryUrlOverride can be used to specify an external OIDC provider.
+  # -- The OIDC client ID for the Firemetrics instance. Defaults to Keycloak instance created by this chart.
   discoveryUrlOverride: ""
+  # -- The Keycloak realm used for OIDC authentication. Only relevant if Keycloak is enabled.
   keycloakRealm: firemetrics
 
 database:
+  # -- The database name used by the Firemetrics instance.
   dbname: firemetrics
+  # -- The database port used by the Firemetrics instance.
   port: 5432
+  # -- The database host used by the Firemetrics instance. Defaults to the Postgres cluster created by this chart.
   hostnameOverride: ""
+  # -- The database super user used by the Firemetrics instance to manage the Postgres instance. Defaults to the user created by Postgres Operator.
   existingSuperUserSecret: ""
 
 backup:
+  # -- Enable WAL archiving for the Postgres cluster.
   enabled: false
+  # -- The name of the S3 bucket used for WAL archiving.
   bucketName: "backup"
+  # -- The S3 bucket region used for WAL archiving.
   region: "auto"
+  # -- The S3 bucket endpoint used for WAL archiving.
   accessKey: "minio"
+  # -- The S3 bucket access key used for WAL archiving.
   secretKey: "minio123"
+  # -- The S3 bucket endpoint used for WAL archiving.
   endpoint: "http://minio"
 
-# imagePullSecret is the name of the Kubernetes secret used to pull images from the ghcr.io registry.
+# -- The image pull secret used for the Firemetrics instance.
 imagePullSecret: ""
 
-# spiloImage is the image used for the Postgres cluster and the bootstrap job.
+# -- The image used for the Spilo Postgres cluster pods.
 spiloImage: ghcr.io/firemetrics/spilo17:4.0-p2-f0457965
 
 components:
   postgres:
+    # -- Enable the Postgres cluster managed by Postgres Operator.
     enabled: true
 
-    podServiceAccountNameOverride: ""
+    # -- The number of Postgres instances in the cluster.
     numberOfInstances: 1
+    # -- The name of the Postgres cluster. Defaults to "postgres-pod".
+    podServiceAccountNameOverride: ""
+    # -- The name of the Postgres cluster. Defaults to "{prefix}-postgres".
     clusterNameOverride: ""
+    # -- The name of the team that owns the Postgres cluster.
     teamId: ""
     spiloRunAsUser: 101
     spiloRunAsGroup: 103
     spiloFSGroup: 103
 
     volume:
+      # -- The size of the Postgres data volume.
       size: 10Gi
 
+    # -- The resource requests and limits for the Postgres cluster pods.
     resources:
       requests:
         cpu: "10m"
@@ -73,6 +108,7 @@ components:
         cpu: "32"
         memory: "128Gi"
 
+    # -- The [PostgreSQL parameters](https://github.com/zalando/postgres-operator/blob/v1.14.0/docs/reference/cluster_manifest.md#postgres-parameters).
     postgresql:
       version: "17"
       parameters:
@@ -80,74 +116,125 @@ components:
         max_locks_per_transaction: "512"
         work_mem: "256MB"
 
+    # -- Extra environment variables for the Postgres cluster pods.
     extraEnv: []
 
+    # -- Override the values for the Postgres cluster Helm chart.
     valuesOverride: {}
 
   bootstrap:
+    # -- Enable the database bootstrap job.
     enabled: true
+    # -- The security context for the bootstrap job.
     securityContext: {}
     firemetrics:
+      # -- The number of worker processes to start in the bootstrap job.
       workerCount: 1
+    # -- Override the values for the bootstrap job Helm chart.
     valuesOverride: {}
 
   fuego:
+    # -- Enable the Fuego component.
     enabled: true
+    # -- The image used for the Fuego pods.
     image: ghcr.io/firemetrics/fuego:dfb02edc
+    # -- Extra environment variables for the Fuego pods.
     env: []
+    # -- Extra volumes for the Fuego pods.
     volumes: []
+    # -- Extra volume mounts for the Fuego pods.
     volumeMounts: []
+    # -- The security context for the Fuego pods.
     securityContext: {}
     oidcClientSecret:
+      # -- The secret containing the OIDC client credentials for Fuego.
       name: fuego-oidc-client
+      # -- The key in the secret containing the OIDC client ID.
       idKey: id
+      # -- The key in the secret containing the OIDC client secret.
       secretKey: secret
+    # -- Override the values for the Fuego Helm chart.
     valuesOverride: {}
 
   panel:
+    # -- Enable the FMX Panel component.
     enabled: true
+    # -- The image used for the FMX Panel pods.
     image: ghcr.io/firemetrics/fmx-panel:ec65075
+    # -- Extra environment variables for the FMX Panel pods.
     env: []
+    # -- Extra volumes for the FMX Panel pods.
     volumes: []
+    # -- Extra volume mounts for the FMX Panel pods.
     volumeMounts: []
+    # -- The security context for the FMX Panel pods.
     securityContext: {}
+    # -- The public path for the FMX Panel.
     publicPath: /panel
+    # -- Disable the dataset import feature in the FMX Panel.
     datasetImportDisabled: false
+    # -- Disable the resource explorer feature in the FMX Panel.
     resourceExplorerDisabled: false
+    # -- Disable the no-code builder feature in the FMX Panel.
     nocodeBuilderDisabled: false
+    # -- Disable the SQL editor feature in the FMX Panel.
     sqlEditorDisabled: false
     oidc:
+      # -- Enable OIDC authentication for the FMX Panel.
       clientId: panel
-      # audience is optional. If not set, it will default to the Panel's public URL.
+      # -- The OIDC audience used by the FMX Panel. Defaults to the public URL of the FMX Panel.
       audience: ""
+    # -- Override the values for the FMX Panel Helm chart.
     valuesOverride: {}
 
   keycloak:
+    # -- Enable the Keycloak component.
     enabled: true
+    # -- The image used for the Keycloak pods.
     image: "quay.io/keycloak/keycloak:26.3.2"
+    # -- The database name used by Keycloak.
     databaseName: keycloak
+    # -- Extra environment variables for the Keycloak pods.
     env: []
+    # -- Extra volumes for the Keycloak pods.
     volumes: []
+    # -- Extra volume mounts for the Keycloak pods.
     volumeMounts: []
+    # -- The security context for the Keycloak pods.
     securityContext: {}
+    # -- The public path for Keycloak.
     publicPath: /auth
+    # -- Enable realm initialization for Keycloak.
     importRealm: true
     databaseUserSecret:
+      # -- The secret containing the Keycloak database user credentials.
       name: keycloak-db-user
+      # -- The key in the secret containing the Keycloak database username.
       usernameKey: username
+      # -- The key in the secret containing the Keycloak database password.
       passwordKey: password
     adminSecret:
+      # -- The secret containing the Keycloak admin credentials.
       name: keycloak-admin
+      # -- The key in the secret containing the Keycloak admin username.
       usernameKey: username
+      # -- The key in the secret containing the Keycloak admin password.
       passwordKey: password
+    # -- Override the values for the Keycloak Helm chart.
     valuesOverride: {}
 
   minio:
+    # -- Enable the MinIO component.
     enabled: false
+    # -- The image used for the MinIO pods.
     chartRepoUrl: "https://operator.min.io"
+    # -- The size of the MinIO data volume.
     size: "10Gi"
+    # -- Override the values for the MinIO Helm chart.
     valuesOverride: {}
 
   ingress:
+    # -- Enable the ingress component.
     enabled: true
+    # -- Override the values for the ingress Helm chart.
     valuesOverride: {}
