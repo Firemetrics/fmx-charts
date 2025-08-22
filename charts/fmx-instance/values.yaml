@@ -2,9 +2,8 @@ hostname: "example.com"
 
 tls:
   enabled: false
-  certSecret:
-    nameOverride: ""
-    existingSecret: false
+  secretNameOverride: ""
+  existingSecret: false
   certManager:
     enabled: false
     issuer: letsencrypt
