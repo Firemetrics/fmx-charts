@@ -1,11 +1,14 @@
 # fmx-minio
 
-![Version: 0.1.32](https://img.shields.io/badge/Version-0.1.32-informational?style=flat-square)
+![Version: 0.1.33](https://img.shields.io/badge/Version-0.1.33-informational?style=flat-square)
 
 ## Values
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
+| adminSecret.accessKeyKey | string | `"accessKey"` |  |
+| adminSecret.name | string | `"minio-admin"` |  |
+| adminSecret.secretKeyKey | string | `"secretKey"` |  |
 | application.chartRepoUrl | string | `"https://operator.min.io"` |  |
 | application.chartVersion | string | `"7.1.1"` |  |
 | application.nameOverride | string | `""` |  |
@@ -15,9 +18,6 @@
 | argoCdNamespace | string | `"argocd"` |  |
 | backup.bucketName | string | `"backup"` |  |
 | backup.enabled | bool | `true` |  |
-| configSecret.accessKey | string | `"minio"` |  |
-| configSecret.nameOverride | string | `""` |  |
-| configSecret.secretKey | string | `"minio123"` |  |
 | poolName | string | `"pool-0"` |  |
 | servers | int | `1` |  |
 | size | string | `"10Gi"` |  |

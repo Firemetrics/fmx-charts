@@ -1,18 +1,19 @@
 # fmx-instance
 
-![Version: 0.1.32](https://img.shields.io/badge/Version-0.1.32-informational?style=flat-square)
+![Version: 0.1.33](https://img.shields.io/badge/Version-0.1.33-informational?style=flat-square)
 
 ## Values
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | argoCdNamespace | string | `"argocd"` | The namespace where Argo CD is installed. |
-| backup.accessKey | string | `"minio"` | The S3 bucket endpoint used for WAL archiving. |
 | backup.bucketName | string | `"backup"` | The name of the S3 bucket used for WAL archiving. |
 | backup.enabled | bool | `false` | Enable WAL archiving for the Postgres cluster. |
 | backup.endpoint | string | `"http://minio"` | The S3 bucket endpoint used for WAL archiving. |
 | backup.region | string | `"auto"` | The S3 bucket region used for WAL archiving. |
-| backup.secretKey | string | `"minio123"` | The S3 bucket access key used for WAL archiving. |
+| backup.userSecret.accessKeyKey | string | `"accessKey"` | The key in the secret containing the S3 access key. |
+| backup.userSecret.name | string | `"backup-bucket-user"` | The secret containing the S3 user credentials for WAL archiving. |
+| backup.userSecret.secretKeyKey | string | `"secretKey"` | The key in the secret containing the S3 secret key. |
 | caCertsConfigMap.data | string | `""` | The content of the CA certificates. If empty, `caCertsConfigMap.existingConfigMap` must be set to true. |
 | caCertsConfigMap.enabled | bool | `false` | Enable the creation of a ConfigMap containing CA certificates. |
 | caCertsConfigMap.existingConfigMap | bool | `false` | Disable automatic creation of the CA certificates ConfigMap. |
