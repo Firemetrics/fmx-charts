@@ -15,6 +15,10 @@ Depending on the configuration, you may also need the following components:
 - [Cert-Manager](https://cert-manager.io/docs/installation/)
 - [MinIO-Operator](https://artifacthub.io/packages/helm/minio-operator/operator)
 
+## Configuration
+
+The `fmx-instance` chart is designed to be configured via Helm values. Take a look at the [values.yaml](charts/fmx-instance/values.yaml) file for the available configuration options.
+
 ## Installation
 
 Create a secret for access to the `ghcr.io` registry:
