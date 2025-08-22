@@ -21,17 +21,7 @@ The `fmx-instance` chart is designed to be configured via Helm values. Take a lo
 
 ## Installation
 
-Create a secret for access to the `ghcr.io` registry:
-
-```bash
-kubectl -n my-namespace create secret docker-registry \
-  --docker-server ghcr.io \
-  --docker-username user \
-  --docker-password token \
-  docker-registry
-```
-
-Create generic secrets:
+The following secrets are required for the `fmx-instance` chart to function properly. Replace the values with your own secure credentials:
 
 ```bash
 kubectl -n my-namespace create secret generic keycloak-admin \
@@ -45,6 +35,24 @@ kubectl -n my-namespace create secret generic keycloak-db-user \
 kubectl -n my-namespace create secret generic fuego-oidc-client \
   --from-literal id=fuego \
   --from-literal secret="$(openssl rand -base64 24)"
+```
+
+You will also need to create a secret for pulling images from the private Firemetrics container registry, unless you have a registry mirror configured.
+
+```bash
+kubectl -n my-namespace create secret docker-registry \
+  --docker-server ghcr.io \
+  --docker-username user \
+  --docker-password token \
+  docker-registry
+```
+
+In case you have backups enabled, you will also need to create a secret for accessing the bucket.
+
+```bash
+kubectl -n my-namespace create secret generic backup-bucket-user \
+  --from-literal accessKey=user \
+  --from-literal secretKey="$(openssl rand -base64 24)"
 ```
 
 Then create an Argo CD application for the `fmx-instance` chart:
