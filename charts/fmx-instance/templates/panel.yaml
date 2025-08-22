@@ -53,10 +53,9 @@ spec:
           clientId: {{ .Values.components.panel.oidc.clientId | quote }}
           audience: {{ include "panelOidcAudience" . | quote }}
 
-        datasetImportDisabled: {{ .Values.components.panel.datasetImportDisabled }}
-        resourceExplorerDisabled: {{ .Values.components.panel.resourceExplorerDisabled }}
-        nocodeBuilderDisabled: {{ .Values.components.panel.nocodeBuilderDisabled }}
-        sqlEditorDisabled: {{ .Values.components.panel.sqlEditorDisabled }}
+        {{- with .Values.components.panel.featureFlags }}
+        featureFlags: {{- . | toYaml | nindent 10 }}
+        {{- end }}
 
         caCertsConfigMap:
           enabled: {{ .Values.caCertsConfigMap.enabled }}

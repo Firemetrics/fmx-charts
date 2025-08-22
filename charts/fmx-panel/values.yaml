@@ -1,4 +1,4 @@
-image: ghcr.io/firemetrics/fmx-panel:ec65075
+image: ghcr.io/firemetrics/fmx-panel:236b21d
 serviceAccountName: ""
 imagePullSecret: ""
 initContainers: []
@@ -7,10 +7,8 @@ env: []
 volumes: []
 volumeMounts: []
 
-datasetImportDisabled: false
-resourceExplorerDisabled: false
-nocodeBuilderDisabled: false
-sqlEditorDisabled: false
+# -- The features enabled in the Panel.
+featureFlags: []
 
 publicUrl: "https://example.com/panel"
 publicPath: "/panel"
@@ -25,7 +23,7 @@ oidc:
   enabled: false
   discoveryUrl: ""
   clientId: "panel"
-  # audience is optional. If not set, it will default to the Panel's public URL.
+  # -- The OIDC audience used by the FMX Panel. Defaults to the Panel's public URL.
   audience: ""
 
 fhir:

@@ -1,6 +1,6 @@
 argoCdNamespace: argocd
 
-# tenantNameOverride is optional. Defaults to the release's name.
+# -- The name for the MinIO tenant. Defaults to the release's name.
 tenantNameOverride: ""
 
 poolName: pool-0
