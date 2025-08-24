@@ -111,8 +111,8 @@
 {{- end -}}
 
 {{- define "tlsCertSecretName" -}}
-  {{- if .Values.tls.nameOverride -}}
-    {{ .Values.tls.nameOverride }}
+  {{- if .Values.tls.secretNameOverride -}}
+    {{ .Values.tls.secretNameOverride }}
   {{- else -}}
     {{ include "appName" . }}-tls-cert
   {{- end -}}
