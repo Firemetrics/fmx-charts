@@ -1,6 +1,6 @@
 # fmx-bootstrap
 
-![Version: 0.1.37](https://img.shields.io/badge/Version-0.1.37-informational?style=flat-square)
+![Version: 0.1.38](https://img.shields.io/badge/Version-0.1.38-informational?style=flat-square)
 
 ## Values
 
