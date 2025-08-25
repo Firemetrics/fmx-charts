@@ -1,6 +1,6 @@
 # fmx-panel
 
-![Version: 0.1.39](https://img.shields.io/badge/Version-0.1.39-informational?style=flat-square)
+![Version: 0.1.40](https://img.shields.io/badge/Version-0.1.40-informational?style=flat-square)
 
 ## Values
 
@@ -16,7 +16,7 @@
 | env | list | `[]` |  |
 | featureFlags | list | `[]` | The features enabled in the Panel. |
 | fhir.baseUrl | string | `"https://example.com/fhir"` |  |
-| image | string | `"ghcr.io/firemetrics/fmx-panel:820a56a"` |  |
+| image | string | `"ghcr.io/firemetrics/fmx-panel:65b30a3"` |  |
 | imagePullSecret | string | `""` |  |
 | initContainers | list | `[]` |  |
 | oidc.audience | string | `""` | The OIDC audience used by the FMX Panel. Defaults to the Panel's public URL. |
