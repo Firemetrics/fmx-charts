@@ -93,6 +93,14 @@ spec:
             - name: FMXPANEL_FEATURE_FLAGS
               value: {{ .Values.featureFlags | join "," | quote }}
 
+            {{- if .Values.openaiApiKeySecret.enabled }}
+            - name: FMXPANEL_OPENAI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.openaiApiKeySecret.name | quote }}
+                  key: {{ .Values.openaiApiKeySecret.key | quote }}
+            {{- end }}
+
             {{- if .Values.oidc.enabled }}
             - name: FMXPANEL_OIDC_ENABLED
               value: "true"

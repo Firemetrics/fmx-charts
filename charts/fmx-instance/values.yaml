@@ -163,7 +163,7 @@ components:
     # -- Enable the Panel component.
     enabled: true
     # -- The image used for the Panel pods.
-    image: ghcr.io/firemetrics/fmx-panel:236b21d
+    image: ghcr.io/firemetrics/fmx-panel:820a56a
     # -- Extra environment variables for the Panel pods.
     env: []
     # -- Extra volumes for the Panel pods.
@@ -181,6 +181,13 @@ components:
       clientId: panel
       # -- The OIDC audience used by the Panel. Defaults to the public URL of the Panel.
       audience: ""
+    openaiApiKeySecret:
+      # -- Enable the OpenAI API key for the Panel.
+      enabled: false
+      # -- The secret containing the OpenAI API key for the Panel.
+      name: openai-api-key
+      # -- The key in the secret containing the OpenAI API key for the Panel.
+      key: api-key
     # -- Override the values for the Panel Helm chart.
     valuesOverride: {}
 

@@ -60,9 +60,12 @@
 | components.panel.enabled | bool | `true` | Enable the Panel component. |
 | components.panel.env | list | `[]` | Extra environment variables for the Panel pods. |
 | components.panel.featureFlags | list | `[]` | The features enabled in the Panel. |
-| components.panel.image | string | `"ghcr.io/firemetrics/fmx-panel:236b21d"` | The image used for the Panel pods. |
+| components.panel.image | string | `"ghcr.io/firemetrics/fmx-panel:820a56a"` | The image used for the Panel pods. |
 | components.panel.oidc.audience | string | `""` | The OIDC audience used by the Panel. Defaults to the public URL of the Panel. |
 | components.panel.oidc.clientId | string | `"panel"` | Enable OIDC authentication for the Panel. |
+| components.panel.openaiApiKeySecret.enabled | bool | `false` | Enable the OpenAI API key for the Panel. |
+| components.panel.openaiApiKeySecret.key | string | `"api-key"` | The key in the secret containing the OpenAI API key for the Panel. |
+| components.panel.openaiApiKeySecret.name | string | `"openai-api-key"` | The secret containing the OpenAI API key for the Panel. |
 | components.panel.publicPath | string | `"/panel"` | The public path for the Panel. |
 | components.panel.securityContext | object | `{}` | The security context for the Panel pods. |
 | components.panel.valuesOverride | object | `{}` | Override the values for the Panel Helm chart. |

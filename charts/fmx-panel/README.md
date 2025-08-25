@@ -16,13 +16,16 @@
 | env | list | `[]` |  |
 | featureFlags | list | `[]` | The features enabled in the Panel. |
 | fhir.baseUrl | string | `"https://example.com/fhir"` |  |
-| image | string | `"ghcr.io/firemetrics/fmx-panel:236b21d"` |  |
+| image | string | `"ghcr.io/firemetrics/fmx-panel:820a56a"` |  |
 | imagePullSecret | string | `""` |  |
 | initContainers | list | `[]` |  |
 | oidc.audience | string | `""` | The OIDC audience used by the FMX Panel. Defaults to the Panel's public URL. |
 | oidc.clientId | string | `"panel"` |  |
 | oidc.discoveryUrl | string | `""` |  |
 | oidc.enabled | bool | `false` |  |
+| openaiApiKeySecret.enabled | bool | `false` |  |
+| openaiApiKeySecret.key | string | `"api-key"` |  |
+| openaiApiKeySecret.name | string | `"openai-api-key"` |  |
 | publicPath | string | `"/panel"` |  |
 | publicUrl | string | `"https://example.com/panel"` |  |
 | securityContext | object | `{}` |  |

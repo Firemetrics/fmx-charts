@@ -1,4 +1,4 @@
-image: ghcr.io/firemetrics/fmx-panel:236b21d
+image: ghcr.io/firemetrics/fmx-panel:820a56a
 serviceAccountName: ""
 imagePullSecret: ""
 initContainers: []
@@ -28,6 +28,11 @@ oidc:
 
 fhir:
   baseUrl: "https://example.com/fhir"
+
+openaiApiKeySecret:
+  enabled: false
+  name: openai-api-key
+  key: api-key
 
 caCertsConfigMap:
   enabled: false
