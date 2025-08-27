@@ -26,7 +26,9 @@ done
 
 helm-docs
 
-git add "$CHARTS_DIR"
+"${SED_INPLACE[@]}" -e "s/^## Unreleased/## $TARGET_VERSION/" ./CHANGELOG.md
+
+git add "$CHARTS_DIR" ./CHANGELOG.md
 git commit -m "v$TARGET_VERSION"
 git tag "v$TARGET_VERSION"
 
