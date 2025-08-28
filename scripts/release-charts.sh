@@ -4,20 +4,13 @@ set -eo pipefail
 
 cd "$(dirname "$0")" && cd ..
 
-TARGET_VERSION="$1"
-
-if [ -z "$TARGET_VERSION" ]; then
-  echo "Usage: $0 <version>"
+if ! git cliff --version &> /dev/null; then
+  echo "Error: git-cliff is not installed"
   exit 1
 fi
 
-if ! grep -q "^## Unreleased" ./CHANGELOG.md; then
-  echo "Error: 'Unreleased' section not found in CHANGELOG.md"
-  exit 1
-fi
-
-TODAY=$(date +%Y-%m-%d)
-"${SED_INPLACE[@]}" -e "s/^## Unreleased/## $TARGET_VERSION - $TODAY/" ./CHANGELOG.md
+TARGET_VERSION="$(git cliff --bumped-version | sed 's/^v//')"
+git cliff --bump -o
 
 CHARTS_DIR="./charts"
 
