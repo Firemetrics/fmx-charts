@@ -11,6 +11,14 @@ if [ -z "$TARGET_VERSION" ]; then
   exit 1
 fi
 
+if ! grep -q "^## Unreleased" ./CHANGELOG.md; then
+  echo "Error: 'Unreleased' section not found in CHANGELOG.md"
+  exit 1
+fi
+
+TODAY=$(date +%Y-%m-%d)
+"${SED_INPLACE[@]}" -e "s/^## Unreleased/## $TARGET_VERSION - $TODAY/" ./CHANGELOG.md
+
 CHARTS_DIR="./charts"
 
 # Detect sed in-place flag syntax
@@ -25,8 +33,6 @@ for chart in "$CHARTS_DIR"/*/; do
 done
 
 helm-docs
-
-"${SED_INPLACE[@]}" -e "s/^## Unreleased/## $TARGET_VERSION/" ./CHANGELOG.md
 
 git add "$CHARTS_DIR" ./CHANGELOG.md
 git commit -m "v$TARGET_VERSION"
