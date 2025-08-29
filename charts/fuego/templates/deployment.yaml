@@ -93,9 +93,9 @@ spec:
               echo "Fetching admin token..."
               TOKEN=$(curl -sS -X POST \
                 -d "client_id=admin-cli" \
-                -d "username=$KEYCLOAK_ADMIN_USERNAME" \
-                -d "password=$KEYCLOAK_ADMIN_PASSWORD" \
                 -d "grant_type=password" \
+                --data-urlencode "username=$KEYCLOAK_ADMIN_USERNAME" \
+                --data-urlencode "password=$KEYCLOAK_ADMIN_PASSWORD" \
                 "$KEYCLOAK_URL/realms/master/protocol/openid-connect/token" \
                 | sed -n 's/.*"access_token":"\([^"]*\)".*/\1/p')
 
