@@ -125,3 +125,19 @@
     {{ include "appName" . }}-ca-certs
   {{- end -}}
 {{- end -}}
+
+{{- define "chartRevision" -}}
+  {{- if .Values.chartRevisionOverride -}}
+    {{ .Values.chartRevisionOverride }}
+  {{- else -}}
+    {{ .Chart.Version }}
+  {{- end -}}
+{{- end -}}
+
+{{- define "chartSelection" -}}
+  {{- if hasSuffix ".git" .context.Values.chartRepoUrl -}}
+    path: charts/{{ .chart }}
+  {{- else -}}
+    chart: {{ .chart }}
+  {{- end -}}
+{{- end -}}

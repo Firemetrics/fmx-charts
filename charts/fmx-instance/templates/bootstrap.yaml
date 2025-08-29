@@ -11,8 +11,8 @@ spec:
 
   source:
     repoURL: {{ .Values.chartRepoUrl | quote }}
-    chart: fmx-bootstrap
-    targetRevision: {{ .Chart.Version | quote }}
+    {{ include "chartSelection" (dict "context" . "chart" "fmx-bootstrap") }}
+    targetRevision: {{ include "chartRevision" . | quote }}
     helm:
       releaseName: {{ include "bootstrapAppName" . }}
       values: |

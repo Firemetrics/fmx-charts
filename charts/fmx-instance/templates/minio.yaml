@@ -11,8 +11,8 @@ spec:
 
   source:
     repoURL: {{ .Values.chartRepoUrl | quote }}
-    chart: fmx-minio
-    targetRevision: {{ .Chart.Version | quote }}
+    {{ include "chartSelection" (dict "context" . "chart" "fmx-minio") }}
+    targetRevision: {{ include "chartRevision" . | quote }}
     helm:
       releaseName: {{ include "minioAppName" . }}
       values: |

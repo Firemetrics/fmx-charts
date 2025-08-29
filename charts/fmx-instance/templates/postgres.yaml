@@ -11,8 +11,8 @@ spec:
 
   source:
     repoURL: {{ .Values.chartRepoUrl | quote }}
-    chart: fmx-postgres
-    targetRevision: {{ .Chart.Version | quote }}
+    {{ include "chartSelection" (dict "context" . "chart" "fmx-postgres") }}
+    targetRevision: {{ include "chartRevision" . | quote }}
     helm:
       releaseName: {{ include "postgresAppName" . }}
       values: |

@@ -11,8 +11,8 @@ spec:
 
   source:
     repoURL: {{ .Values.chartRepoUrl | quote }}
-    chart: fmx-ingress
-    targetRevision: {{ .Chart.Version | quote }}
+    {{ include "chartSelection" (dict "context" . "chart" "fmx-ingress") }}
+    targetRevision: {{ include "chartRevision" . | quote }}
     helm:
       releaseName: {{ include "ingressAppName" . }}
       values: |

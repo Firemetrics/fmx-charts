@@ -31,6 +31,9 @@ caCertsConfigMap:
 # -- The URL of the Firemetrics Helm charts repository.
 chartRepoUrl: "https://nexus.firemetricshealth.com/repository/helm-firemetrics/"
 
+# -- The version of the Firemetrics Helm charts to use. Defaults to the current chart's version.
+chartRevisionOverride: ""
+
 # -- The namespace where Argo CD is installed.
 argoCdNamespace: argocd
 

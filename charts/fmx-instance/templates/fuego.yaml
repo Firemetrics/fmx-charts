@@ -11,8 +11,8 @@ spec:
 
   source:
     repoURL: {{ .Values.chartRepoUrl | quote }}
-    chart: fuego
-    targetRevision: {{ .Chart.Version | quote }}
+    {{ include "chartSelection" (dict "context" . "chart" "fuego") }}
+    targetRevision: {{ include "chartRevision" . | quote }}
     helm:
       releaseName: {{ include "fuegoAppName" . }}
       values: |

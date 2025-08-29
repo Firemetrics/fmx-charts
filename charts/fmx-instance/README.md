@@ -20,6 +20,7 @@
 | caCertsConfigMap.fileName | string | `"ca-certificates.crt"` | The file name of the CA certificates in the ConfigMap. |
 | caCertsConfigMap.nameOverride | string | `""` | Name of the ConfigMap containing CA certificates. Defaults to "{prefix}-ca-certs". |
 | chartRepoUrl | string | `"https://nexus.firemetricshealth.com/repository/helm-firemetrics/"` | The URL of the Firemetrics Helm charts repository. |
+| chartRevisionOverride | string | `""` | The version of the Firemetrics Helm charts to use. Defaults to the current chart's version. |
 | components.bootstrap.enabled | bool | `true` | Enable the database bootstrap job. |
 | components.bootstrap.firemetrics.workerCount | int | `1` | The number of worker processes to start in the bootstrap job. |
 | components.bootstrap.securityContext | object | `{}` | The security context for the bootstrap job. |
