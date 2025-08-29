@@ -13,6 +13,6 @@ data:
         disableDeletion: true
         allowUiUpdates: false
         options:
-          path: {{ include "dashboardsDataMountPath" . }}
+          path: {{ include "dashboardsDataPath" . | quote }}
           foldersFromFilesStructure: true
 

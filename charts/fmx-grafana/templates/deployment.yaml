@@ -29,14 +29,14 @@ spec:
       {{- $caCertsVolumeName := "ca-certs" }}
       {{- $caCertsPath := "/etc/ssl/certs/ca-certificates.crt" }}
 
-      {{- $dashboardsDataVolume := "dashboards-data" }}
+      {{- $exampleDashboardsVolume := "example-dashboards" }}
       {{- $dashboardsVolume := "dashboards" }}
       {{- $datasourcesVolume := "datasources" }}
 
       volumes:
-        - name: {{ $dashboardsDataVolume }}
+        - name: {{ $exampleDashboardsVolume }}
           configMap:
-            name: {{ include "dashboardsDataConfigMapName" . | quote }}
+            name: {{ include "exampleDashboardsConfigMapName" . | quote }}
         - name: {{ $dashboardsVolume }}
           configMap:
             name: {{ include "dashboardsConfigMapName" . | quote }}
@@ -227,8 +227,8 @@ spec:
           {{- end }}
 
           volumeMounts:
-            - name: {{ $dashboardsDataVolume }}
-              mountPath: {{ include "dashboardsDataMountPath" . | quote }}
+            - name: {{ $exampleDashboardsVolume }}
+              mountPath: {{ include "exampleDashboardsMountPath" . | quote }}
             - name: {{ $dashboardsVolume }}
               mountPath: {{ include "dashboardsMountPath" . | quote }}
             - name: {{ $datasourcesVolume }}

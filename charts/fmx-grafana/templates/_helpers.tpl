@@ -30,12 +30,16 @@
   {{ include "httpScheme" . }}://{{ .Values.hostname }}{{ .Values.publicPath }}/
 {{- end -}}
 
-{{- define "dashboardsDataConfigMapName" -}}
+{{- define "exampleDashboardsConfigMapName" -}}
   {{ include "appName" . }}-dashboards-data
 {{- end -}}
 
-{{- define "dashboardsDataMountPath" -}}
+{{- define "dashboardsDataPath" -}}
   /opt/dashboards
+{{- end -}}
+
+{{- define "exampleDashboardsMountPath" -}}
+  {{ include "dashboardsDataPath" . }}/Examples
 {{- end -}}
 
 {{- define "dashboardsConfigMapName" -}}
