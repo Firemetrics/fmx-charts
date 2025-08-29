@@ -8,7 +8,7 @@ data:
     {
       "realm": "{{ .Values.importRealm.realmName }}",
       "enabled": true,
-      "defaultDefaultClientScopes": ["basic"],
+      "defaultDefaultClientScopes": ["basic", "email", "profile"],
       "clients": [
         {
           "clientId": {{ .Values.panel.clientId | quote }},
@@ -17,6 +17,8 @@ data:
           "redirectUris": ["{{ .Values.panel.publicUrl }}/*"],
           "defaultClientScopes": [
             "basic",
+            "email",
+            "profile",
             "attribute-fhir-user",
             "audience-panel",
             "audience-fuego"
@@ -55,6 +57,65 @@ data:
               "config": {
                 "introspection.token.claim": "true",
                 "access.token.claim": "true"
+              }
+            }
+          ]
+        },
+        {
+          "name": "email",
+          "protocol": "openid-connect",
+          "protocolMappers": [
+            {
+              "name": "email",
+              "protocol": "openid-connect",
+              "protocolMapper": "oidc-usermodel-attribute-mapper",
+              "consentRequired": false,
+              "config": {
+                "aggregate.attrs": "false",
+                "userinfo.token.claim": "true",
+                "introspection.token.claim": "true",
+                "id.token.claim": "true",
+                "access.token.claim": "true",
+                "user.attribute": "email",
+                "claim.name": "email",
+                "jsonType.label": "String"
+              }
+            },
+            {
+              "name": "email_verified",
+              "protocol": "openid-connect",
+              "protocolMapper": "oidc-usermodel-property-mapper",
+              "consentRequired": false,
+              "config": {
+                "userinfo.token.claim": "true",
+                "introspection.token.claim": "true",
+                "id.token.claim": "true",
+                "access.token.claim": "true",
+                "user.attribute": "emailVerified",
+                "claim.name": "email_verified",
+                "jsonType.label": "boolean"
+              }
+            }
+          ]
+        },
+        {
+          "name": "profile",
+          "protocol": "openid-connect",
+          "protocolMappers": [
+            {
+              "name": "username",
+              "protocol": "openid-connect",
+              "protocolMapper": "oidc-usermodel-attribute-mapper",
+              "consentRequired": false,
+              "config": {
+                "aggregate.attrs": "false",
+                "userinfo.token.claim": "true",
+                "introspection.token.claim": "true",
+                "id.token.claim": "true",
+                "access.token.claim": "true",
+                "user.attribute": "username",
+                "claim.name": "username",
+                "jsonType.label": "String"
               }
             }
           ]
