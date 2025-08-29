@@ -114,7 +114,7 @@ data:
                 "id.token.claim": "true",
                 "access.token.claim": "true",
                 "user.attribute": "username",
-                "claim.name": "username",
+                "claim.name": "preferred_username",
                 "jsonType.label": "String"
               }
             },
