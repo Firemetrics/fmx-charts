@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.3.1] - 2025-08-29
+
+### 🐛 Bug Fixes
+
+- Add `groups` claim to tokens by default
 ## [1.3.0] - 2025-08-29
 
 ### 🚀 Features
