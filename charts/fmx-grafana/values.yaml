@@ -49,6 +49,10 @@ oidc:
     idKey: id
     secretKey: secret
 
+persistence:
+  enabled: true
+  requestedStorage: "2Gi"
+
 service:
   enabled: true
   nameOverride: ""

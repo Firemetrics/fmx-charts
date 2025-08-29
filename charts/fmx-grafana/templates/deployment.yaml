@@ -26,10 +26,13 @@ spec:
         - name: {{ . }}
       {{- end }}
 
-      {{- $caCertsVolumeName := "ca-certs" }}
+      {{- $caCertsVolume := "ca-certs" }}
       {{- $caCertsPath := "/etc/ssl/certs/ca-certificates.crt" }}
 
+      {{- $dataVolume := "datasources" }}
+
       {{- $exampleDashboardsVolume := "example-dashboards" }}
+
       {{- $dashboardsVolume := "dashboards" }}
       {{- $datasourcesVolume := "datasources" }}
 
@@ -44,8 +47,14 @@ spec:
           configMap:
             name: {{ include "datasourcesConfigMapName" . | quote }}
 
+        {{- if .Values.persistence.enabled }}
+        - name: {{ $dataVolume }}
+          persistentVolumeClaim:
+            claimName: {{ include "pvcName" . }}
+        {{- end }}
+
         {{- if .Values.caCertsConfigMap.enabled }}
-        - name: {{ $caCertsVolumeName }}
+        - name: {{ $caCertsVolume }}
           configMap:
             defaultMode: 0644
             name: {{ .Values.caCertsConfigMap.name | quote }}
@@ -122,7 +131,7 @@ spec:
 
           {{- if .Values.caCertsConfigMap.enabled }}
           volumeMounts:
-            - name: {{ $caCertsVolumeName | quote }}
+            - name: {{ $caCertsVolume | quote }}
               mountPath: {{ $caCertsPath | quote }}
               readOnly: true
               subPath: {{ .Values.caCertsConfigMap.fileName | quote }}
@@ -233,6 +242,12 @@ spec:
               mountPath: {{ include "dashboardsMountPath" . | quote }}
             - name: {{ $datasourcesVolume }}
               mountPath: {{ include "datasourcesMountPath" . | quote }}
+
+            {{- if .Values.persistence.enabled }}
+            - name: {{ $dataVolume }}
+              mountPath: /var/lib/grafana
+            {{- end }}
+
             {{- with .Values.volumeMounts }}
               {{- . | toYaml | nindent 12 }}
             {{- end }}

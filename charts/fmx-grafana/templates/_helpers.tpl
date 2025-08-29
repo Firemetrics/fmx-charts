@@ -6,6 +6,10 @@
   {{ include "appName" . }}
 {{- end -}}
 
+{{- define "pvcName" -}}
+  {{ include "appName" . }}-data
+{{- end -}}
+
 {{- define "svcName" -}}
   {{- if .Values.service.nameOverride -}}
     {{ .Values.service.nameOverride }}

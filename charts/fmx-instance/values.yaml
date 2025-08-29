@@ -231,6 +231,11 @@ components:
       idKey: id
       # -- The key in the secret containing the OIDC client secret.
       secretKey: secret
+    persistence:
+      # -- Enable persistence for Grafana.
+      enabled: true
+      # -- The size of the Grafana data volume.
+      requestedStorage: "2Gi"
     # -- Override the values for the Grafana Helm chart.
     valuesOverride: {}
 

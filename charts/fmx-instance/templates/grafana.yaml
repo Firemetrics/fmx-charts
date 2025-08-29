@@ -71,6 +71,8 @@ spec:
           userinfoUrl: {{ include "oidcUserinfoUrl" . | quote }}
           signoutUrl: {{ include "oidcSignoutUrl" . | quote }}
           clientSecret: {{ .Values.components.grafana.oidcClientSecret | toYaml | nindent 12 }}
+
+        persistence: {{- .Values.components.grafana.persistence | toYaml | nindent 10 }}
       {{- end }}
 
   destination:
