@@ -68,7 +68,7 @@ spec:
       initContainers:
 
         {{- if .Values.bootstrapDatabase.enabled }}
-        - name: bootstrap-db-user
+        - name: bootstrap-database
           image: {{ .Values.bootstrapDatabase.image | quote }}
           env:
             - name: PGHOST
@@ -126,7 +126,7 @@ spec:
         {{- end }}
 
         {{- if .Values.bootstrapKeycloak.enabled }}
-        - name: bootstrap-kc-oidc-client
+        - name: bootstrap-keycloak
           image: {{ .Values.bootstrapKeycloak.image | quote }}
 
           {{- if .Values.caCertsConfigMap.enabled }}
@@ -215,6 +215,29 @@ spec:
                 echo "Failed to create client (HTTP $STATUS)"
                 exit 1
               fi
+
+              echo "Creating realm roles..."
+              for ROLE in grafana_admin grafana_editor; do
+                ROLE_STATUS=$(curl -sS -o /dev/null -w "%{http_code}" \
+                  -X POST "$KEYCLOAK_URL/admin/realms/$KEYCLOAK_REALM/roles" \
+                  -H "Authorization: Bearer $TOKEN" \
+                  -H "Content-Type: application/json" \
+                  -d '{
+                    "name": "'$ROLE'",
+                    "description": "",
+                    "composite": false,
+                    "clientRole": false
+                  }')
+
+                if [ "$ROLE_STATUS" -eq 201 ]; then
+                  echo "  -> Realm role '$ROLE' created."
+                elif [ "$ROLE_STATUS" -eq 409 ]; then
+                  echo "  -> Realm role '$ROLE' already exists, continuing..."
+                else
+                  echo "  -> Failed to create realm role '$ROLE' (HTTP $ROLE_STATUS)"
+                  exit 1
+                fi
+              done
         {{- end }}
 
         {{- with .Values.initContainers }}
@@ -295,7 +318,7 @@ spec:
             - name: GF_AUTH_GENERIC_OAUTH_NAME_ATTRIBUTE_PATH
               value: "name"
             - name: GF_AUTH_GENERIC_OAUTH_ROLE_ATTRIBUTE_PATH
-              value: "grafana_role"
+              value: "contains(groups[*], 'grafana_admin') && 'GrafanaAdmin' || contains(groups[*], 'grafana_editor') && 'Editor' || 'Viewer'"
             - name: GF_AUTH_GENERIC_OAUTH_AUTH_URL
               value: {{ .Values.oidc.authUrl | quote }}
             - name: GF_AUTH_GENERIC_OAUTH_TOKEN_URL
