@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "datasourcesConfigMapName" . }}
+data:
+  datasources.yaml: |
+    apiVersion: 1
+    datasources:
+      - name: Firemetrics
+        type: postgres
+        editable: false
+        url: db:${{ include "dbPortEnvVar" . }}
+        database: ${{ include "dbNameEnvVar" . }}
+        user: ${{ include "dbUsernameEnvVar" . }}
+        secureJsonData:
+          password: ${{ include "dbPasswordEnvVar" . }}
+

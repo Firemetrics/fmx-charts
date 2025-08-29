@@ -19,8 +19,6 @@ spec:
       {{- if .Values.components.keycloak.valuesOverride }}
         {{- .Values.components.keycloak.valuesOverride | toYaml | nindent 8 }}
       {{- else }}
-        argoCdNamespace: {{ .Values.argoCdNamespace | quote }}
-
         hostname: {{ .Values.hostname | quote }}
         publicPath: {{ .Values.components.keycloak.publicPath | quote }}
 

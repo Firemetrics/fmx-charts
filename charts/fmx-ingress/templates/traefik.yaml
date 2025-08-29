@@ -60,6 +60,7 @@ spec:
         - name: {{ .Values.services.keycloak.name }}
           port: http
     {{- end }}
+
     {{- if .Values.services.fuego.enabled }}
     - match: "Host(`{{ .Values.hostname }}`) && PathPrefix(`{{ .Values.services.fuego.path }}`)"
       kind: Rule
@@ -67,6 +68,7 @@ spec:
         - name: {{ .Values.services.fuego.name }}
           port: http
     {{- end }}
+
     {{- if .Values.services.panel.enabled }}
     - match: "Host(`{{ .Values.hostname }}`) && PathPrefix(`{{ .Values.services.panel.path }}`)"
       kind: Rule
@@ -74,6 +76,15 @@ spec:
         - name: {{ .Values.services.panel.name }}
           port: http
     {{- end }}
+
+    {{- if .Values.services.grafana.enabled }}
+    - match: "Host(`{{ .Values.hostname }}`) && PathPrefix(`{{ .Values.services.grafana.path }}`)"
+      kind: Rule
+      services:
+        - name: {{ .Values.services.grafana.name }}
+          port: http
+    {{- end }}
+
     - match: "Host(`{{ .Values.hostname }}`)"
       kind: Rule
       middlewares:

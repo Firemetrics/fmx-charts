@@ -1,0 +1,710 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 10,
+  "links": [],
+  "panels": [
+    {
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "P755FF2861CAC585A"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 6,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "/.*/",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "11.1.0-pre",
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "P755FF2861CAC585A"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  pnf.value || ' ' || pn.family || ', ' || png.value \"Name\",\n  lower(p.\"birthDate\") || ' (' || DATE_PART('YEAR', AGE(NOW(), lower(p.\"birthDate\"))) || 'Y)' \"Birthdate\",\n  fmx_code(p.gender) \"Gender\",\n  pmc.display \"Marital Status\",\n    CASE\n    WHEN p.\"deceasedDateTime\" IS NOT NULL THEN '✝ ' || lower(p.\"deceasedDateTime\")\n    ELSE '-'\n  END AS deceased\nFROM\n  patient p\n  JOIN patient_name pn on p._id = pn._resource\n  JOIN patient_name_given png on p._id = png._resource\n  JOIN patient_name_prefix pnf on p._id = pnf._resource\n  JOIN \"patient_maritalStatus_coding\" pmc ON (pmc._resource = p._id)\nWHERE\n  p.id = '${pat}'",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Patient Details",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "P755FF2861CAC585A"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-BlPu"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 14,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "h"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 24,
+        "x": 0,
+        "y": 5
+      },
+      "id": 7,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "P755FF2861CAC585A"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  e.id,\n  lower(ep.start) \"start\",\n  lower(ep.end) \"end\",\n  EXTRACT(EPOCH FROM (lower(ep.end) - lower(ep.start))) / 60 / 60 \"Stay Duration\"\nFROM\n  encounter e\n  JOIN encounter_period ep on e._id = ep._resource\n  JOIN encounter_subject es on e._id = es._resource\n  JOIN patient p on (es._reference_id = p._id AND es._reference_type = 'Patient')\nWHERE p.id = '${pat}'",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Encounter Overview",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "P755FF2861CAC585A"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 12
+      },
+      "id": 5,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true
+      },
+      "pluginVersion": "11.1.0-pre",
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "P755FF2861CAC585A"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  lower(i0.\"occurrenceDateTime\") \"Date\",\n  fmx_code (i0.status) \"Status\" ,\n  fmx_code (ivc0.code) \"Code\",\n  iv0.text \"Description\"\nFROM\n  immunization i0\n  JOIN \"immunization_vaccineCode\" iv0 ON (iv0._resource = i0._id)\n  JOIN \"immunization_vaccineCode_coding\" ivc0 ON (ivc0._resource = i0._id)\n  JOIN immunization_patient ip0 ON (ip0._resource = i0._id)\n  JOIN patient p1 ON (\n    p1._id = ip0._reference_id\n    and ip0._reference_type = 'Patient'\n  )\nWHERE\n  p1.id = '${pat}';",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Immunization",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "P755FF2861CAC585A"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 12,
+        "x": 12,
+        "y": 12
+      },
+      "id": 1,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true
+      },
+      "pluginVersion": "11.1.0-pre",
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "P755FF2861CAC585A"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  lower(o0.\"effectiveDateTime\") \"Date\",\n  fmx_code (o0.status) \"Status\",\n  fmx_code (ovc0.code) \"Code\",\n  ovc0.display \"Display\"\nFROM\n  observation o0\n  JOIN \"observation_valueCodeableConcept\" ov0 ON (ov0._resource = o0._id)\n  JOIN \"observation_valueCodeableConcept_coding\" ovc0 ON (ovc0._resource = o0._id)\n  JOIN observation_subject os0 ON (os0._resource = o0._id)\n  JOIN patient p1 ON (\n    p1._id = os0._reference_id\n    AND os0._reference_type = 'Patient'\n  )\nWHERE\n  p1.id = '${pat}'\nORDER BY\n  \"Date\" DESC;",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Side Information",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "P755FF2861CAC585A"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 18
+      },
+      "id": 2,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true
+      },
+      "pluginVersion": "11.1.0-pre",
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "P755FF2861CAC585A"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  lower(o0.\"effectiveDateTime\") \"Date\",\n  occ.display \"Measurement\",\n  round(ov0.value, 2) || fmx_code (ov0.code) \"Value\",\n  ov0.unit \"Unit\"\nFROM\n  observation o0\n  JOIN \"observation_valueQuantity\" ov0 ON (ov0._resource = o0._id)\n  JOIN observation_subject os0 ON (os0._resource = o0._id)\n  JOIN observation_code_coding occ on (occ._resource = o0._id)\n  LEFT JOIN \"observation_referenceRange_low\" orl on (orl._resource = o0._id)\n  JOIN patient p1 ON (\n    p1._id = os0._reference_id\n    and os0._reference_type = 'Patient'\n  )\nWHERE\n  p1.id = '${pat}'\nORDER BY\n  \"Date\" DESC;",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Laboratory Values",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "P755FF2861CAC585A"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 12,
+        "x": 0,
+        "y": 20
+      },
+      "id": 3,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true
+      },
+      "pluginVersion": "11.1.0-pre",
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "P755FF2861CAC585A"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  lower(ppp.start) \"Start\",\n  lower(ppp.end) \"End\",\n  fmx_code (p0.status) \"Status\",\n  fmx_code (pcc0.code) \"Code\",\n  pcc0.display \"Description\"\nFROM\n  procedure p0\n  JOIN procedure_code pc0 ON (pc0._resource = p0._id)\n  JOIN procedure_code_coding pcc0 ON (pcc0._resource = p0._id)\n  JOIN procedure_subject ps0 ON (ps0._resource = p0._id)\n  JOIN \"procedure_performedPeriod\" ppp on p0._id = ppp._resource\n  JOIN patient p1 ON (\n    p1._id = ps0._reference_id\n    and ps0._reference_type = 'Patient'\n  )\nWHERE\n  p1.id = '${pat}'",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Procedures",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "P755FF2861CAC585A"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Description"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 525
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 24,
+        "x": 0,
+        "y": 26
+      },
+      "id": 4,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": []
+      },
+      "pluginVersion": "11.1.0-pre",
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "P755FF2861CAC585A"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  lower(m0.\"authoredOn\") \"Created\",\n  mmc0.display \"Description\",\n  fmx_code (mmc0.code) \"Code\",\n  fmx_code (m0.status) \"Statsu\"\nFROM\n  medicationrequest m0\n  JOIN \"medicationrequest_medicationCodeableConcept\" mm0 ON (mm0._resource = m0._id)\n  JOIN \"medicationrequest_medicationCodeableConcept_coding\" mmc0 ON (mmc0._resource = m0._id)\n  JOIN medicationrequest_subject ms0 ON (ms0._resource = m0._id)\n  JOIN patient p1 ON (\n    p1._id = ms0._reference_id\n    and ms0._reference_type = 'Patient'\n  )\nWHERE \n  p1.id = '${pat}';",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Medication Requests",
+      "type": "table"
+    }
+  ],
+  "refresh": "",
+  "schemaVersion": 39,
+  "tags": [
+    "firemetrics-dev"
+  ],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "selected": false,
+          "text": "d5ca0272-6e18-42e7-8a46-b95cdba227c7",
+          "value": "d5ca0272-6e18-42e7-8a46-b95cdba227c7"
+        },
+        "datasource": {
+          "type": "grafana-postgresql-datasource",
+          "uid": "P755FF2861CAC585A"
+        },
+        "definition": "SELECT p.id FROM patient p JOIN patient_name pn on p._id = pn._resource",
+        "hide": 0,
+        "includeAll": false,
+        "multi": false,
+        "name": "pat",
+        "options": [],
+        "query": "SELECT p.id FROM patient p JOIN patient_name pn on p._id = pn._resource",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timeRangeUpdatedDuringEditOrView": false,
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "Patient-Dashboard",
+  "uid": "adnl6gtytdr7kc",
+  "version": 19,
+  "weekStart": ""
+}

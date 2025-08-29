@@ -1,0 +1,83 @@
+{{- if .Values.components.grafana.enabled -}}
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: {{ include "grafanaAppName" . }}
+  namespace: {{ .Values.argoCdNamespace | quote }}
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+
+  source:
+    repoURL: {{ .Values.chartRepoUrl | quote }}
+    {{ include "chartSelection" (dict "context" . "chart" "fmx-grafana") }}
+    targetRevision: {{ include "chartRevision" . | quote }}
+    helm:
+      releaseName: {{ include "grafanaAppName" . }}
+      values: |
+      {{- if .Values.components.grafana.valuesOverride }}
+        {{- .Values.components.grafana.valuesOverride | toYaml | nindent 8 }}
+      {{- else }}
+        hostname: {{ .Values.hostname | quote }}
+        publicPath: {{ .Values.components.grafana.publicPath | quote }}
+        image: {{ .Values.components.grafana.image | quote }}
+
+        tls:
+          enabled: {{ .Values.tls.enabled }}
+
+        {{- with .Values.components.grafana.env }}
+        env: {{- . | toYaml | nindent 10 }}
+        {{- end }}
+
+        {{- with .Values.components.grafana.volumes }}
+        volumes: {{- . | toYaml | nindent 10 }}
+        {{- end }}
+
+        {{- with .Values.components.grafana.volumeMounts }}
+        volumeMounts: {{- . | toYaml | nindent 10 }}
+        {{- end }}
+
+        {{- with .Values.components.grafana.securityContext }}
+        securityContext: {{- . | toYaml | nindent 10 }}
+        {{- end }}
+
+        database:
+          dbname: {{ .Values.database.dbname | quote }}
+          port: {{ .Values.database.port }}
+          hostname: {{ include "databaseHostname" . | quote }}
+          userSecret: {{- .Values.components.grafana.databaseUserSecret | toYaml | nindent 12 }}
+
+        bootstrapDatabase:
+          enabled: true
+          image: {{ .Values.spiloImage | quote }}
+          databaseUserSecret:
+            name: {{ include "databaseSuperUserSecretName" . | quote }}
+
+        {{- if .Values.components.keycloak.enabled }}
+        bootstrapKeycloak:
+          enabled: true
+          url: {{ include "keycloakPublicUrl" . | quote }}
+          realm: {{ .Values.oidc.keycloakRealm | quote }}
+          adminUserSecret: {{- .Values.components.keycloak.adminSecret | toYaml | nindent 12 }}
+        {{- end }}
+
+        adminSecret: {{- .Values.components.grafana.adminSecret | toYaml | nindent 10 }}
+
+        oidc:
+          enabled: {{ .Values.oidc.enabled }}
+          authUrl: {{ include "oidcAuthUrl" . | quote }}
+          tokenUrl: {{ include "oidcTokenUrl" . | quote }}
+          userinfoUrl: {{ include "oidcUserinfoUrl" . | quote }}
+          signoutUrl: {{ include "oidcSignoutUrl" . | quote }}
+          clientSecret: {{ .Values.components.grafana.oidcClientSecret | toYaml | nindent 12 }}
+      {{- end }}
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: {{ .Release.Namespace }}
+
+  {{- with .Values.syncPolicy }}
+  syncPolicy: {{- . | toYaml | nindent 4 }}
+  {{- end -}}
+{{- end -}}

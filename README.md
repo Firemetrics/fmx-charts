@@ -25,7 +25,7 @@ The following secrets are required for the `fmx-instance` chart to function prop
 
 ```bash
 kubectl -n my-namespace create secret generic keycloak-admin \
-  --from-literal username=user \
+  --from-literal username=admin \
   --from-literal password="$(openssl rand -base64 24)"
 
 kubectl -n my-namespace create secret generic keycloak-db-user \
@@ -34,6 +34,18 @@ kubectl -n my-namespace create secret generic keycloak-db-user \
 
 kubectl -n my-namespace create secret generic fuego-oidc-client \
   --from-literal id=fuego \
+  --from-literal secret="$(openssl rand -base64 24)"
+
+kubectl -n my-namespace create secret generic grafana-db-user \
+  --from-literal username=grafana \
+  --from-literal password="$(openssl rand -base64 24)"
+
+kubectl -n my-namespace create secret generic grafana-admin \
+  --from-literal username=admin \
+  --from-literal password="$(openssl rand -base64 24)"
+
+kubectl -n my-namespace create secret generic grafana-oidc-client \
+  --from-literal id=grafana \
   --from-literal secret="$(openssl rand -base64 24)"
 ```
 

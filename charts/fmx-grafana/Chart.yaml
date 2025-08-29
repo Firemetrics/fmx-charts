@@ -1,0 +1,4 @@
+apiVersion: v2
+name: fmx-grafana
+description:
+version: 1.0.0

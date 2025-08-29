@@ -18,6 +18,10 @@
   {{ include "appName" . }}-panel
 {{- end -}}
 
+{{- define "grafanaAppName" -}}
+  {{ include "appName" . }}-grafana
+{{- end -}}
+
 {{- define "keycloakAppName" -}}
   {{ include "appName" . }}-keycloak
 {{- end -}}
@@ -74,10 +78,6 @@
   {{ include "fuegoUrl" . }}{{ include "fhirPath" . }}
 {{- end -}}
 
-{{- define "keycloakPublicUrl" -}}
-  {{ include "baseUrl" . }}{{ .Values.components.keycloak.publicPath }}
-{{- end -}}
-
 {{- define "databaseSuperUserName" -}}
   postgres
 {{- end -}}
@@ -90,11 +90,55 @@
   {{- end -}}
 {{- end -}}
 
+{{- define "keycloakPublicUrl" -}}
+  {{ include "baseUrl" . }}{{ .Values.components.keycloak.publicPath }}
+{{- end -}}
+
+{{- define "keycloakRealmUrl" }}
+  {{- if .Values.oidc.discoveryUrlOverride -}}
+    {{ .Values.oidc.discoveryUrlOverride }}
+  {{- else -}}
+    {{ include "keycloakPublicUrl" . }}/realms/{{ .Values.oidc.keycloakRealm }}
+  {{- end -}}
+{{- end -}}
+
 {{- define "oidcDiscoveryUrl" }}
   {{- if .Values.oidc.discoveryUrlOverride -}}
     {{ .Values.oidc.discoveryUrlOverride }}
   {{- else -}}
-    {{ include "keycloakPublicUrl" . }}/realms/{{ .Values.oidc.keycloakRealm }}/.well-known/openid-configuration
+    {{ include "keycloakRealmUrl" . }}/.well-known/openid-configuration
+  {{- end -}}
+{{- end -}}
+
+{{- define "oidcAuthUrl" }}
+  {{- if .Values.oidc.authUrlOverride -}}
+    {{ .Values.oidc.authUrlOverride }}
+  {{- else -}}
+    {{ include "keycloakRealmUrl" . }}/protocol/openid-connect/auth
+  {{- end -}}
+{{- end -}}
+
+{{- define "oidcTokenUrl" }}
+  {{- if .Values.oidc.tokenUrlOverride -}}
+    {{ .Values.oidc.tokenUrlOverride }}
+  {{- else -}}
+    {{ include "keycloakRealmUrl" . }}/protocol/openid-connect/token
+  {{- end -}}
+{{- end -}}
+
+{{- define "oidcUserinfoUrl" }}
+  {{- if .Values.oidc.userinfoUrlOverride -}}
+    {{ .Values.oidc.userinfoUrlOverride }}
+  {{- else -}}
+    {{ include "keycloakRealmUrl" . }}/protocol/openid-connect/userinfo
+  {{- end -}}
+{{- end -}}
+
+{{- define "oidcSignoutUrl" }}
+  {{- if .Values.oidc.signoutUrlOverride -}}
+    {{ .Values.oidc.signoutUrlOverride }}
+  {{- else -}}
+    {{ include "keycloakRealmUrl" . }}/protocol/openid-connect/signout
   {{- end -}}
 {{- end -}}
 

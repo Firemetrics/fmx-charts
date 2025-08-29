@@ -1,0 +1,64 @@
+hostname: example.com
+publicPath: ""
+image: ghcr.io/firemetrics/firemetrics-dashboards:latest
+imagePullSecret: ""
+initContainers: []
+env: []
+volumes: []
+volumeMounts: []
+securityContext: {}
+
+tls:
+  enabled: false
+
+database:
+  hostname: postgres
+  port: 5432
+  dbname: firemetrics
+  userSecret:
+    name: grafana-db-user
+    usernameKey: username
+    passwordKey: password
+
+bootstrapDatabase:
+  enabled: false
+  image: ghcr.io/zalando/spilo-17:4.0-p2
+  databaseUserSecret:
+    name: grafana-bootstrap-db-user
+    usernameKey: username
+    passwordKey: password
+
+bootstrapKeycloak:
+  enabled: false
+  image: curlimages/curl:8.15.0
+  url: "https://example.com/auth"
+  realm: "firemetrics"
+  adminUserSecret:
+    name: keycloak-admin
+    usernameKey: username
+    passwordKey: password
+
+adminSecret:
+  name: "grafana-admin"
+  usernameKey: username
+  passwordKey: password
+
+oidc:
+  enabled: false
+  authUrl: "http://example.com/openid-connect/auth"
+  tokenUrl: "http://example.com/openid-connect/token"
+  apiUrl: "http://example.com/openid-connect/userinfo"
+  signoutUrl: "http://example.com/openid-connect/logout"
+  clientSecret:
+    name: grafana-oidc-client
+    idKey: id
+    secretKey: secret
+
+service:
+  enabled: true
+  nameOverride: ""
+
+caCertsConfigMap:
+  enabled: false
+  name: "ca-certs"
+  fileName: "ca-certificates.crt"

@@ -46,8 +46,16 @@ syncPolicy:
 oidc:
   # -- Enable OIDC authentication for the Firemetrics instance.
   enabled: true
-  # -- The OIDC client ID for the Firemetrics instance. Defaults to Keycloak instance created by this chart.
+  # -- The OIDC discovery URL. Defaults to the Keycloak instance created by this chart.
   discoveryUrlOverride: ""
+  # -- The OIDC authentication URL. Defaults to the Keycloak instance created by this chart.
+  authUrlOverride: ""
+  # -- The OIDC token URL. Defaults to the Keycloak instance created by this chart.
+  tokenUrlOverride: ""
+  # -- The OIDC user info URL. Defaults to the Keycloak instance created by this chart.
+  userinfoUrlOverride: ""
+  # -- The OIDC sign-out URL. Defaults to the Keycloak instance created by this chart.
+  signoutUrlOverride: ""
   # -- The Keycloak realm used for OIDC authentication. Only relevant if Keycloak is enabled.
   keycloakRealm: firemetrics
 
@@ -192,6 +200,45 @@ components:
       # -- The key in the secret containing the OpenAI API key for the Panel.
       key: api-key
     # -- Override the values for the Panel Helm chart.
+    valuesOverride: {}
+
+  grafana:
+    # -- Enable the Grafana component.
+    enabled: true
+    # -- The public path for Grafana.
+    publicPath: /grafana
+    # -- The image used for Grafana pods.
+    image: ghcr.io/firemetrics/firemetrics-dashboards:latest
+    # -- Extra environment variables for Grafana pods.
+    env: []
+    # -- Extra volumes for Grafana pods.
+    volumes: []
+    # -- Extra volume mounts for Grafana pods.
+    volumeMounts: []
+    # -- The security context for Grafana pods.
+    securityContext: {}
+    databaseUserSecret:
+      # -- The secret containing Grafana database user credentials.
+      name: grafana-db-user
+      # -- The key in the secret containing the Grafana database username.
+      usernameKey: username
+      # -- The key in the secret containing the Grafana database password.
+      passwordKey: password
+    adminSecret:
+      # -- The secret containing Grafana admin credentials.
+      name: grafana-admin
+      # -- The key in the secret containing the Grafana admin username.
+      usernameKey: username
+      # -- The key in the secret containing the Grafana admin password.
+      passwordKey: password
+    oidcClientSecret:
+      # -- The secret containing the OIDC client credentials for Grafana.
+      name: grafana-oidc-client
+      # -- The key in the secret containing the OIDC client ID.
+      idKey: id
+      # -- The key in the secret containing the OIDC client secret.
+      secretKey: secret
+    # -- Override the values for the Grafana Helm chart.
     valuesOverride: {}
 
   keycloak:

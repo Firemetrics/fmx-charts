@@ -9,10 +9,17 @@ services:
     enabled: true
     path: /panel
     name: fmx-panel
+
   fuego:
     enabled: true
     path: /fhir
     name: fuego
+
+  grafana:
+    enabled: true
+    path: /grafana
+    name: grafana
+
   keycloak:
     enabled: false
     path: /auth

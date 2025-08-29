@@ -1,0 +1,294 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "appName" . }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/part-of: {{ include "appName" . }}
+      app.kubernetes.io/component: backend
+      app.kubernetes.io/name: {{ include "podLabel" . }}
+  template:
+    metadata:
+      name: {{ include "appName" . }}
+      labels:
+        app.kubernetes.io/part-of: {{ include "appName" . }}
+        app.kubernetes.io/component: backend
+        app.kubernetes.io/name: {{ include "podLabel" . }}
+    spec:
+      {{- with .Values.serviceAccountName }}
+      serviceAccountName: {{ . }}
+      {{- end }}
+
+      {{- with .Values.imagePullSecret }}
+      imagePullSecrets:
+        - name: {{ . }}
+      {{- end }}
+
+      {{- $caCertsVolumeName := "ca-certs" }}
+      {{- $caCertsPath := "/etc/ssl/certs/ca-certificates.crt" }}
+
+      {{- $dashboardsDataVolume := "dashboards-data" }}
+      {{- $dashboardsVolume := "dashboards" }}
+      {{- $datasourcesVolume := "datasources" }}
+
+      volumes:
+        - name: {{ $dashboardsDataVolume }}
+          configMap:
+            name: {{ include "dashboardsDataConfigMapName" . | quote }}
+        - name: {{ $dashboardsVolume }}
+          configMap:
+            name: {{ include "dashboardsConfigMapName" . | quote }}
+        - name: {{ $datasourcesVolume }}
+          configMap:
+            name: {{ include "datasourcesConfigMapName" . | quote }}
+
+        {{- if .Values.caCertsConfigMap.enabled }}
+        - name: {{ $caCertsVolumeName }}
+          configMap:
+            defaultMode: 0644
+            name: {{ .Values.caCertsConfigMap.name | quote }}
+        {{- end }}
+
+        {{- with .Values.volumes }}
+          {{- . | toYaml | nindent 8 }}
+        {{- end }}
+
+      {{- if or .Values.bootstrapDatabase.enabled .Values.bootstrapKeycloak.enabled .Values.initContainers }}
+      initContainers:
+
+        {{- if .Values.bootstrapDatabase.enabled }}
+        - name: bootstrap-db-user
+          image: {{ .Values.bootstrapDatabase.image | quote }}
+          env:
+            - name: PGHOST
+              value: {{ .Values.database.hostname | quote }}
+            - name: PGPORT
+              value: {{ .Values.database.port | quote }}
+            - name: PGUSER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.bootstrapDatabase.databaseUserSecret.name | quote }}
+                  key: {{ .Values.bootstrapDatabase.databaseUserSecret.usernameKey | quote }}
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.bootstrapDatabase.databaseUserSecret.name | quote }}
+                  key: {{ .Values.bootstrapDatabase.databaseUserSecret.passwordKey | quote }}
+            - name: BOOTSTRAP_DB_NAME
+              value: {{ .Values.database.dbname | quote }}
+            - name: BOOTSTRAP_DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.database.userSecret.name | quote }}
+                  key: {{ .Values.database.userSecret.usernameKey | quote }}
+            - name: BOOTSTRAP_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.database.userSecret.name | quote }}
+                  key: {{ .Values.database.userSecret.passwordKey | quote }}
+          command:
+            - /bin/bash
+            - -c
+            - |
+              set -euo pipefail
+
+              while ! pg_isready &>/dev/null; do
+                echo "Waiting for Postgres to be ready..."
+                sleep 1
+              done
+
+              # Create role if missing
+              if psql -tAc "SELECT 1 FROM pg_roles WHERE rolname = '$BOOTSTRAP_DB_USERNAME'" | grep -q 1; then
+                echo "Role $BOOTSTRAP_DB_USERNAME already exists."
+              else
+                echo "Creating role $BOOTSTRAP_DB_USERNAME..."
+                psql -c "CREATE ROLE $BOOTSTRAP_DB_USERNAME LOGIN PASSWORD '$BOOTSTRAP_DB_PASSWORD'"
+              fi
+
+              # Grant read-only privileges
+              psql -d "$BOOTSTRAP_DB_NAME" -c "GRANT CONNECT ON DATABASE $BOOTSTRAP_DB_NAME TO $BOOTSTRAP_DB_USERNAME"
+              psql -d "$BOOTSTRAP_DB_NAME" -c "GRANT USAGE ON SCHEMA public TO $BOOTSTRAP_DB_USERNAME"
+              psql -d "$BOOTSTRAP_DB_NAME" -c "GRANT SELECT ON ALL TABLES IN SCHEMA public TO $BOOTSTRAP_DB_USERNAME"
+              psql -d "$BOOTSTRAP_DB_NAME" -c "GRANT SELECT ON ALL SEQUENCES IN SCHEMA public TO $BOOTSTRAP_DB_USERNAME"
+              psql -d "$BOOTSTRAP_DB_NAME" -c "ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON TABLES TO $BOOTSTRAP_DB_USERNAME"
+              psql -d "$BOOTSTRAP_DB_NAME" -c "ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON SEQUENCES TO $BOOTSTRAP_DB_USERNAME"
+        {{- end }}
+
+        {{- if .Values.bootstrapKeycloak.enabled }}
+        - name: bootstrap-kc-oidc-client
+          image: {{ .Values.bootstrapKeycloak.image | quote }}
+
+          {{- if .Values.caCertsConfigMap.enabled }}
+          volumeMounts:
+            - name: {{ $caCertsVolumeName | quote }}
+              mountPath: {{ $caCertsPath | quote }}
+              readOnly: true
+              subPath: {{ .Values.caCertsConfigMap.fileName | quote }}
+          {{- end }}
+
+          env:
+            - name: KEYCLOAK_URL
+              value: {{ .Values.bootstrapKeycloak.url | quote }}
+            - name: KEYCLOAK_REALM
+              value: {{ .Values.bootstrapKeycloak.realm | quote }}
+            - name: KEYCLOAK_ADMIN_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.bootstrapKeycloak.adminUserSecret.name | quote }}
+                  key: {{ .Values.bootstrapKeycloak.adminUserSecret.usernameKey | quote }}
+            - name: KEYCLOAK_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.bootstrapKeycloak.adminUserSecret.name | quote }}
+                  key: {{ .Values.bootstrapKeycloak.adminUserSecret.passwordKey | quote }}
+            - name: CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.oidc.clientSecret.name | quote }}
+                  key: {{ .Values.oidc.clientSecret.idKey | quote }}
+            - name: CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.oidc.clientSecret.name | quote }}
+                  key: {{ .Values.oidc.clientSecret.secretKey | quote }}
+            {{- if .Values.caCertsConfigMap.enabled }}
+            - name: CURL_CA_BUNDLE
+              value: {{ $caCertsPath | quote }}
+            {{- end }}
+          command:
+            - sh
+            - -c
+            - |
+              set -euo pipefail
+
+              echo "Fetching admin token..."
+              TOKEN=$(curl -sS -X POST \
+                -d "client_id=admin-cli" \
+                -d "grant_type=password" \
+                --data-urlencode "username=$KEYCLOAK_ADMIN_USERNAME" \
+                --data-urlencode "password=$KEYCLOAK_ADMIN_PASSWORD" \
+                "$KEYCLOAK_URL/realms/master/protocol/openid-connect/token" \
+                | sed -n 's/.*"access_token":"\([^"]*\)".*/\1/p')
+
+              if [ -z "$TOKEN" ] || [ "$TOKEN" = "null" ]; then
+                echo "Failed to obtain admin token"
+                exit 1
+              fi
+
+              STATUS=$(curl -sS -o /dev/null -w "%{http_code}" \
+                -X POST "$KEYCLOAK_URL/admin/realms/$KEYCLOAK_REALM/clients" \
+                -H "Authorization: Bearer $TOKEN" \
+                -H "Content-Type: application/json" \
+                -d '{
+                  "clientId": "'$CLIENT_ID'",
+                  "secret": "'$CLIENT_SECRET'",
+                  "enabled": true,
+                  "publicClient": false,
+                  "serviceAccountsEnabled": true,
+                  "directAccessGrantsEnabled": false,
+                  "standardFlowEnabled": false,
+                  "authorizationServicesEnabled": false
+                }')
+
+              if [ "$STATUS" -eq 201 ]; then
+                echo "Client created successfully."
+              elif [ "$STATUS" -eq 409 ]; then
+                echo "Client already exists, continuing..."
+              else
+                echo "Failed to create client (HTTP $STATUS)"
+                exit 1
+              fi
+        {{- end }}
+
+        {{- with .Values.initContainers }}
+          {{- . | toYaml | nindent 8 }}
+        {{- end }}
+      {{- end }}
+
+      containers:
+        - name: main
+          image: {{ .Values.image | quote }}
+
+          ports:
+            - name: http
+              containerPort: {{ include "podHttpPort" . }}
+              protocol: TCP
+
+          {{- with .Values.securityContext }}
+          securityContext: {{- . | toYaml | nindent 12 }}
+          {{- end }}
+
+          volumeMounts:
+            - name: {{ $dashboardsDataVolume }}
+              mountPath: {{ include "dashboardsDataMountPath" . | quote }}
+            - name: {{ $dashboardsVolume }}
+              mountPath: {{ include "dashboardsMountPath" . | quote }}
+            - name: {{ $datasourcesVolume }}
+              mountPath: {{ include "datasourcesMountPath" . | quote }}
+            {{- with .Values.volumeMounts }}
+              {{- . | toYaml | nindent 12 }}
+            {{- end }}
+
+          env:
+            - name: {{ include "dbHostEnvVar" . }}
+              value: {{ .Values.database.hostname | quote }}
+            - name: {{ include "dbPortEnvVar" . }}
+              value: {{ .Values.database.port | quote }}
+            - name: {{ include "dbNameEnvVar" . }}
+              value: {{ .Values.database.dbname | quote }}
+            - name: {{ include "dbUsernameEnvVar" . }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.database.userSecret.name | quote }}
+                  key: {{ .Values.database.userSecret.usernameKey | quote }}
+            - name: {{ include "dbPasswordEnvVar" . }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.database.userSecret.name | quote }}
+                  key: {{ .Values.database.userSecret.passwordKey | quote }}
+
+            {{- if .Values.publicPath }}
+            - name: GF_SERVER_ROOT_URL
+              value: {{ include "baseUrl" . | quote }}
+            - name: GF_SERVER_SERVE_FROM_SUB_PATH
+              value: "true"
+            {{- end }}
+
+            {{- if .Values.oidc.enabled }}
+            - name: GF_AUTH_GENERIC_OAUTH_ENABLED
+              value: "true"
+            - name: GF_AUTH_GENERIC_OAUTH_NAME
+              value: "OpenID Connect"
+            - name: GF_AUTH_GENERIC_OAUTH_SCOPES
+              value: "openid profile email groups"
+            - name: GF_AUTH_GENERIC_OAUTH_LOGIN_ATTRIBUTE_PATH
+              value: "preferred_username"
+            - name: GF_AUTH_GENERIC_OAUTH_EMAIL_ATTRIBUTE_PATH
+              value: "email"
+            - name: GF_AUTH_GENERIC_OAUTH_NAME_ATTRIBUTE_PATH
+              value: "name"
+            - name: GF_AUTH_GENERIC_OAUTH_AUTH_URL
+              value: {{ .Values.oidc.authUrl | quote }}
+            - name: GF_AUTH_GENERIC_OAUTH_TOKEN_URL
+              value: {{ .Values.oidc.tokenUrl | quote }}
+            - name: GF_AUTH_GENERIC_OAUTH_API_URL
+              value: {{ .Values.oidc.userinfoUrl | quote }}
+            - name: GF_AUTH_SIGNOUT_REDIRECT_URL
+              value: {{ printf "%s?post_logout_redirect_uri=%s" .Values.oidc.signoutUrl (include "baseUrl" . | urlquery) | quote }}
+            - name: GF_AUTH_GENERIC_OAUTH_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.oidc.clientSecret.name | quote }}
+                  key: {{ .Values.oidc.clientSecret.idKey | quote }}
+            - name: GF_AUTH_GENERIC_OAUTH_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.oidc.clientSecret.name | quote }}
+                  key: {{ .Values.oidc.clientSecret.secretKey | quote }}
+            {{- end }}
+
+            {{- with .Values.env }}
+              {{- . | toYaml | nindent 12 }}
+            {{- end }}
