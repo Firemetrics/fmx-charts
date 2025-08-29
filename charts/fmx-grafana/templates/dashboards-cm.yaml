@@ -13,6 +13,6 @@ data:
         disableDeletion: true
         allowUiUpdates: false
         options:
-          path: {{ include "dashboardsConfigMapName" . }}
+          path: {{ include "dashboardsDataMountPath" . }}
           foldersFromFilesStructure: true
 
