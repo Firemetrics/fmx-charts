@@ -153,6 +153,8 @@ spec:
                 secretKeyRef:
                   name: {{ .Values.oidc.clientSecret.name | quote }}
                   key: {{ .Values.oidc.clientSecret.secretKey | quote }}
+            - name: REDIRECT_URL_PATTERN
+              value: {{ printf "%s*" (include "baseUrl" .) | quote }}
             {{- if .Values.caCertsConfigMap.enabled }}
             - name: CURL_CA_BUNDLE
               value: {{ $caCertsPath | quote }}
@@ -188,8 +190,12 @@ spec:
                   "publicClient": false,
                   "serviceAccountsEnabled": true,
                   "directAccessGrantsEnabled": false,
-                  "standardFlowEnabled": false,
-                  "authorizationServicesEnabled": false
+                  "authorizationServicesEnabled": false,
+                  "standardFlowEnabled": true,
+                  "redirectUris": ["'$REDIRECT_URL_PATTERN'"],
+                  "attributes": {
+                    "post.logout.redirect.uris": "'$REDIRECT_URL_PATTERN'"
+                  }
                 }')
 
               if [ "$STATUS" -eq 201 ]; then
@@ -259,10 +265,14 @@ spec:
             {{- if .Values.oidc.enabled }}
             - name: GF_AUTH_GENERIC_OAUTH_ENABLED
               value: "true"
+            - name: GF_AUTH_DISABLE_LOGIN_FORM
+              value: "true"
+            - name: GF_AUTH_GENERIC_OAUTH_AUTO_LOGIN
+              value: "true"
             - name: GF_AUTH_GENERIC_OAUTH_NAME
               value: "OpenID Connect"
             - name: GF_AUTH_GENERIC_OAUTH_SCOPES
-              value: "openid profile email groups"
+              value: "openid profile email"
             - name: GF_AUTH_GENERIC_OAUTH_LOGIN_ATTRIBUTE_PATH
               value: "preferred_username"
             - name: GF_AUTH_GENERIC_OAUTH_EMAIL_ATTRIBUTE_PATH
