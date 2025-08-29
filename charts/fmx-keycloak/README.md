@@ -9,7 +9,6 @@
 | adminSecret.name | string | `"keycloak-admin"` |  |
 | adminSecret.passwordKey | string | `"password"` |  |
 | adminSecret.usernameKey | string | `"username"` |  |
-| argoCdNamespace | string | `"argocd"` |  |
 | bootstrap.databaseUserSecret.name | string | `"keycloak-bootstrap-db-user"` |  |
 | bootstrap.databaseUserSecret.passwordKey | string | `"password"` |  |
 | bootstrap.databaseUserSecret.usernameKey | string | `"username"` |  |

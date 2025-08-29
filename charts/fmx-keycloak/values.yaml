@@ -8,8 +8,6 @@ volumes: []
 volumeMounts: []
 securityContext: {}
 
-argoCdNamespace: argocd
-
 database:
   hostname: postgres
   port: 5432
