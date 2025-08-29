@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.0] - 2025-08-29
+
+### 🚀 Features
+
+- Add persistence to Grafana
+
+### 🐛 Bug Fixes
+
+- Fix initial Keycloak OIDC username claim
+- Fix Grafana data volume name
 ## [1.1.1] - 2025-08-29
 
 ### 🐛 Bug Fixes
