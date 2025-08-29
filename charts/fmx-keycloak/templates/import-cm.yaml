@@ -117,6 +117,18 @@ data:
                 "claim.name": "username",
                 "jsonType.label": "String"
               }
+            },
+            {
+              "name": "full name",
+              "protocol": "openid-connect",
+              "protocolMapper": "oidc-full-name-mapper",
+              "consentRequired": false,
+              "config": {
+                "userinfo.token.claim": "true",
+                "introspection.token.claim": "true",
+                "id.token.claim": "true",
+                "access.token.claim": "true"
+              }
             }
           ]
         },
