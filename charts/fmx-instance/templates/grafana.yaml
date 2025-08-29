@@ -21,7 +21,9 @@ spec:
       {{- else }}
         hostname: {{ .Values.hostname | quote }}
         publicPath: {{ .Values.components.grafana.publicPath | quote }}
+
         image: {{ .Values.components.grafana.image | quote }}
+        imagePullSecret: {{ .Values.imagePullSecret | quote }}
 
         tls:
           enabled: {{ .Values.tls.enabled }}

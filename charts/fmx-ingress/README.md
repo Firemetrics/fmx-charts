@@ -10,6 +10,9 @@
 | services.fuego.enabled | bool | `true` |  |
 | services.fuego.name | string | `"fuego"` |  |
 | services.fuego.path | string | `"/fhir"` |  |
+| services.grafana.enabled | bool | `true` |  |
+| services.grafana.name | string | `"grafana"` |  |
+| services.grafana.path | string | `"/grafana"` |  |
 | services.keycloak.enabled | bool | `false` |  |
 | services.keycloak.name | string | `"keycloak"` |  |
 | services.keycloak.path | string | `"/auth"` |  |

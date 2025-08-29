@@ -23,6 +23,7 @@ spec:
         publicPath: {{ .Values.components.keycloak.publicPath | quote }}
 
         image: {{ .Values.components.keycloak.image | quote }}
+        imagePullSecret: {{ .Values.imagePullSecret | quote }}
 
         {{- with .Values.components.keycloak.env }}
         env: {{- . | toYaml | nindent 10 }}

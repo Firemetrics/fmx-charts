@@ -35,6 +35,23 @@
 | components.fuego.valuesOverride | object | `{}` | Override the values for the Fuego Helm chart. |
 | components.fuego.volumeMounts | list | `[]` | Extra volume mounts for the Fuego pods. |
 | components.fuego.volumes | list | `[]` | Extra volumes for the Fuego pods. |
+| components.grafana.adminSecret.name | string | `"grafana-admin"` | The secret containing Grafana admin credentials. |
+| components.grafana.adminSecret.passwordKey | string | `"password"` | The key in the secret containing the Grafana admin password. |
+| components.grafana.adminSecret.usernameKey | string | `"username"` | The key in the secret containing the Grafana admin username. |
+| components.grafana.databaseUserSecret.name | string | `"grafana-db-user"` | The secret containing Grafana database user credentials. |
+| components.grafana.databaseUserSecret.passwordKey | string | `"password"` | The key in the secret containing the Grafana database password. |
+| components.grafana.databaseUserSecret.usernameKey | string | `"username"` | The key in the secret containing the Grafana database username. |
+| components.grafana.enabled | bool | `true` | Enable the Grafana component. |
+| components.grafana.env | list | `[]` | Extra environment variables for Grafana pods. |
+| components.grafana.image | string | `"ghcr.io/firemetrics/firemetrics-dashboards:latest"` | The image used for Grafana pods. |
+| components.grafana.oidcClientSecret.idKey | string | `"id"` | The key in the secret containing the OIDC client ID. |
+| components.grafana.oidcClientSecret.name | string | `"grafana-oidc-client"` | The secret containing the OIDC client credentials for Grafana. |
+| components.grafana.oidcClientSecret.secretKey | string | `"secret"` | The key in the secret containing the OIDC client secret. |
+| components.grafana.publicPath | string | `"/grafana"` | The public path for Grafana. |
+| components.grafana.securityContext | object | `{}` | The security context for Grafana pods. |
+| components.grafana.valuesOverride | object | `{}` | Override the values for the Grafana Helm chart. |
+| components.grafana.volumeMounts | list | `[]` | Extra volume mounts for Grafana pods. |
+| components.grafana.volumes | list | `[]` | Extra volumes for Grafana pods. |
 | components.ingress.enabled | bool | `true` | Enable the ingress component. |
 | components.ingress.valuesOverride | object | `{}` | Override the values for the ingress Helm chart. |
 | components.keycloak.adminSecret.name | string | `"keycloak-admin"` | The secret containing the Keycloak admin credentials. |
@@ -91,9 +108,13 @@
 | database.port | int | `5432` | The database port used by the Firemetrics instance. |
 | hostname | string | `"example.com"` | The hostname for the Firemetrics instance. |
 | imagePullSecret | string | `""` | The image pull secret used for the Firemetrics instance. |
-| oidc.discoveryUrlOverride | string | `""` | The OIDC client ID for the Firemetrics instance. Defaults to Keycloak instance created by this chart. |
+| oidc.authUrlOverride | string | `""` | The OIDC authentication URL. Defaults to the Keycloak instance created by this chart. |
+| oidc.discoveryUrlOverride | string | `""` | The OIDC discovery URL. Defaults to the Keycloak instance created by this chart. |
 | oidc.enabled | bool | `true` | Enable OIDC authentication for the Firemetrics instance. |
 | oidc.keycloakRealm | string | `"firemetrics"` | The Keycloak realm used for OIDC authentication. Only relevant if Keycloak is enabled. |
+| oidc.signoutUrlOverride | string | `""` | The OIDC sign-out URL. Defaults to the Keycloak instance created by this chart. |
+| oidc.tokenUrlOverride | string | `""` | The OIDC token URL. Defaults to the Keycloak instance created by this chart. |
+| oidc.userinfoUrlOverride | string | `""` | The OIDC user info URL. Defaults to the Keycloak instance created by this chart. |
 | spiloImage | string | `"ghcr.io/firemetrics/spilo17:4.0-p2-f0457965"` | The image used for the Spilo Postgres cluster pods. |
 | syncPolicy | object | `{"automated":{"prune":true,"selfHeal":true}}` | The sync policy used for all applications created by this chart. |
 | tls.certManager.enabled | bool | `false` | Enable cert-manager integration for automatic TLS certificate management. |
