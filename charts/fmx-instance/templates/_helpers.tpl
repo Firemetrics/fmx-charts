@@ -138,7 +138,7 @@
   {{- if .Values.oidc.signoutUrlOverride -}}
     {{ .Values.oidc.signoutUrlOverride }}
   {{- else -}}
-    {{ include "keycloakRealmUrl" . }}/protocol/openid-connect/signout
+    {{ include "keycloakRealmUrl" . }}/protocol/openid-connect/logout
   {{- end -}}
 {{- end -}}
 
