@@ -38,11 +38,6 @@ bootstrapKeycloak:
     usernameKey: username
     passwordKey: password
 
-adminSecret:
-  name: "grafana-admin"
-  usernameKey: username
-  passwordKey: password
-
 oidc:
   enabled: false
   authUrl: "http://example.com/openid-connect/auth"

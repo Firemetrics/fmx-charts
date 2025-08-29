@@ -6,9 +6,6 @@
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| adminSecret.name | string | `"grafana-admin"` |  |
-| adminSecret.passwordKey | string | `"password"` |  |
-| adminSecret.usernameKey | string | `"username"` |  |
 | bootstrapDatabase.databaseUserSecret.name | string | `"grafana-bootstrap-db-user"` |  |
 | bootstrapDatabase.databaseUserSecret.passwordKey | string | `"password"` |  |
 | bootstrapDatabase.databaseUserSecret.usernameKey | string | `"username"` |  |

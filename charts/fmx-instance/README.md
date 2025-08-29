@@ -35,9 +35,6 @@
 | components.fuego.valuesOverride | object | `{}` | Override the values for the Fuego Helm chart. |
 | components.fuego.volumeMounts | list | `[]` | Extra volume mounts for the Fuego pods. |
 | components.fuego.volumes | list | `[]` | Extra volumes for the Fuego pods. |
-| components.grafana.adminSecret.name | string | `"grafana-admin"` | The secret containing Grafana admin credentials. |
-| components.grafana.adminSecret.passwordKey | string | `"password"` | The key in the secret containing the Grafana admin password. |
-| components.grafana.adminSecret.usernameKey | string | `"username"` | The key in the secret containing the Grafana admin username. |
 | components.grafana.databaseUserSecret.name | string | `"grafana-db-user"` | The secret containing Grafana database user credentials. |
 | components.grafana.databaseUserSecret.passwordKey | string | `"password"` | The key in the secret containing the Grafana database password. |
 | components.grafana.databaseUserSecret.usernameKey | string | `"username"` | The key in the secret containing the Grafana database username. |

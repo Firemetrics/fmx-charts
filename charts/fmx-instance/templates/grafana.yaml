@@ -64,8 +64,6 @@ spec:
           adminUserSecret: {{- .Values.components.keycloak.adminSecret | toYaml | nindent 12 }}
         {{- end }}
 
-        adminSecret: {{- .Values.components.grafana.adminSecret | toYaml | nindent 10 }}
-
         oidc:
           enabled: {{ .Values.oidc.enabled }}
           authUrl: {{ include "oidcAuthUrl" . | quote }}
