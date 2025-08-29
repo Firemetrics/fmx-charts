@@ -9,7 +9,7 @@ data:
       - name: Firemetrics
         type: postgres
         editable: false
-        url: db:${{ include "dbPortEnvVar" . }}
+        url: ${{ include "dbHostEnvVar" . }}:${{ include "dbPortEnvVar" . }}
         database: ${{ include "dbNameEnvVar" . }}
         user: ${{ include "dbUsernameEnvVar" . }}
         secureJsonData:
