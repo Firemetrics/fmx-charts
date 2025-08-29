@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.1] - 2025-08-29
+
+### 🐛 Bug Fixes
+
+- Remove Grafana admin user secret setting
 ## [1.1.0] - 2025-08-29
 
 ### 🚀 Features
