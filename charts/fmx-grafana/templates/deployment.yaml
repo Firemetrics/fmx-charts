@@ -29,7 +29,7 @@ spec:
       {{- $caCertsVolume := "ca-certs" }}
       {{- $caCertsPath := "/etc/ssl/certs/ca-certificates.crt" }}
 
-      {{- $dataVolume := "datasources" }}
+      {{- $dataVolume := "data" }}
 
       {{- $exampleDashboardsVolume := "example-dashboards" }}
 
