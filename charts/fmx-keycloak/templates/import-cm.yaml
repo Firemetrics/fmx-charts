@@ -8,7 +8,7 @@ data:
     {
       "realm": "{{ .Values.importRealm.realmName }}",
       "enabled": true,
-      "defaultDefaultClientScopes": ["basic", "email", "profile"],
+      "defaultDefaultClientScopes": ["basic", "email", "profile", "groups"],
       "clients": [
         {
           "clientId": {{ .Values.panel.clientId | quote }},
@@ -19,6 +19,7 @@ data:
             "basic",
             "email",
             "profile",
+            "groups",
             "attribute-fhir-user",
             "audience-panel",
             "audience-fuego"
