@@ -77,7 +77,7 @@
 | components.panel.enabled | bool | `true` | Enable the Panel component. |
 | components.panel.env | list | `[]` | Extra environment variables for the Panel pods. |
 | components.panel.featureFlags | list | `[]` | The features enabled in the Panel. |
-| components.panel.image | string | `"ghcr.io/firemetrics/fmx-panel:acbc771"` | The image used for the Panel pods. |
+| components.panel.image | string | `"ghcr.io/firemetrics/fmx-panel:f87c1ce"` | The image used for the Panel pods. |
 | components.panel.oidc.audience | string | `""` | The OIDC audience used by the Panel. Defaults to the public URL of the Panel. |
 | components.panel.oidc.clientId | string | `"panel"` | Enable OIDC authentication for the Panel. |
 | components.panel.openaiApiKeySecret.enabled | bool | `false` | Enable the OpenAI API key for the Panel. |

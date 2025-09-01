@@ -41,6 +41,10 @@ spec:
         fhir:
           baseUrl: {{ include "internalFhirBaseUrl" . | quote }}
 
+        {{- if .Values.components.grafana.enabled }}
+        grafanaUrl: {{ printf "%s%s" (include "baseUrl" .) .Values.components.grafana.publicPath | quote }}
+        {{- end }}
+
         openaiApiKeySecret: {{- .Values.components.panel.openaiApiKeySecret | toYaml | nindent 10 }}
 
         database:

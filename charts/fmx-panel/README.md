@@ -16,7 +16,8 @@
 | env | list | `[]` |  |
 | featureFlags | list | `[]` | The features enabled in the Panel. |
 | fhir.baseUrl | string | `"https://example.com/fhir"` |  |
-| image | string | `"ghcr.io/firemetrics/fmx-panel:acbc771"` |  |
+| grafanaUrl | string | `""` |  |
+| image | string | `"ghcr.io/firemetrics/fmx-panel:f87c1ce"` |  |
 | imagePullSecret | string | `""` |  |
 | initContainers | list | `[]` |  |
 | oidc.audience | string | `""` | The OIDC audience used by the FMX Panel. Defaults to the Panel's public URL. |

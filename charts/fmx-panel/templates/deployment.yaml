@@ -93,6 +93,11 @@ spec:
             - name: FMXPANEL_FEATURE_FLAGS
               value: {{ .Values.featureFlags | join "," | quote }}
 
+            {{- with .Values.grafanaUrl }}
+            - name: FMXPANEL_GRAFANA_URL
+              value: {{ . | quote }}
+            {{- end }}
+
             {{- if .Values.openaiApiKeySecret.enabled }}
             - name: FMXPANEL_OPENAI_API_KEY
               valueFrom:

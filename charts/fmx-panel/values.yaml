@@ -1,4 +1,4 @@
-image: ghcr.io/firemetrics/fmx-panel:acbc771
+image: ghcr.io/firemetrics/fmx-panel:f87c1ce
 serviceAccountName: ""
 imagePullSecret: ""
 initContainers: []
@@ -28,6 +28,8 @@ oidc:
 
 fhir:
   baseUrl: "https://example.com/fhir"
+
+grafanaUrl: ""
 
 openaiApiKeySecret:
   enabled: false
