@@ -38,8 +38,7 @@ spec:
         publicUrl: {{ include "panelUrl" . | quote }}
         publicPath: {{ .Values.components.panel.publicPath | quote }}
 
-        fhir:
-          baseUrl: {{ include "internalFhirBaseUrl" . | quote }}
+        fhirBaseUrl: {{ include "internalFhirBaseUrl" . | quote }}
 
         {{- if .Values.components.grafana.enabled }}
         grafanaUrl: {{ printf "%s%s" (include "baseUrl" .) .Values.components.grafana.publicPath | quote }}

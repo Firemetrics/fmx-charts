@@ -15,7 +15,7 @@
 | database.userSecret | string | `"panel-user"` |  |
 | env | list | `[]` |  |
 | featureFlags | list | `[]` | The features enabled in the Panel. |
-| fhir.baseUrl | string | `"https://example.com/fhir"` |  |
+| fhirBaseUrl | string | `"https://example.com/fhir"` |  |
 | grafanaUrl | string | `""` |  |
 | image | string | `"ghcr.io/firemetrics/fmx-panel:f87c1ce"` |  |
 | imagePullSecret | string | `""` |  |
