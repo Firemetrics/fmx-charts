@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.4.0] - 2025-09-01
+
+### 🚀 Features
+
+- Upgrade Panel to `f87c1ce`
+
+### 🐛 Bug Fixes
+
+- Clean up Panel configuration
 ## [1.3.1] - 2025-08-29
 
 ### 🐛 Bug Fixes
