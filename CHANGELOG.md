@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.4.1] - 2025-09-03
+
+### 🐛 Bug Fixes
+
+- Upgrade Panel default version
 ## [1.4.0] - 2025-09-01
 
 ### 🚀 Features
