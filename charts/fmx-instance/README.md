@@ -40,7 +40,7 @@
 | components.grafana.databaseUserSecret.usernameKey | string | `"username"` | The key in the secret containing the Grafana database username. |
 | components.grafana.enabled | bool | `true` | Enable the Grafana component. |
 | components.grafana.env | list | `[]` | Extra environment variables for Grafana pods. |
-| components.grafana.image | string | `"ghcr.io/firemetrics/firemetrics-dashboards:latest"` | The image used for Grafana pods. |
+| components.grafana.image | string | `"ghcr.io/firemetrics/firemetrics-dashboards:1cf52b6"` | The image used for Grafana pods. |
 | components.grafana.oidcClientSecret.idKey | string | `"id"` | The key in the secret containing the OIDC client ID. |
 | components.grafana.oidcClientSecret.name | string | `"grafana-oidc-client"` | The secret containing the OIDC client credentials for Grafana. |
 | components.grafana.oidcClientSecret.secretKey | string | `"secret"` | The key in the secret containing the OIDC client secret. |
