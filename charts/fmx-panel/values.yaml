@@ -1,4 +1,4 @@
-image: ghcr.io/firemetrics/fmx-panel:f87c1ce
+image: ghcr.io/firemetrics/fmx-panel:v1.0.1
 serviceAccountName: ""
 imagePullSecret: ""
 initContainers: []
