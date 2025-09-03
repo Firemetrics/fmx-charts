@@ -208,7 +208,7 @@ components:
     # -- The public path for Grafana.
     publicPath: /grafana
     # -- The image used for Grafana pods.
-    image: ghcr.io/firemetrics/firemetrics-dashboards:1cf52b6
+    image: ghcr.io/firemetrics/firemetrics-dashboards:828d4b0
     # -- Extra environment variables for Grafana pods.
     env: []
     # -- Extra volumes for Grafana pods.
