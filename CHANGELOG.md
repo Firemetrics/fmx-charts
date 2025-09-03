@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.4.2] - 2025-09-03
+
+### 🐛 Bug Fixes
+
+- Fix default Postgres image ref
+- Update default Grafana image ref
 ## [1.4.1] - 2025-09-03
 
 ### 🐛 Bug Fixes
