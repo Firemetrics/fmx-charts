@@ -31,7 +31,7 @@
 | featureFlags | list | `[]` | The features enabled in the Panel. |
 | fhirBaseUrl | string | `"https://example.com/fhir"` |  |
 | grafanaUrl | string | `""` |  |
-| image | string | `"ghcr.io/firemetrics/fmx-panel:v1.0.1"` |  |
+| image | string | `"ghcr.io/firemetrics/fmx-panel:v1.0.3"` |  |
 | imagePullSecret | string | `""` |  |
 | initContainers | list | `[]` |  |
 | oidc.audience | string | `""` | Defaults to the public URL. |
