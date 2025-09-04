@@ -40,8 +40,8 @@ argoCdNamespace: argocd
 # -- The sync policy used for all applications created by this chart.
 syncPolicy:
   automated:
-    prune: true
-    selfHeal: true
+    prune: false
+    selfHeal: false
 
 oidc:
   # -- Enable OIDC authentication for the Firemetrics instance.

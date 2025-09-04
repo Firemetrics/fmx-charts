@@ -120,7 +120,7 @@
 | oidc.tokenUrlOverride | string | `""` | The OIDC token URL. Defaults to the Keycloak instance created by this chart. |
 | oidc.userinfoUrlOverride | string | `""` | The OIDC user info URL. Defaults to the Keycloak instance created by this chart. |
 | spiloImage | string | `"ghcr.io/firemetrics/spilo17:4.0-p2-f0457965"` | The image used for the Spilo Postgres cluster pods. |
-| syncPolicy | object | `{"automated":{"prune":true,"selfHeal":true}}` | The sync policy used for all applications created by this chart. |
+| syncPolicy | object | `{"automated":{"prune":false,"selfHeal":false}}` | The sync policy used for all applications created by this chart. |
 | tls.certManager.enabled | bool | `false` | Enable cert-manager integration for automatic TLS certificate management. |
 | tls.certManager.issuer | string | `"letsencrypt"` | Name of the cert-manager ClusterIssuer to use for TLS certificate issuance. |
 | tls.enabled | bool | `false` | Enable TLS for the Firemetrics instance. |
