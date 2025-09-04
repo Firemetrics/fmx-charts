@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.5.2] - 2025-09-04
+
+### 🐛 Bug Fixes
+
+- Upgrade Panel to v1.0.5
 ## [1.5.1] - 2025-09-04
 
 ### 🐛 Bug Fixes
