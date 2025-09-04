@@ -54,8 +54,6 @@ spec:
             name: {{ include "databaseSuperUserSecretName" . | quote }}
 
         panel:
-          publicUrl: {{ include "panelUrl" . | quote }}
-          clientId: {{ .Values.components.panel.oidc.clientId | quote }}
           oidcAudience: {{ include "panelOidcAudience" . | quote }}
 
         fuego:

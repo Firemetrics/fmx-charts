@@ -9,23 +9,6 @@ data:
       "realm": "{{ .Values.importRealm.realmName }}",
       "enabled": true,
       "defaultDefaultClientScopes": ["basic", "email", "profile", "groups"],
-      "clients": [
-        {
-          "clientId": {{ .Values.panel.clientId | quote }},
-          "enabled": true,
-          "publicClient": true,
-          "redirectUris": ["{{ .Values.panel.publicUrl }}/*"],
-          "defaultClientScopes": [
-            "basic",
-            "email",
-            "profile",
-            "groups",
-            "attribute-fhir-user",
-            "audience-panel",
-            "audience-fuego"
-          ]
-        }
-      ],
       "clientScopes": [
         {
           "name": "basic",

@@ -36,6 +36,14 @@ kubectl -n my-namespace create secret generic fuego-oidc-client \
   --from-literal id=fuego \
   --from-literal secret="$(openssl rand -base64 24)"
 
+kubectl -n my-namespace create secret generic panel-db-user \
+  --from-literal username=panel \
+  --from-literal password="$(openssl rand -base64 24)"
+
+kubectl -n my-namespace create secret generic panel-oidc-client \
+  --from-literal id=panel \
+  --from-literal secret="$(openssl rand -base64 24)"
+
 kubectl -n my-namespace create secret generic grafana-db-user \
   --from-literal username=grafana \
   --from-literal password="$(openssl rand -base64 24)"

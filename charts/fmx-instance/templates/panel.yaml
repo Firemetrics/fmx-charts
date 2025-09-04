@@ -50,13 +50,25 @@ spec:
           dbname: {{ .Values.database.dbname | quote }}
           port: {{ .Values.database.port }}
           hostname: {{ include "databaseHostname" . | quote }}
-          userSecret: {{ include "databaseSuperUserSecretName" . | quote }}
+          userSecret: {{- .Values.components.panel.databaseUserSecret | toYaml | nindent 12 }}
 
         oidc:
           enabled: {{ .Values.oidc.enabled }}
           discoveryUrl: {{ include "oidcDiscoveryUrl" . | quote }}
-          clientId: {{ .Values.components.panel.oidc.clientId | quote }}
           audience: {{ include "panelOidcAudience" . | quote }}
+          clientSecret: {{ .Values.components.panel.oidc.clientSecret | toYaml | nindent 12 }}
+
+        bootstrapDatabase:
+          enabled: true
+          image: {{ .Values.spiloImage | quote }}
+          databaseUserSecret:
+            name: {{ include "databaseSuperUserSecretName" . | quote }}
+
+        bootstrapKeycloak:
+          enabled: {{ .Values.components.keycloak.enabled }}
+          url: {{ include "keycloakPublicUrl" . | quote }}
+          realm: {{ .Values.oidc.keycloakRealm | quote }}
+          adminUserSecret: {{- .Values.components.keycloak.adminSecret | toYaml | nindent 12 }}
 
         {{- with .Values.components.panel.featureFlags }}
         featureFlags: {{- . | toYaml | nindent 10 }}

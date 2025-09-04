@@ -43,8 +43,6 @@ persistence:
   size: 1Gi
 
 panel:
-  publicUrl: ""
-  clientId: "panel"
   oidcAudience: "panel"
 
 fuego:

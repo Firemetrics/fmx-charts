@@ -17,14 +17,38 @@ database:
   hostname: postgres
   dbname: firemetrics
   port: 5432
-  userSecret: panel-user
+  userSecret:
+    name: panel-db-user
+    usernameKey: username
+    passwordKey: password
+
+bootstrapDatabase:
+  enabled: false
+  image: ghcr.io/zalando/spilo-17:4.0-p2
+  databaseUserSecret:
+    name: panel-bootstrap-db-user
+    usernameKey: username
+    passwordKey: password
+
+bootstrapKeycloak:
+  enabled: false
+  image: curlimages/curl:8.15.0
+  url: "https://example.com/auth"
+  realm: "firemetrics"
+  adminUserSecret:
+    name: keycloak-admin
+    usernameKey: username
+    passwordKey: password
 
 oidc:
   enabled: false
   discoveryUrl: ""
-  clientId: "panel"
-  # -- The OIDC audience used by the FMX Panel. Defaults to the Panel's public URL.
+  # -- Defaults to the public URL.
   audience: ""
+  clientSecret:
+    name: panel-oidc-client
+    idKey: id
+    secretKey: secret
 
 fhirBaseUrl: "https://example.com/fhir"
 

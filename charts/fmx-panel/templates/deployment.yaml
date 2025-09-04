@@ -23,14 +23,167 @@ spec:
       serviceAccountName: {{ . }}
       {{- end }}
 
-      {{- with .Values.initContainers }}
-      initContainers:
-        {{- . | toYaml | nindent 8 }}
-      {{- end }}
-
       {{- with .Values.imagePullSecret }}
       imagePullSecrets:
         - name: {{ . }}
+      {{- end }}
+
+      {{- if or .Values.bootstrapDatabase.enabled .Values.bootstrapKeycloak.enabled .Values.initContainers }}
+      initContainers:
+
+        {{- if .Values.bootstrapDatabase.enabled }}
+        - name: bootstrap-database
+          image: {{ .Values.bootstrapDatabase.image | quote }}
+          env:
+            - name: PGHOST
+              value: {{ .Values.database.hostname | quote }}
+            - name: PGPORT
+              value: {{ .Values.database.port | quote }}
+            - name: PGUSER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.bootstrapDatabase.databaseUserSecret.name | quote }}
+                  key: {{ .Values.bootstrapDatabase.databaseUserSecret.usernameKey | quote }}
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.bootstrapDatabase.databaseUserSecret.name | quote }}
+                  key: {{ .Values.bootstrapDatabase.databaseUserSecret.passwordKey | quote }}
+            - name: BOOTSTRAP_DB_NAME
+              value: {{ .Values.database.dbname | quote }}
+            - name: BOOTSTRAP_DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.database.userSecret.name | quote }}
+                  key: {{ .Values.database.userSecret.usernameKey | quote }}
+            - name: BOOTSTRAP_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.database.userSecret.name | quote }}
+                  key: {{ .Values.database.userSecret.passwordKey | quote }}
+          command:
+            - /bin/bash
+            - -c
+            - |
+              set -euo pipefail
+
+              while ! pg_isready &>/dev/null; do
+                echo "Waiting for Postgres to be ready..."
+                sleep 1
+              done
+
+              # Create role if missing
+              if psql -tAc "SELECT 1 FROM pg_roles WHERE rolname = '$BOOTSTRAP_DB_USERNAME'" | grep -q 1; then
+                echo "Role $BOOTSTRAP_DB_USERNAME already exists."
+              else
+                echo "Creating role $BOOTSTRAP_DB_USERNAME..."
+                psql -c "CREATE ROLE $BOOTSTRAP_DB_USERNAME LOGIN PASSWORD '$BOOTSTRAP_DB_PASSWORD'"
+              fi
+
+              # Grant read-only privileges
+              psql -d "$BOOTSTRAP_DB_NAME" -c "GRANT CONNECT ON DATABASE $BOOTSTRAP_DB_NAME TO $BOOTSTRAP_DB_USERNAME"
+              psql -d "$BOOTSTRAP_DB_NAME" -c "GRANT USAGE ON SCHEMA public TO $BOOTSTRAP_DB_USERNAME"
+              psql -d "$BOOTSTRAP_DB_NAME" -c "GRANT SELECT ON ALL TABLES IN SCHEMA public TO $BOOTSTRAP_DB_USERNAME"
+              psql -d "$BOOTSTRAP_DB_NAME" -c "GRANT SELECT ON ALL SEQUENCES IN SCHEMA public TO $BOOTSTRAP_DB_USERNAME"
+              psql -d "$BOOTSTRAP_DB_NAME" -c "ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON TABLES TO $BOOTSTRAP_DB_USERNAME"
+              psql -d "$BOOTSTRAP_DB_NAME" -c "ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON SEQUENCES TO $BOOTSTRAP_DB_USERNAME"
+        {{- end }}
+
+        {{- if .Values.bootstrapKeycloak.enabled }}
+        - name: bootstrap-keycloak
+          image: {{ .Values.bootstrapKeycloak.image | quote }}
+
+          {{- if .Values.caCertsConfigMap.enabled }}
+          volumeMounts:
+            - name: {{ $caCertsVolumeName | quote }}
+              mountPath: {{ $caCertsPath | quote }}
+              readOnly: true
+              subPath: {{ .Values.caCertsConfigMap.fileName | quote }}
+          {{- end }}
+
+          env:
+            - name: KEYCLOAK_URL
+              value: {{ .Values.bootstrapKeycloak.url | quote }}
+            - name: KEYCLOAK_REALM
+              value: {{ .Values.bootstrapKeycloak.realm | quote }}
+            - name: KEYCLOAK_ADMIN_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.bootstrapKeycloak.adminUserSecret.name | quote }}
+                  key: {{ .Values.bootstrapKeycloak.adminUserSecret.usernameKey | quote }}
+            - name: KEYCLOAK_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.bootstrapKeycloak.adminUserSecret.name | quote }}
+                  key: {{ .Values.bootstrapKeycloak.adminUserSecret.passwordKey | quote }}
+            - name: CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.oidc.clientSecret.name | quote }}
+                  key: {{ .Values.oidc.clientSecret.idKey | quote }}
+            - name: CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.oidc.clientSecret.name | quote }}
+                  key: {{ .Values.oidc.clientSecret.secretKey | quote }}
+            - name: REDIRECT_URL_PATTERN
+              value: {{ printf "%s/*" .Values.publicUrl | quote }}
+            {{- if .Values.caCertsConfigMap.enabled }}
+            - name: CURL_CA_BUNDLE
+              value: {{ $caCertsPath | quote }}
+            {{- end }}
+          command:
+            - sh
+            - -c
+            - |
+              set -euo pipefail
+
+              echo "Fetching admin token..."
+              TOKEN=$(curl -sS -X POST \
+                -d "client_id=admin-cli" \
+                -d "grant_type=password" \
+                --data-urlencode "username=$KEYCLOAK_ADMIN_USERNAME" \
+                --data-urlencode "password=$KEYCLOAK_ADMIN_PASSWORD" \
+                "$KEYCLOAK_URL/realms/master/protocol/openid-connect/token" \
+                | sed -n 's/.*"access_token":"\([^"]*\)".*/\1/p')
+
+              if [ -z "$TOKEN" ] || [ "$TOKEN" = "null" ]; then
+                echo "Failed to obtain admin token"
+                exit 1
+              fi
+
+              STATUS=$(curl -sS -o /dev/null -w "%{http_code}" \
+                -X POST "$KEYCLOAK_URL/admin/realms/$KEYCLOAK_REALM/clients" \
+                -H "Authorization: Bearer $TOKEN" \
+                -H "Content-Type: application/json" \
+                -d '{
+                  "clientId": "'$CLIENT_ID'",
+                  "secret": "'$CLIENT_SECRET'",
+                  "enabled": true,
+                  "publicClient": true,
+                  "serviceAccountsEnabled": true,
+                  "directAccessGrantsEnabled": false,
+                  "authorizationServicesEnabled": false,
+                  "standardFlowEnabled": true,
+                  "redirectUris": ["'$REDIRECT_URL_PATTERN'"],
+                  "attributes": {
+                    "post.logout.redirect.uris": "'$REDIRECT_URL_PATTERN'"
+                  }
+                }')
+
+              if [ "$STATUS" -eq 201 ]; then
+                echo "Client created successfully."
+              elif [ "$STATUS" -eq 409 ]; then
+                echo "Client already exists, continuing..."
+              else
+                echo "Failed to create client (HTTP $STATUS)"
+                exit 1
+              fi
+        {{- end }}
+
+        {{- with .Values.initContainers }}
+          {{- . | toYaml | nindent 8 }}
+        {{- end }}
       {{- end }}
 
       {{- if or .Values.caCertsConfigMap.enabled .Values.volumes }}
@@ -80,13 +233,13 @@ spec:
             - name: FMXPANEL_DATABASE_USERNAME
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.database.userSecret | quote }}
-                  key: username
+                  name: {{ .Values.database.userSecret.name | quote }}
+                  key: {{ .Values.database.userSecret.usernameKey | quote }}
             - name: FMXPANEL_DATABASE_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.database.userSecret | quote }}
-                  key: password
+                  name: {{ .Values.database.userSecret.name | quote }}
+                  key: {{ .Values.database.userSecret.passwordKey | quote }}
             - name: FMXPANEL_FHIR_BASE_URL
               value: {{ .Values.fhirBaseUrl | quote }}
 
@@ -112,7 +265,10 @@ spec:
             - name: FMXPANEL_OIDC_DISCOVERY_URL
               value: {{ .Values.oidc.discoveryUrl | quote }}
             - name: FMXPANEL_OIDC_CLIENT_ID
-              value: {{ .Values.oidc.clientId | quote }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.oidc.clientSecret.name | quote }}
+                  key: {{ .Values.oidc.clientSecret.idKey | quote }}
             - name: FMXPANEL_OIDC_AUDIENCE
               value: {{ include "oidcAudience" . | quote }}
             {{- end }}
