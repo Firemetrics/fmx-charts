@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.5.1] - 2025-09-04
+
+### 🐛 Bug Fixes
+
+- Upgrade Grafana to `01e5524`
+- Delete defunctional Grafana dashboards
+- Rename dashboard examples folder
 ## [1.5.0] - 2025-09-04
 
 ### 🚀 Features
