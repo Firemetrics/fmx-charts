@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.5.0] - 2025-09-04
+
+### 🚀 Features
+
+- Add Panel bootstrap process
+
+### 🐛 Bug Fixes
+
+- Upgrade Grafana image ref
+- Update default Panel image ref
+- Disable prune and self-heal by default
+- Update Panel to `v1.0.4`
 ## [1.4.2] - 2025-09-03
 
 ### 🐛 Bug Fixes
