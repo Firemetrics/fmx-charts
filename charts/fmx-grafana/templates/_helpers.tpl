@@ -43,7 +43,7 @@
 {{- end -}}
 
 {{- define "exampleDashboardsMountPath" -}}
-  {{ include "dashboardsDataPath" . }}/Examples
+  {{ include "dashboardsDataPath" . }}/Firemetrics Examples
 {{- end -}}
 
 {{- define "dashboardsConfigMapName" -}}
