@@ -1,6 +1,6 @@
 hostname: example.com
 publicPath: ""
-image: ghcr.io/firemetrics/firemetrics-dashboards:828d4b0
+image: ghcr.io/firemetrics/firemetrics-dashboards:01e5524
 imagePullSecret: ""
 initContainers: []
 env: []

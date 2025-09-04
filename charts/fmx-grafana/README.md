@@ -29,7 +29,7 @@
 | database.userSecret.usernameKey | string | `"username"` |  |
 | env | list | `[]` |  |
 | hostname | string | `"example.com"` |  |
-| image | string | `"ghcr.io/firemetrics/firemetrics-dashboards:828d4b0"` |  |
+| image | string | `"ghcr.io/firemetrics/firemetrics-dashboards:01e5524"` |  |
 | imagePullSecret | string | `""` |  |
 | initContainers | list | `[]` |  |
 | oidc.apiUrl | string | `"http://example.com/openid-connect/userinfo"` |  |
