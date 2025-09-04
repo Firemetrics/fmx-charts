@@ -80,7 +80,7 @@
 | components.panel.enabled | bool | `true` | Enable the Panel component. |
 | components.panel.env | list | `[]` | Extra environment variables for the Panel pods. |
 | components.panel.featureFlags | list | `[]` | The features enabled in the Panel. |
-| components.panel.image | string | `"ghcr.io/firemetrics/fmx-panel:v1.0.3"` | The image used for the Panel pods. |
+| components.panel.image | string | `"ghcr.io/firemetrics/fmx-panel:v1.0.4"` | The image used for the Panel pods. |
 | components.panel.oidc.audience | string | `""` | The OIDC audience used by the Panel. Defaults to the public URL of the Panel. |
 | components.panel.oidc.clientSecret.idKey | string | `"id"` | The key in the secret containing the OIDC client ID. |
 | components.panel.oidc.clientSecret.name | string | `"panel-oidc-client"` | The secret containing the OIDC client credentials for Panel. |
