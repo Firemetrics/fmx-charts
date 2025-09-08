@@ -1,0 +1,48 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "appName" . | quote }}
+spec:
+  schedule: "*/5 * * * *"
+  jobTemplate:
+    spec:
+      backoffLimit: 0
+      ttlSecondsAfterFinished: 300
+      template:
+        spec:
+          restartPolicy: Never
+          {{- with .Values.imagePullSecret }}
+          imagePullSecrets:
+            - name: {{ . }}
+          {{ end }}
+          containers:
+            - name: main
+              image: {{ .Values.image | quote }}
+              {{- with .Values.securityContext }}
+              securityContext: {{- . | toYaml | nindent 12 }}
+              {{- end }}
+              env:
+                - name: PGHOST
+                  value: {{ .Values.database.hostname | quote }}
+                - name: PGUSER
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ .Values.database.userSecret | quote }}
+                      key: username
+                - name: PGPASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ .Values.database.userSecret | quote }}
+                      key: password
+                - name: DATABASE_NAME
+                  value: {{ .Values.database.dbname | quote }}
+                - name: DATABASE_PORT
+                  value: {{ .Values.database.port | quote }}
+                - name: FMX_WORKER_COUNT
+                  value: {{ .Values.firemetrics.workerCount | quote }}
+              command:
+                - /bin/bash
+                - -c
+                - |
+                  set -euo pipefail
+                  psql -d $DATABASE_NAME -c "select fql_start_queue_workers($FMX_WORKER_COUNT);"
