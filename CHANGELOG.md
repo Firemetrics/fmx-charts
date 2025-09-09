@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.5.3] - 2025-09-09
+
+### 🐛 Bug Fixes
+
+- Fix queue worker startup
+- Update default Panel image ref
 ## [1.5.2] - 2025-09-04
 
 ### 🐛 Bug Fixes
