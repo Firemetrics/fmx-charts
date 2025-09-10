@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.5.4] - 2025-09-10
+
+### 🐛 Bug Fixes
+
+- Update Panel image ref
 ## [1.5.3] - 2025-09-09
 
 ### 🐛 Bug Fixes
