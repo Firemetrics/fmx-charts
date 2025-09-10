@@ -174,7 +174,7 @@ components:
     # -- Enable the Panel component.
     enabled: true
     # -- The image used for the Panel pods.
-    image: ghcr.io/firemetrics/fmx-panel:v1.1.0
+    image: ghcr.io/firemetrics/fmx-panel:v1.2.0
     # -- Extra environment variables for the Panel pods.
     env: []
     # -- Extra volumes for the Panel pods.
