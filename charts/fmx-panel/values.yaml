@@ -8,7 +8,8 @@ volumes: []
 volumeMounts: []
 
 # -- The features enabled in the Panel.
-featureFlags: []
+featureFlags:
+  - resource_explorer
 
 publicUrl: "https://example.com/panel"
 publicPath: "/panel"

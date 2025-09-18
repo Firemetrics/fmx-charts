@@ -79,7 +79,7 @@
 | components.panel.databaseUserSecret.usernameKey | string | `"username"` | The key in the secret containing the Panel database username. |
 | components.panel.enabled | bool | `true` | Enable the Panel component. |
 | components.panel.env | list | `[]` | Extra environment variables for the Panel pods. |
-| components.panel.featureFlags | list | `[]` | The features enabled in the Panel. |
+| components.panel.featureFlags | list | `["resource_explorer"]` | The features enabled in the Panel. |
 | components.panel.image | string | `"ghcr.io/firemetrics/fmx-panel:v1.2.0"` | The image used for the Panel pods. |
 | components.panel.oidc.audience | string | `""` | The OIDC audience used by the Panel. Defaults to the public URL of the Panel. |
 | components.panel.oidc.clientSecret.idKey | string | `"id"` | The key in the secret containing the OIDC client ID. |

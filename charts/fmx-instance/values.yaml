@@ -186,7 +186,8 @@ components:
     # -- The public path for the Panel.
     publicPath: /panel
     # -- The features enabled in the Panel.
-    featureFlags: []
+    featureFlags:
+      - resource_explorer
     oidc:
       # -- The OIDC audience used by the Panel. Defaults to the public URL of the Panel.
       audience: ""
