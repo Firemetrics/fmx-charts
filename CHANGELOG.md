@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.5.5] - 2025-09-19
+
+### 🐛 Bug Fixes
+
+- Enable resource_explorer feature by default
+
+### ⚙️ Miscellaneous Tasks
+
+- Add CLAUDE.md
 ## [1.5.4] - 2025-09-10
 
 ### 🐛 Bug Fixes
