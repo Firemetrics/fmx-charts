@@ -1,6 +1,10 @@
 # Firemetrics Helm Charts
 
-Helm charts for deploying the Firemetrics ecosystem.
+Helm charts for deploying the Firemetrics ecosystem using Argo CD's App of Apps pattern.
+
+## Architecture
+
+This repository implements the [App of Apps pattern](https://argo-cd.readthedocs.io/en/latest/operator-manual/cluster-bootstrapping/#app-of-apps-pattern) for GitOps deployment of the complete Firemetrics healthcare metrics platform. The `fmx-instance` chart serves as the umbrella application, with each component (PostgreSQL, Keycloak, Panel, Fuego, Grafana, etc.) deployed as a separate Argo CD Application. A single `values.yaml` file configures the entire ecosystem, with proper orchestration ensuring services start in the correct order.
 
 ## Prerequisites
 
@@ -17,7 +21,14 @@ Depending on the configuration, you may also need the following components:
 
 ## Configuration
 
-The `fmx-instance` chart is designed to be configured via Helm values. Take a look at the [values.yaml](charts/fmx-instance/values.yaml) file for the available configuration options.
+The `fmx-instance` chart implements the App of Apps pattern and is designed to be configured via Helm values. The parent application uses a single [values.yaml](charts/fmx-instance/values.yaml) file to configure all child applications in the ecosystem.
+
+Key configuration areas include:
+- **hostname**: Domain for the Firemetrics instance
+- **components**: Enable/disable individual services (postgres, keycloak, fuego, panel, grafana, etc.)
+- **oidc**: OIDC authentication settings propagated to all services
+- **tls**: TLS/SSL certificate configuration
+- **database**: PostgreSQL cluster configuration
 
 ## Installation
 
@@ -71,7 +82,7 @@ kubectl -n my-namespace create secret generic backup-bucket-user \
   --from-literal secretKey="$(openssl rand -base64 24)"
 ```
 
-Then create an Argo CD application for the `fmx-instance` chart:
+Then create an Argo CD application for the `fmx-instance` chart. This parent application will automatically create and manage all child applications for the individual services:
 
 ```bash
 argocd app create fmx \
@@ -85,3 +96,15 @@ argocd app create fmx \
   --auto-prune \
   --self-heal
 ```
+
+Once deployed, this single parent application will create individual Argo CD Applications for:
+- PostgreSQL database cluster
+- Keycloak authentication service
+- Panel web interface
+- Fuego API service
+- Grafana monitoring
+- Bootstrap database initialization
+- Ingress configuration
+- MinIO object storage (if enabled)
+
+Each child application can be monitored and managed independently through the Argo CD UI while maintaining centralized configuration through the parent application.
