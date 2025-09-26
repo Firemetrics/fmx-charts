@@ -8,6 +8,8 @@
 |-----|------|---------|-------------|
 | hostname | string | `"example.com"` |  |
 | services.fuego.enabled | bool | `true` |  |
+| services.fuego.hapi.enabled | bool | `true` |  |
+| services.fuego.hapi.name | string | `"fuego-hapi"` |  |
 | services.fuego.name | string | `"fuego"` |  |
 | services.fuego.path | string | `"/fhir"` |  |
 | services.grafana.enabled | bool | `true` |  |
