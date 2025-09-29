@@ -61,6 +61,15 @@ spec:
           port: http
     {{- end }}
 
+    {{- if and .Values.services.fuego.enabled .Values.services.fuego.hapi.enabled }}
+    - match: "Host(`{{ .Values.hostname }}`) && PathRegexp(`{{ .Values.services.fuego.path }}/.*\\$validate.*`)"
+      kind: Rule
+      priority: 100
+      services:
+        - name: {{ .Values.services.fuego.hapi.name }}
+          port: http
+    {{- end }}
+
     {{- if .Values.services.fuego.enabled }}
     - match: "Host(`{{ .Values.hostname }}`) && PathPrefix(`{{ .Values.services.fuego.path }}`)"
       kind: Rule

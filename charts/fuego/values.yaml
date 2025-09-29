@@ -48,3 +48,37 @@ caCertsConfigMap:
   enabled: false
   name: "ca-certs"
   fileName: "ca-certificates.crt"
+
+hapi:
+  enabled: true
+  image: ghcr.io/firemetrics/fmx-hapi-facade:0.1.6
+  serviceAccountName: ""
+  initContainers: []
+  env: []
+  volumes: []
+  volumeMounts: []
+
+  features:
+    validation:
+      enabled: true
+
+  securityContext:
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+        - ALL
+    readOnlyRootFilesystem: true
+    runAsNonRoot: true
+    runAsUser: 1000
+
+  service:
+    enabled: true
+    nameOverride: ""
+
+  oidc:
+    enabled: false
+    discoveryUrl: ""
+    clientSecret:
+      name: "hapi-oidc-client"
+      idKey: "id"
+      secretKey: "secret"

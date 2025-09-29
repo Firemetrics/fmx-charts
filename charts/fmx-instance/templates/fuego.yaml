@@ -63,6 +63,40 @@ spec:
           enabled: {{ .Values.caCertsConfigMap.enabled }}
           name: {{ include "caCertsConfigMapName" . | quote }}
           fileName: {{ .Values.caCertsConfigMap.fileName | quote }}
+
+        hapi:
+          enabled: {{ .Values.components.fuego.hapi.enabled }}
+          image: {{ .Values.components.fuego.hapi.image | quote }}
+
+          {{- with .Values.components.fuego.hapi.securityContext }}
+          securityContext: {{- . | toYaml | nindent 12 }}
+          {{- end }}
+
+          {{- with .Values.components.fuego.hapi.env }}
+          env: {{ . | toYaml | nindent 12 }}
+          {{- end }}
+
+          {{- with .Values.components.fuego.hapi.initContainers }}
+          initContainers: {{ . | toYaml | nindent 12 }}
+          {{- end }}
+
+          {{- with .Values.components.fuego.hapi.volumes }}
+          volumes: {{ . | toYaml | nindent 12 }}
+          {{- end }}
+
+          {{- with .Values.components.fuego.hapi.volumeMounts }}
+          volumeMounts: {{ . | toYaml | nindent 12 }}
+          {{- end }}
+
+          features: {{ .Values.components.fuego.hapi.features | toYaml | nindent 12 }}
+
+          service:
+            nameOverride: {{ include "fuegoAppName" . }}-hapi
+
+          oidc:
+            enabled: {{ .Values.oidc.enabled }}
+            discoveryUrl: {{ include "oidcDiscoveryUrl" . | quote }}
+            clientSecret: {{ .Values.components.fuego.hapi.oidcClientSecret | toYaml | nindent 14 }}
       {{- end }}
 
   destination:

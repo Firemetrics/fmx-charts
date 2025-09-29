@@ -14,6 +14,9 @@ services:
     enabled: true
     path: /fhir
     name: fuego
+    hapi:
+      enabled: true
+      name: fuego-hapi
 
   grafana:
     enabled: true

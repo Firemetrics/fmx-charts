@@ -1,0 +1,192 @@
+{{- if .Values.hapi.enabled -}}
+{{- $caCertsVolumeName := "ca-certs" -}}
+{{- $caCertsPath := "/etc/ssl/certs/ca-certificates.crt" -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "hapiAppName" . }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/part-of: {{ include "appName" . }}
+      app.kubernetes.io/component: hapi
+      app.kubernetes.io/name: {{ include "hapiPodLabel" . }}
+  template:
+    metadata:
+      name: {{ include "hapiAppName" . }}
+      labels:
+        app.kubernetes.io/part-of: {{ include "appName" . }}
+        app.kubernetes.io/component: hapi
+        app.kubernetes.io/name: {{ include "hapiPodLabel" . }}
+    spec:
+      {{- with .Values.hapi.serviceAccountName }}
+      serviceAccountName: {{ . }}
+      {{- end }}
+
+      {{- with .Values.imagePullSecret }}
+      imagePullSecrets:
+        - name: {{ . }}
+      {{- end }}
+
+      {{- if or .Values.caCertsConfigMap.enabled .Values.hapi.volumes }}
+      volumes:
+        {{- if .Values.caCertsConfigMap.enabled }}
+        - name: {{ $caCertsVolumeName }}
+          configMap:
+            defaultMode: 0644
+            name: {{ .Values.caCertsConfigMap.name | quote }}
+        {{- end }}
+
+        {{- with .Values.hapi.volumes }}
+          {{- . | toYaml | nindent 8 }}
+        {{- end }}
+      {{- end }}
+
+      {{- if or (and .Values.hapi.oidc.enabled .Values.bootstrapKeycloak.enabled) .Values.hapi.initContainers }}
+      initContainers:
+
+        {{- if and .Values.hapi.oidc.enabled .Values.bootstrapKeycloak.enabled }}
+        - name: bootstrap-keycloak
+          image: {{ .Values.bootstrapKeycloak.image | quote }}
+
+          {{- if .Values.caCertsConfigMap.enabled }}
+          volumeMounts:
+            - name: {{ $caCertsVolumeName | quote }}
+              mountPath: {{ $caCertsPath | quote }}
+              readOnly: true
+              subPath: {{ .Values.caCertsConfigMap.fileName | quote }}
+          {{- end }}
+
+          env:
+            - name: KEYCLOAK_URL
+              value: {{ .Values.bootstrapKeycloak.url | quote }}
+            - name: KEYCLOAK_REALM
+              value: {{ .Values.bootstrapKeycloak.realm | quote }}
+            - name: KEYCLOAK_ADMIN_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.bootstrapKeycloak.adminUserSecret.name | quote }}
+                  key: {{ .Values.bootstrapKeycloak.adminUserSecret.usernameKey | quote }}
+            - name: KEYCLOAK_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.bootstrapKeycloak.adminUserSecret.name | quote }}
+                  key: {{ .Values.bootstrapKeycloak.adminUserSecret.passwordKey | quote }}
+            - name: CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.hapi.oidc.clientSecret.name | quote }}
+                  key: {{ .Values.hapi.oidc.clientSecret.idKey | quote }}
+            - name: CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.hapi.oidc.clientSecret.name | quote }}
+                  key: {{ .Values.hapi.oidc.clientSecret.secretKey | quote }}
+            {{- if .Values.caCertsConfigMap.enabled }}
+            - name: CURL_CA_BUNDLE
+              value: {{ $caCertsPath | quote }}
+            {{- end }}
+          command:
+            - sh
+            - -c
+            - |
+              set -euo pipefail
+
+              echo "Fetching admin token..."
+              TOKEN=$(curl -sS -X POST \
+                -d "client_id=admin-cli" \
+                -d "grant_type=password" \
+                --data-urlencode "username=$KEYCLOAK_ADMIN_USERNAME" \
+                --data-urlencode "password=$KEYCLOAK_ADMIN_PASSWORD" \
+                "$KEYCLOAK_URL/realms/master/protocol/openid-connect/token" \
+                | sed -n 's/.*"access_token":"\([^"]*\)".*/\1/p')
+
+              if [ -z "$TOKEN" ] || [ "$TOKEN" = "null" ]; then
+                echo "Failed to obtain admin token"
+                exit 1
+              fi
+
+              STATUS=$(curl -sS -o /dev/null -w "%{http_code}" \
+                -X POST "$KEYCLOAK_URL/admin/realms/$KEYCLOAK_REALM/clients" \
+                -H "Authorization: Bearer $TOKEN" \
+                -H "Content-Type: application/json" \
+                -d '{
+                  "clientId": "'$CLIENT_ID'",
+                  "secret": "'$CLIENT_SECRET'",
+                  "enabled": true,
+                  "publicClient": false,
+                  "serviceAccountsEnabled": true,
+                  "directAccessGrantsEnabled": false,
+                  "standardFlowEnabled": false,
+                  "authorizationServicesEnabled": false
+                }')
+
+              if [ "$STATUS" -eq 201 ]; then
+                echo "Client created successfully."
+              elif [ "$STATUS" -eq 409 ]; then
+                echo "Client already exists, continuing..."
+              else
+                echo "Failed to create client (HTTP $STATUS)"
+                exit 1
+              fi
+        {{- end }}
+
+        {{- with .Values.hapi.initContainers }}
+          {{- . | toYaml | nindent 8 }}
+        {{- end }}
+      {{- end }}
+
+      containers:
+        - name: hapi
+          image: {{ .Values.hapi.image | quote }}
+          {{- with .Values.hapi.securityContext }}
+          securityContext: {{- . | toYaml | nindent 12 }}
+          {{- end }}
+          ports:
+            - name: http
+              containerPort: 9090
+
+          {{- if or .Values.caCertsConfigMap.enabled .Values.hapi.volumeMounts }}
+          volumeMounts:
+            {{- if .Values.caCertsConfigMap.enabled }}
+            - name: {{ $caCertsVolumeName | quote }}
+              mountPath: {{ $caCertsPath | quote }}
+              readOnly: true
+              subPath: {{ .Values.caCertsConfigMap.fileName | quote }}
+            {{- end }}
+
+            {{- with .Values.hapi.volumeMounts }}
+              {{- . | toYaml | nindent 12 }}
+            {{- end }}
+          {{- end }}
+
+          env:
+            - name: FMX_HAPI_HTTP_PORT
+              value: "9090"
+            - name: FMX_HAPI_FHIR_SERVER
+              value: {{ printf "http://%s.%s.svc.cluster.local/fhir"  (include "appName" .) .Release.Namespace | quote }}
+            - name: FMX_HAPI_FHIR_VERSION
+              value: "R4"
+            - name: FMX_HAPI_VALIDATOR_AUTH_ENABLED
+              value: {{ .Values.hapi.oidc.enabled | quote }}
+
+            {{- if .Values.hapi.oidc.enabled }}
+            - name: FMX_HAPI_VALIDATOR_OIDC_DISCOVERY_URL
+              value: {{ .Values.hapi.oidc.discoveryUrl | quote }}
+            - name: FMX_HAPI_VALIDATOR_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.hapi.oidc.clientSecret.name | quote }}
+                  key: {{ .Values.hapi.oidc.clientSecret.idKey | quote }}
+            - name: FMX_HAPI_VALIDATOR_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.hapi.oidc.clientSecret.name | quote }}
+                  key: {{ .Values.hapi.oidc.clientSecret.secretKey | quote }}
+            {{- end }}
+
+            {{- with .Values.hapi.env }}
+              {{- . | toYaml | nindent 12 }}
+            {{- end }}
+{{- end -}}

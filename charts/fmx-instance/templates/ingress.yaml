@@ -33,6 +33,9 @@ spec:
             enabled: {{ .Values.components.fuego.enabled }}
             path: {{ include "fhirPath" . | quote }}
             name: {{ include "fuegoAppName" . }}
+            hapi:
+              enabled: {{ .Values.components.fuego.hapi.enabled }}
+              name: {{ include "fuegoAppName" . }}-hapi
 
           grafana:
             enabled: {{ .Values.components.grafana.enabled }}

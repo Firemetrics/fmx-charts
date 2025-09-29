@@ -27,6 +27,17 @@
 | components.bootstrap.valuesOverride | object | `{}` | Override the values for the bootstrap job Helm chart. |
 | components.fuego.enabled | bool | `true` | Enable the Fuego component. |
 | components.fuego.env | list | `[]` | Extra environment variables for the Fuego pods. |
+| components.fuego.hapi.enabled | bool | `true` | Enable the HAPI FHIR facade service. |
+| components.fuego.hapi.env | list | `[]` | Extra environment variables for the HAPI pods. |
+| components.fuego.hapi.features.validation.enabled | bool | `true` | Enable FHIR validation feature. |
+| components.fuego.hapi.image | string | `"ghcr.io/firemetrics/fmx-hapi-facade:0.1.6"` | The image used for the HAPI pods. |
+| components.fuego.hapi.initContainers | list | `[]` | Extra init containers for the HAPI pods. |
+| components.fuego.hapi.oidcClientSecret.idKey | string | `"id"` | The key in the secret containing the OIDC client ID. |
+| components.fuego.hapi.oidcClientSecret.name | string | `"hapi-oidc-client"` | The secret containing the OIDC client credentials for HAPI. |
+| components.fuego.hapi.oidcClientSecret.secretKey | string | `"secret"` | The key in the secret containing the OIDC client secret. |
+| components.fuego.hapi.securityContext | object | `{}` | The security context for the HAPI pods. |
+| components.fuego.hapi.volumeMounts | list | `[]` | Extra volume mounts for the HAPI pods. |
+| components.fuego.hapi.volumes | list | `[]` | Extra volumes for the HAPI pods. |
 | components.fuego.image | string | `"ghcr.io/firemetrics/fuego:dfb02edc"` | The image used for the Fuego pods. |
 | components.fuego.oidcClientSecret.idKey | string | `"id"` | The key in the secret containing the OIDC client ID. |
 | components.fuego.oidcClientSecret.name | string | `"fuego-oidc-client"` | The secret containing the OIDC client credentials for Fuego. |

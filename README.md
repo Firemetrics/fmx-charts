@@ -47,6 +47,10 @@ kubectl -n my-namespace create secret generic fuego-oidc-client \
   --from-literal id=fuego \
   --from-literal secret="$(openssl rand -base64 24)"
 
+kubectl -n my-namespace create secret generic hapi-oidc-client \
+  --from-literal id=hapi \
+  --from-literal secret="$(openssl rand -base64 24)"
+
 kubectl -n my-namespace create secret generic panel-db-user \
   --from-literal username=panel \
   --from-literal password="$(openssl rand -base64 24)"

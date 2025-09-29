@@ -167,6 +167,32 @@ components:
       idKey: id
       # -- The key in the secret containing the OIDC client secret.
       secretKey: secret
+    hapi:
+      # -- Enable the HAPI FHIR facade service.
+      enabled: true
+      # -- The image used for the HAPI pods.
+      image: ghcr.io/firemetrics/fmx-hapi-facade:0.1.6
+      # -- Extra init containers for the HAPI pods.
+      initContainers: []
+      # -- Extra environment variables for the HAPI pods.
+      env: []
+      # -- Extra volumes for the HAPI pods.
+      volumes: []
+      # -- Extra volume mounts for the HAPI pods.
+      volumeMounts: []
+      # -- The security context for the HAPI pods.
+      securityContext: {}
+      features:
+        validation:
+          # -- Enable FHIR validation feature.
+          enabled: true
+      oidcClientSecret:
+        # -- The secret containing the OIDC client credentials for HAPI.
+        name: hapi-oidc-client
+        # -- The key in the secret containing the OIDC client ID.
+        idKey: id
+        # -- The key in the secret containing the OIDC client secret.
+        secretKey: secret
     # -- Override the values for the Fuego Helm chart.
     valuesOverride: {}
 
