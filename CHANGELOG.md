@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.6.0] - 2025-10-01
+
+### 🚀 Features
+
+- Add HAPI facade service
+
+### 📚 Documentation
+
+- Add documentation about charts architecture
+
+### ⚙️ Miscellaneous Tasks
+
+- Remove unnecessary README PDF
+- Remove helm-docs comments in readmes
 ## [1.5.5] - 2025-09-19
 
 ### 🐛 Bug Fixes

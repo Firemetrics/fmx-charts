@@ -1,6 +1,6 @@
 # fmx-panel
 
-![Version: 1.5.5](https://img.shields.io/badge/Version-1.5.5-informational?style=flat-square)
+![Version: 1.6.0](https://img.shields.io/badge/Version-1.6.0-informational?style=flat-square)
 
 ## Values
 
