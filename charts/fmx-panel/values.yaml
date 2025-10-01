@@ -10,6 +10,8 @@ volumeMounts: []
 # -- The features enabled in the Panel.
 featureFlags:
   - resource_explorer
+  - nocode_builder
+  - sql_editor
 
 publicUrl: "https://example.com/panel"
 publicPath: "/panel"

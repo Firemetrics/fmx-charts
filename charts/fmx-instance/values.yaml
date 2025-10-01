@@ -214,6 +214,8 @@ components:
     # -- The features enabled in the Panel.
     featureFlags:
       - resource_explorer
+      - nocode_builder
+      - sql_editor
     oidc:
       # -- The OIDC audience used by the Panel. Defaults to the public URL of the Panel.
       audience: ""
