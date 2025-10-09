@@ -26,6 +26,7 @@ Each template in `charts/fmx-instance/templates/` creates a dedicated Argo CD Ap
 - **bootstrap**: Database initialization and schema management
 - **ingress**: Traefik ingress controller configuration
 - **minio**: Object storage (optional)
+- **dicom**: DICOM services (optional)
 
 ### Benefits of This Pattern
 - **Single Deployment Point**: Deploy entire stack with one parent application
@@ -39,6 +40,7 @@ Each template in `charts/fmx-instance/templates/` creates a dedicated Argo CD Ap
 ```
 charts/
 ├── fmx-bootstrap/     # Bootstrap chart for initial setup
+├── fmx-dicom/         # DICOM services wrapper (receiver and future DICOM components)
 ├── fmx-grafana/       # Grafana configuration
 ├── fmx-ingress/       # Ingress controller setup
 ├── fmx-instance/      # Parent App of Apps chart (primary deployment entry point)
@@ -114,6 +116,7 @@ The deployment requires several Kubernetes secrets to be created manually:
 - `grafana-oidc-client` for Grafana OIDC
 - `docker-registry` for private image registry access
 - `backup-bucket-user` for backup storage (if enabled)
+- `dicom-receiver-db-user` for DICOM receiver database access (if enabled)
 
 ## Version Management
 

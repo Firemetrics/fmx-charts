@@ -1,0 +1,19 @@
+{{- if .Values.receiver.enabled -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "receiverSvcName" . }}
+spec:
+  type: {{ .Values.receiver.service.type }}
+  ports:
+    - name: dicom
+      port: {{ .Values.receiver.dicom.port }}
+      targetPort: dicom
+      {{- if and (eq .Values.receiver.service.type "NodePort") .Values.receiver.service.nodePort }}
+      nodePort: {{ .Values.receiver.service.nodePort }}
+      {{- end }}
+  selector:
+    app.kubernetes.io/part-of: {{ include "appName" . }}
+    app.kubernetes.io/component: dicom-receiver
+    app.kubernetes.io/name: {{ include "receiverPodLabel" . }}
+{{- end -}}

@@ -25,6 +25,23 @@
 | components.bootstrap.firemetrics.workerCount | int | `1` | The number of worker processes to start in the bootstrap job. |
 | components.bootstrap.securityContext | object | `{}` | The security context for the bootstrap job. |
 | components.bootstrap.valuesOverride | object | `{}` | Override the values for the bootstrap job Helm chart. |
+| components.dicom.enabled | bool | `true` | Enable the DICOM component. |
+| components.dicom.receiver.databaseUserSecret.name | string | `"dicom-receiver-db-user"` | The secret containing DICOM receiver database user credentials. |
+| components.dicom.receiver.databaseUserSecret.passwordKey | string | `"password"` | The key in the secret containing the DICOM receiver database password. |
+| components.dicom.receiver.databaseUserSecret.usernameKey | string | `"username"` | The key in the secret containing the DICOM receiver database username. |
+| components.dicom.receiver.dicom.aet | string | `"FMX"` | The Application Entity Title (AET) for the DICOM receiver. |
+| components.dicom.receiver.dicom.logLevel | string | `"INFO"` | The log level for the DICOM receiver. |
+| components.dicom.receiver.dicom.numThreads | int | `8` | The number of worker threads for the DICOM receiver. |
+| components.dicom.receiver.dicom.port | int | `11112` | The port for the DICOM receiver. |
+| components.dicom.receiver.enabled | bool | `true` | Enable the DICOM receiver. |
+| components.dicom.receiver.env | list | `[]` | Extra environment variables for the DICOM receiver pods. |
+| components.dicom.receiver.image | string | `"ghcr.io/firemetrics/dicom_receiver:f489565f"` | The image used for the DICOM receiver pods. |
+| components.dicom.receiver.service.nodePort | string | `""` | The node port for the DICOM receiver service (optional, only used when type is NodePort). |
+| components.dicom.receiver.service.type | string | `"NodePort"` | The service type for the DICOM receiver. Use "NodePort" to expose on the node. |
+| components.dicom.receiver.volumeMounts | list | `[]` | Extra volume mounts for the DICOM receiver pods. |
+| components.dicom.receiver.volumes | list | `[]` | Extra volumes for the DICOM receiver pods. |
+| components.dicom.securityContext | object | `{}` | The security context for the DICOM pods. |
+| components.dicom.valuesOverride | object | `{}` | Override the values for the DICOM Helm chart. |
 | components.fuego.enabled | bool | `true` | Enable the Fuego component. |
 | components.fuego.env | list | `[]` | Extra environment variables for the Fuego pods. |
 | components.fuego.hapi.enabled | bool | `true` | Enable the HAPI FHIR facade service. |
