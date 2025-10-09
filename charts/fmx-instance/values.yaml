@@ -355,6 +355,9 @@ components:
         type: NodePort
         # -- The node port for the DICOM receiver service (optional, only used when type is NodePort).
         nodePort: ""
+      migration:
+        # -- Enable the migration init container to run database migrations before starting the receiver.
+        enabled: true
       dicom:
         # -- The log level for the DICOM receiver.
         logLevel: INFO

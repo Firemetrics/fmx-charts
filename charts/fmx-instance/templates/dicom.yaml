@@ -38,6 +38,7 @@ spec:
           volumeMounts: {{- . | toYaml | nindent 12 }}
           {{- end }}
           service: {{- .Values.components.dicom.receiver.service | toYaml | nindent 12 }}
+          migration: {{- .Values.components.dicom.receiver.migration | toYaml | nindent 12 }}
           dicom: {{- .Values.components.dicom.receiver.dicom | toYaml | nindent 12 }}
           database:
             dbname: {{ .Values.database.dbname | quote }}

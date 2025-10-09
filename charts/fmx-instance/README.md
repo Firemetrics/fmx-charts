@@ -36,6 +36,7 @@
 | components.dicom.receiver.enabled | bool | `true` | Enable the DICOM receiver. |
 | components.dicom.receiver.env | list | `[]` | Extra environment variables for the DICOM receiver pods. |
 | components.dicom.receiver.image | string | `"ghcr.io/firemetrics/dicom_receiver:f489565f"` | The image used for the DICOM receiver pods. |
+| components.dicom.receiver.migration.enabled | bool | `true` | Enable the migration init container to run database migrations before starting the receiver. |
 | components.dicom.receiver.service.nodePort | string | `""` | The node port for the DICOM receiver service (optional, only used when type is NodePort). |
 | components.dicom.receiver.service.type | string | `"NodePort"` | The service type for the DICOM receiver. Use "NodePort" to expose on the node. |
 | components.dicom.receiver.volumeMounts | list | `[]` | Extra volume mounts for the DICOM receiver pods. |
