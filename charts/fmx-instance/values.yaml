@@ -343,7 +343,7 @@ components:
       # -- Enable the DICOM receiver.
       enabled: true
       # -- The image used for the DICOM receiver pods.
-      image: ghcr.io/firemetrics/dicom_receiver:f489565f
+      image: ghcr.io/firemetrics/dicom_receiver:b99421d7
       # -- Extra environment variables for the DICOM receiver pods.
       env: []
       # -- Extra volumes for the DICOM receiver pods.

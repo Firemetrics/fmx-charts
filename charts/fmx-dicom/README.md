@@ -28,7 +28,7 @@
 | receiver.dicom.port | int | `11112` | The port for the DICOM receiver. |
 | receiver.enabled | bool | `true` | Enable the DICOM receiver component. |
 | receiver.env | list | `[]` | Extra environment variables for the DICOM receiver. |
-| receiver.image | string | `"ghcr.io/firemetrics/dicom_receiver:f489565f"` | The image used for the DICOM receiver. |
+| receiver.image | string | `"ghcr.io/firemetrics/dicom_receiver:b99421d7"` | The image used for the DICOM receiver. |
 | receiver.initContainers | list | `[]` | Extra init containers for the DICOM receiver. |
 | receiver.migration.enabled | bool | `true` | Enable the migration init container to run database migrations before starting the receiver. |
 | receiver.service.nodePort | string | `""` | The node port for the DICOM receiver service (optional, only used when type is NodePort). |
