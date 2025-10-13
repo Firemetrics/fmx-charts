@@ -16,6 +16,9 @@
 | backup.bucketName | string | `"backup"` |  |
 | backup.enabled | bool | `true` |  |
 | configSecretName | string | `"minio-config"` |  |
+| exposedService.enabled | bool | `false` | Enable the creation of an exposed service for direct MinIO access. |
+| exposedService.servicePort | int | `9000` | The service port for the exposed MinIO service. |
+| exposedService.serviceType | string | `"LoadBalancer"` | The service type for the exposed MinIO service. |
 | poolName | string | `"pool-0"` |  |
 | servers | int | `1` |  |
 | size | string | `"10Gi"` |  |

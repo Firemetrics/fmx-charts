@@ -14,6 +14,14 @@ backup:
   enabled: true
   bucketName: backup
 
+exposedService:
+  # -- Enable the creation of an exposed service for direct MinIO access.
+  enabled: false
+  # -- The service port for the exposed MinIO service.
+  servicePort: 9000
+  # -- The service type for the exposed MinIO service.
+  serviceType: LoadBalancer
+
 application:
   nameOverride: ""
   chartRepoUrl: "https://operator.min.io"

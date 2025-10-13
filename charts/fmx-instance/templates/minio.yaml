@@ -1,4 +1,4 @@
-{{- if and .Values.components.minio.enabled .Values.backup.enabled -}}
+{{- if .Values.components.minio.enabled -}}
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -22,8 +22,12 @@ spec:
         size: {{ .Values.components.minio.size | quote }}
         configSecretName: {{ .Values.components.minio.configSecretName | quote }}
         backup:
-          enabled: true
+          enabled: {{ .Values.backup.enabled }}
           bucketName: {{ .Values.backup.bucketName | quote }}
+        exposedService:
+          enabled: {{ .Values.components.minio.exposedService.enabled }}
+          servicePort: {{ .Values.components.minio.exposedService.servicePort }}
+          serviceType: {{ .Values.components.minio.exposedService.serviceType | quote }}
         application:
           chartRepoUrl: {{ .Values.components.minio.chartRepoUrl | quote }}
           {{- with .Values.syncPolicy }}

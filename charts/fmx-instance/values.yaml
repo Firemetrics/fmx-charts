@@ -325,6 +325,13 @@ components:
     size: "10Gi"
     # -- The configuration secret for MinIO.
     configSecretName: "minio-config"
+    exposedService:
+      # -- Enable the creation of an exposed service for direct MinIO access.
+      enabled: false
+      # -- The service port for the exposed MinIO service.
+      servicePort: 9000
+      # -- The service type for the exposed MinIO service.
+      serviceType: LoadBalancer
     # -- Override the values for the MinIO Helm chart.
     valuesOverride: {}
 
