@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.7.0] - 2025-10-14
+
+### 🚀 Features
+
+- Support exposing MinIO service
+- Add DICOM Receiver service
+
+### 🐛 Bug Fixes
+
+- Change Panel feature flags enabeld by default
 ## [1.6.0] - 2025-10-01
 
 ### 🚀 Features
