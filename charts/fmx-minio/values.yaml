@@ -14,6 +14,10 @@ backup:
   enabled: true
   bucketName: backup
 
+dicom:
+  enabled: true
+  bucketName: dicom
+
 exposedService:
   # -- Enable the creation of an exposed service for direct MinIO access.
   enabled: false

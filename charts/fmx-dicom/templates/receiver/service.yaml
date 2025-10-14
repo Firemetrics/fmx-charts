@@ -1,0 +1,18 @@
+{{- if .Values.receiver.exposedService.enabled -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "receiverSvcName" . }}-exposed
+  namespace: {{ .Release.Namespace }}
+spec:
+  type: {{ .Values.receiver.exposedService.serviceType }}
+  ports:
+    - name: dicom
+      port: {{ .Values.receiver.exposedService.servicePort }}
+      protocol: TCP
+      targetPort: 11112
+  selector:
+    app.kubernetes.io/part-of: {{ include "appName" . }}
+    app.kubernetes.io/component: dicom-receiver
+    app.kubernetes.io/name: {{ include "receiverPodLabel" . }}
+{{- end }}

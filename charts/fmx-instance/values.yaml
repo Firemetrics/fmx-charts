@@ -80,7 +80,7 @@ backup:
   endpoint: "http://minio"
   userSecret:
     # -- The secret containing the S3 user credentials for WAL archiving.
-    name: backup-bucket-user
+    name: minio-user
     # -- The key in the secret containing the S3 access key.
     accessKeyKey: accessKey
     # -- The key in the secret containing the S3 secret key.
@@ -339,4 +339,65 @@ components:
     # -- Enable the ingress component.
     enabled: true
     # -- Override the values for the ingress Helm chart.
+    valuesOverride: {}
+
+  dicom:
+    # -- Enable the DICOM component.
+    enabled: true
+    # -- The security context for the DICOM pods.
+    securityContext: {}
+    receiver:
+      # -- Enable the DICOM receiver.
+      enabled: true
+      # -- The image used for the DICOM receiver pods.
+      image: ghcr.io/firemetrics/dicom_receiver:0a76e7d2
+      # -- Extra environment variables for the DICOM receiver pods.
+      env: []
+      # -- Extra volumes for the DICOM receiver pods.
+      volumes: []
+      # -- Extra volume mounts for the DICOM receiver pods.
+      volumeMounts: []
+      exposedService:
+        # -- Enable the creation of an exposed service for direct DICOM receiver access.
+        enabled: false
+        # -- The service port for the exposed DICOM receiver service.
+        servicePort: 11112
+        # -- The service type for the exposed DICOM receiver service.
+        serviceType: LoadBalancer
+      migration:
+        # -- Enable the migration init container to run database migrations before starting the receiver.
+        enabled: false
+      dicom:
+        # -- The log level for the DICOM receiver.
+        logLevel: INFO
+        # -- The Application Entity Title (AET) for the DICOM receiver.
+        aet: FMX
+        # -- The number of worker threads for the DICOM receiver.
+        numThreads: 8
+      databaseUserSecret:
+        # -- The secret containing DICOM receiver database user credentials.
+        name: dicom-receiver-db-user
+        # -- The key in the secret containing the DICOM receiver database username.
+        usernameKey: username
+        # -- The key in the secret containing the DICOM receiver database password.
+        passwordKey: password
+    s3:
+      # -- Enable S3 storage for DICOM files.
+      enabled: false
+      # -- The S3 bucket endpoint URL.
+      endpoint: "http://minio"
+      # -- The S3 endpoint syntax style (path or vhost).
+      endpointSyntax: "path"
+      # -- The S3 bucket name for DICOM files.
+      bucketName: "dicom"
+      # -- The S3 bucket region.
+      region: "auto"
+      userSecret:
+        # -- The secret containing S3 user credentials for DICOM storage.
+        name: minio-user
+        # -- The key in the secret containing the S3 access key.
+        accessKeyKey: accessKey
+        # -- The key in the secret containing the S3 secret key.
+        secretKeyKey: secretKey
+    # -- Override the values for the DICOM Helm chart.
     valuesOverride: {}

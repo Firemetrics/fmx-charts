@@ -1,0 +1,74 @@
+serviceAccountName: ""
+imagePullSecret: ""
+securityContext: {}
+
+receiver:
+  # -- Enable the DICOM receiver component.
+  enabled: true
+  # -- The image used for the DICOM receiver.
+  image: ghcr.io/firemetrics/dicom_receiver:0a76e7d2
+  # -- Extra init containers for the DICOM receiver.
+  initContainers: []
+  # -- Extra environment variables for the DICOM receiver.
+  env: []
+  # -- Extra volumes for the DICOM receiver.
+  volumes: []
+  # -- Extra volume mounts for the DICOM receiver.
+  volumeMounts: []
+  exposedService:
+    # -- Enable the creation of an exposed service for direct DICOM receiver access.
+    enabled: false
+    # -- The service port for the exposed DICOM receiver service.
+    servicePort: 11112
+    # -- The service type for the exposed DICOM receiver service.
+    serviceType: LoadBalancer
+  migration:
+    # -- Enable the migration init container to run database migrations before starting the receiver.
+    enabled: false
+  dicom:
+    # -- The log level for the DICOM receiver.
+    logLevel: INFO
+    # -- The Application Entity Title (AET) for the DICOM receiver.
+    aet: FMX
+    # -- The number of worker threads for the DICOM receiver.
+    numThreads: 8
+  database:
+    hostname: postgres
+    dbname: postgres
+    schema: dicom
+    port: 5432
+    userSecret:
+      name: dicom-receiver-db-user
+      usernameKey: username
+      passwordKey: password
+  bootstrapDatabase:
+    enabled: false
+    image: ghcr.io/zalando/spilo-17:4.0-p2
+    databaseUserSecret:
+      name: dicom-receiver-bootstrap-db-user
+      usernameKey: username
+      passwordKey: password
+
+s3:
+  # -- Enable S3 storage for DICOM files.
+  enabled: false
+  # -- The S3 bucket endpoint URL.
+  endpoint: "http://minio"
+  # -- The S3 endpoint syntax style (path or vhost).
+  endpointSyntax: "path"
+  # -- The S3 bucket name for DICOM files.
+  bucketName: "dicom"
+  # -- The S3 bucket region.
+  region: "auto"
+  userSecret:
+    # -- The secret containing S3 user credentials.
+    name: minio-user
+    # -- The key in the secret containing the S3 access key.
+    accessKeyKey: accessKey
+    # -- The key in the secret containing the S3 secret key.
+    secretKeyKey: secretKey
+
+caCertsConfigMap:
+  enabled: false
+  name: "ca-certs"
+  fileName: "ca-certificates.crt"

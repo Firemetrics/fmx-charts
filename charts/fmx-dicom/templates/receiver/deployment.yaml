@@ -1,0 +1,260 @@
+{{- if .Values.receiver.enabled -}}
+{{- $caCertsVolumeName := "ca-certs" -}}
+{{- $caCertsPath := "/etc/ssl/certs/ca-certificates.crt" -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "receiverAppName" . }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/part-of: {{ include "appName" . }}
+      app.kubernetes.io/component: dicom-receiver
+      app.kubernetes.io/name: {{ include "receiverPodLabel" . }}
+  template:
+    metadata:
+      name: {{ include "receiverAppName" . }}
+      labels:
+        app.kubernetes.io/part-of: {{ include "appName" . }}
+        app.kubernetes.io/component: dicom-receiver
+        app.kubernetes.io/name: {{ include "receiverPodLabel" . }}
+    spec:
+      {{- with .Values.serviceAccountName }}
+      serviceAccountName: {{ . }}
+      {{- end }}
+
+      {{- with .Values.imagePullSecret }}
+      imagePullSecrets:
+        - name: {{ . }}
+      {{- end }}
+
+      {{- if or .Values.caCertsConfigMap.enabled .Values.receiver.volumes }}
+      volumes:
+        {{- if .Values.caCertsConfigMap.enabled }}
+        - name: {{ $caCertsVolumeName }}
+          configMap:
+            defaultMode: 0644
+            name: {{ .Values.caCertsConfigMap.name | quote }}
+        {{- end }}
+
+        {{- with .Values.receiver.volumes }}
+          {{- . | toYaml | nindent 8 }}
+        {{- end }}
+      {{- end }}
+
+      {{- if or .Values.receiver.bootstrapDatabase.enabled .Values.receiver.migration.enabled .Values.receiver.initContainers }}
+      initContainers:
+
+        {{- if .Values.receiver.bootstrapDatabase.enabled }}
+        - name: bootstrap-database
+          image: {{ .Values.receiver.bootstrapDatabase.image | quote }}
+
+          {{- if .Values.caCertsConfigMap.enabled }}
+          volumeMounts:
+            - name: {{ $caCertsVolumeName | quote }}
+              mountPath: {{ $caCertsPath | quote }}
+              readOnly: true
+              subPath: {{ .Values.caCertsConfigMap.fileName | quote }}
+          {{- end }}
+
+          env:
+            - name: PGHOST
+              value: {{ .Values.receiver.database.hostname | quote }}
+            - name: PGPORT
+              value: {{ .Values.receiver.database.port | quote }}
+            - name: PGUSER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.receiver.bootstrapDatabase.databaseUserSecret.name | quote }}
+                  key: {{ .Values.receiver.bootstrapDatabase.databaseUserSecret.usernameKey | quote }}
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.receiver.bootstrapDatabase.databaseUserSecret.name | quote }}
+                  key: {{ .Values.receiver.bootstrapDatabase.databaseUserSecret.passwordKey | quote }}
+            - name: BOOTSTRAP_DB_NAME
+              value: {{ .Values.receiver.database.dbname | quote }}
+            - name: BOOTSTRAP_DB_SCHEMA
+              value: {{ .Values.receiver.database.schema | quote }}
+            - name: BOOTSTRAP_DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.receiver.database.userSecret.name | quote }}
+                  key: {{ .Values.receiver.database.userSecret.usernameKey | quote }}
+            - name: BOOTSTRAP_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.receiver.database.userSecret.name | quote }}
+                  key: {{ .Values.receiver.database.userSecret.passwordKey | quote }}
+          command:
+            - /bin/bash
+            - -c
+            - |
+              set -euo pipefail
+
+              while ! pg_isready &>/dev/null; do
+                echo "Waiting for Postgres to be ready..."
+                sleep 1
+              done
+
+              # Create role if missing
+              if psql -tAc "SELECT 1 FROM pg_roles WHERE rolname = '$BOOTSTRAP_DB_USERNAME'" | grep -q 1; then
+                echo "Role $BOOTSTRAP_DB_USERNAME already exists."
+              else
+                echo "Creating role $BOOTSTRAP_DB_USERNAME..."
+                psql -c "CREATE ROLE $BOOTSTRAP_DB_USERNAME LOGIN PASSWORD '$BOOTSTRAP_DB_PASSWORD'"
+              fi
+
+              # Create schema if missing
+              psql -d "$BOOTSTRAP_DB_NAME" -c "CREATE SCHEMA IF NOT EXISTS $BOOTSTRAP_DB_SCHEMA"
+
+              # Grant database and schema privileges
+              psql -d "$BOOTSTRAP_DB_NAME" -c "GRANT CONNECT ON DATABASE $BOOTSTRAP_DB_NAME TO $BOOTSTRAP_DB_USERNAME"
+              psql -d "$BOOTSTRAP_DB_NAME" -c "GRANT USAGE, CREATE ON SCHEMA public TO $BOOTSTRAP_DB_USERNAME"
+              psql -d "$BOOTSTRAP_DB_NAME" -c "GRANT USAGE, CREATE ON SCHEMA $BOOTSTRAP_DB_SCHEMA TO $BOOTSTRAP_DB_USERNAME"
+              psql -d "$BOOTSTRAP_DB_NAME" -c "ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO $BOOTSTRAP_DB_USERNAME"
+              psql -d "$BOOTSTRAP_DB_NAME" -c "ALTER DEFAULT PRIVILEGES IN SCHEMA $BOOTSTRAP_DB_SCHEMA GRANT ALL ON TABLES TO $BOOTSTRAP_DB_USERNAME"
+              psql -d "$BOOTSTRAP_DB_NAME" -c "ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON SEQUENCES TO $BOOTSTRAP_DB_USERNAME"
+              psql -d "$BOOTSTRAP_DB_NAME" -c "ALTER DEFAULT PRIVILEGES IN SCHEMA $BOOTSTRAP_DB_SCHEMA GRANT ALL ON SEQUENCES TO $BOOTSTRAP_DB_USERNAME"
+              psql -d "$BOOTSTRAP_DB_NAME" -c "GRANT CREATE ON DATABASE $BOOTSTRAP_DB_NAME TO $BOOTSTRAP_DB_USERNAME"
+        {{- end }}
+
+        {{- if .Values.receiver.migration.enabled }}
+        - name: migrate
+          image: {{ .Values.receiver.image | quote }}
+          {{- with .Values.securityContext }}
+          securityContext: {{- . | toYaml | nindent 12 }}
+          {{- end }}
+
+          {{- if or .Values.caCertsConfigMap.enabled .Values.receiver.volumeMounts }}
+          volumeMounts:
+            {{- if .Values.caCertsConfigMap.enabled }}
+            - name: {{ $caCertsVolumeName | quote }}
+              mountPath: {{ $caCertsPath | quote }}
+              readOnly: true
+              subPath: {{ .Values.caCertsConfigMap.fileName | quote }}
+            {{- end }}
+
+            {{- with .Values.receiver.volumeMounts }}
+              {{- . | toYaml | nindent 12 }}
+            {{- end }}
+          {{- end }}
+
+          env:
+            - name: DICOM_TELEMETRY_LOGGING_LEVEL
+              value: {{ .Values.receiver.dicom.logLevel | quote }}
+            - name: DICOM_PORT
+              value: "11112"
+            - name: DICOM_AET
+              value: {{ .Values.receiver.dicom.aet | quote }}
+            - name: PG_HOST
+              value: {{ .Values.receiver.database.hostname | quote }}
+            - name: PG_PORT
+              value: {{ .Values.receiver.database.port | quote }}
+            - name: PG_DATABASE
+              value: {{ .Values.receiver.database.dbname | quote }}
+            - name: PG_SCHEMA
+              value: {{ .Values.receiver.database.schema | quote }}
+            - name: PG_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.receiver.database.userSecret.name | quote }}
+                  key: {{ .Values.receiver.database.userSecret.usernameKey | quote }}
+            - name: PG_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.receiver.database.userSecret.name | quote }}
+                  key: {{ .Values.receiver.database.userSecret.passwordKey | quote }}
+            - name: NUM_THREADS
+              value: {{ .Values.receiver.dicom.numThreads | quote }}
+
+            {{- with .Values.receiver.env }}
+              {{- . | toYaml | nindent 12 }}
+            {{- end }}
+
+          command: ["./dicom_receiver", "--migrate"]
+        {{- end }}
+
+        {{- with .Values.receiver.initContainers }}
+          {{- . | toYaml | nindent 8 }}
+        {{- end }}
+      {{- end }}
+
+      containers:
+        - name: main
+          image: {{ .Values.receiver.image | quote }}
+          {{- with .Values.securityContext }}
+          securityContext: {{- . | toYaml | nindent 12 }}
+          {{- end }}
+          ports:
+            - name: dicom
+              containerPort: 11112
+
+          {{- if or .Values.caCertsConfigMap.enabled .Values.receiver.volumeMounts }}
+          volumeMounts:
+            {{- if .Values.caCertsConfigMap.enabled }}
+            - name: {{ $caCertsVolumeName | quote }}
+              mountPath: {{ $caCertsPath | quote }}
+              readOnly: true
+              subPath: {{ .Values.caCertsConfigMap.fileName | quote }}
+            {{- end }}
+
+            {{- with .Values.receiver.volumeMounts }}
+              {{- . | toYaml | nindent 12 }}
+            {{- end }}
+          {{- end }}
+
+          env:
+            - name: DICOM_TELEMETRY_LOGGING_LEVEL
+              value: {{ .Values.receiver.dicom.logLevel | quote }}
+            - name: DICOM_PORT
+              value: "11112"
+            - name: DICOM_AET
+              value: {{ .Values.receiver.dicom.aet | quote }}
+            - name: PG_HOST
+              value: {{ .Values.receiver.database.hostname | quote }}
+            - name: PG_PORT
+              value: {{ .Values.receiver.database.port | quote }}
+            - name: PG_DATABASE
+              value: {{ .Values.receiver.database.dbname | quote }}
+            - name: PG_SCHEMA
+              value: {{ .Values.receiver.database.schema | quote }}
+            - name: PG_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.receiver.database.userSecret.name | quote }}
+                  key: {{ .Values.receiver.database.userSecret.usernameKey | quote }}
+            - name: PG_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.receiver.database.userSecret.name | quote }}
+                  key: {{ .Values.receiver.database.userSecret.passwordKey | quote }}
+            - name: NUM_THREADS
+              value: {{ .Values.receiver.dicom.numThreads | quote }}
+
+            {{- if .Values.s3.enabled }}
+            - name: DICOM_S3_ENDPOINT_SYNTAX
+              value: {{ .Values.s3.endpointSyntax | quote }}
+            - name: DICOM_S3_ENDPOINT
+              value: {{ .Values.s3.endpoint | quote }}
+            - name: DICOM_S3_BUCKET
+              value: {{ .Values.s3.bucketName | quote }}
+            - name: DICOM_S3_REGION
+              value: {{ .Values.s3.region | quote }}
+            - name: DICOM_S3_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.s3.userSecret.name | quote }}
+                  key: {{ .Values.s3.userSecret.accessKeyKey | quote }}
+            - name: DICOM_S3_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.s3.userSecret.name | quote }}
+                  key: {{ .Values.s3.userSecret.secretKeyKey | quote }}
+            {{- end }}
+
+            {{- with .Values.receiver.env }}
+              {{- . | toYaml | nindent 12 }}
+            {{- end }}
+{{- end -}}

@@ -34,6 +34,10 @@
   {{ include "appName" . }}-minio
 {{- end -}}
 
+{{- define "receiverAppName" -}}
+  {{ include "appName" . }}-dicom
+{{- end -}}
+
 {{- define "databaseHostname" -}}
   {{- if .Values.database.hostnameOverride -}}
     {{ .Values.database.hostnameOverride }}

@@ -12,7 +12,7 @@
 | backup.endpoint | string | `"http://minio"` | The S3 bucket endpoint used for WAL archiving. |
 | backup.region | string | `"auto"` | The S3 bucket region used for WAL archiving. |
 | backup.userSecret.accessKeyKey | string | `"accessKey"` | The key in the secret containing the S3 access key. |
-| backup.userSecret.name | string | `"backup-bucket-user"` | The secret containing the S3 user credentials for WAL archiving. |
+| backup.userSecret.name | string | `"minio-user"` | The secret containing the S3 user credentials for WAL archiving. |
 | backup.userSecret.secretKeyKey | string | `"secretKey"` | The key in the secret containing the S3 secret key. |
 | caCertsConfigMap.data | string | `""` | The content of the CA certificates. If empty, `caCertsConfigMap.existingConfigMap` must be set to true. |
 | caCertsConfigMap.enabled | bool | `false` | Enable the creation of a ConfigMap containing CA certificates. |
@@ -25,6 +25,32 @@
 | components.bootstrap.firemetrics.workerCount | int | `1` | The number of worker processes to start in the bootstrap job. |
 | components.bootstrap.securityContext | object | `{}` | The security context for the bootstrap job. |
 | components.bootstrap.valuesOverride | object | `{}` | Override the values for the bootstrap job Helm chart. |
+| components.dicom.enabled | bool | `true` | Enable the DICOM component. |
+| components.dicom.receiver.databaseUserSecret.name | string | `"dicom-receiver-db-user"` | The secret containing DICOM receiver database user credentials. |
+| components.dicom.receiver.databaseUserSecret.passwordKey | string | `"password"` | The key in the secret containing the DICOM receiver database password. |
+| components.dicom.receiver.databaseUserSecret.usernameKey | string | `"username"` | The key in the secret containing the DICOM receiver database username. |
+| components.dicom.receiver.dicom.aet | string | `"FMX"` | The Application Entity Title (AET) for the DICOM receiver. |
+| components.dicom.receiver.dicom.logLevel | string | `"INFO"` | The log level for the DICOM receiver. |
+| components.dicom.receiver.dicom.numThreads | int | `8` | The number of worker threads for the DICOM receiver. |
+| components.dicom.receiver.enabled | bool | `true` | Enable the DICOM receiver. |
+| components.dicom.receiver.env | list | `[]` | Extra environment variables for the DICOM receiver pods. |
+| components.dicom.receiver.exposedService.enabled | bool | `false` | Enable the creation of an exposed service for direct DICOM receiver access. |
+| components.dicom.receiver.exposedService.servicePort | int | `11112` | The service port for the exposed DICOM receiver service. |
+| components.dicom.receiver.exposedService.serviceType | string | `"LoadBalancer"` | The service type for the exposed DICOM receiver service. |
+| components.dicom.receiver.image | string | `"ghcr.io/firemetrics/dicom_receiver:0a76e7d2"` | The image used for the DICOM receiver pods. |
+| components.dicom.receiver.migration.enabled | bool | `false` | Enable the migration init container to run database migrations before starting the receiver. |
+| components.dicom.receiver.volumeMounts | list | `[]` | Extra volume mounts for the DICOM receiver pods. |
+| components.dicom.receiver.volumes | list | `[]` | Extra volumes for the DICOM receiver pods. |
+| components.dicom.s3.bucketName | string | `"dicom"` | The S3 bucket name for DICOM files. |
+| components.dicom.s3.enabled | bool | `false` | Enable S3 storage for DICOM files. |
+| components.dicom.s3.endpoint | string | `"http://minio"` | The S3 bucket endpoint URL. |
+| components.dicom.s3.endpointSyntax | string | `"path"` | The S3 endpoint syntax style (path or vhost). |
+| components.dicom.s3.region | string | `"auto"` | The S3 bucket region. |
+| components.dicom.s3.userSecret.accessKeyKey | string | `"accessKey"` | The key in the secret containing the S3 access key. |
+| components.dicom.s3.userSecret.name | string | `"minio-user"` | The secret containing S3 user credentials for DICOM storage. |
+| components.dicom.s3.userSecret.secretKeyKey | string | `"secretKey"` | The key in the secret containing the S3 secret key. |
+| components.dicom.securityContext | object | `{}` | The security context for the DICOM pods. |
+| components.dicom.valuesOverride | object | `{}` | Override the values for the DICOM Helm chart. |
 | components.fuego.enabled | bool | `true` | Enable the Fuego component. |
 | components.fuego.env | list | `[]` | Extra environment variables for the Fuego pods. |
 | components.fuego.hapi.enabled | bool | `true` | Enable the HAPI FHIR facade service. |

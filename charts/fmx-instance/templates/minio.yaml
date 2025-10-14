@@ -24,6 +24,9 @@ spec:
         backup:
           enabled: {{ .Values.backup.enabled }}
           bucketName: {{ .Values.backup.bucketName | quote }}
+        dicom:
+          enabled: {{ .Values.components.dicom.s3.enabled }}
+          bucketName: {{ .Values.components.dicom.s3.bucketName | quote }}
         exposedService:
           enabled: {{ .Values.components.minio.exposedService.enabled }}
           servicePort: {{ .Values.components.minio.exposedService.servicePort }}

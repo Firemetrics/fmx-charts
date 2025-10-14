@@ -30,9 +30,14 @@ spec:
               name: {{ .Values.poolName | quote }}
               volumesPerServer: {{ .Values.volumesPerServer }}
               size: {{ .Values.size }}
-          {{- if .Values.backup.enabled }}
+          {{- if or .Values.backup.enabled .Values.dicom.enabled }}
           buckets:
+            {{- if .Values.backup.enabled }}
             - name: {{ .Values.backup.bucketName | quote }}
+            {{- end }}
+            {{- if .Values.dicom.enabled }}
+            - name: {{ .Values.dicom.bucketName | quote }}
+            {{- end }}
           {{- end }}
       {{- end }}
 

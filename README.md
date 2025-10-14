@@ -66,6 +66,10 @@ kubectl -n my-namespace create secret generic grafana-db-user \
 kubectl -n my-namespace create secret generic grafana-oidc-client \
   --from-literal id=grafana \
   --from-literal secret="$(openssl rand -base64 24)"
+
+kubectl -n my-namespace create secret generic dicom-receiver-db-user \
+  --from-literal username=dicom_receiver \
+  --from-literal password="$(openssl rand -base64 24)"
 ```
 
 You will also need to create a secret for pulling images from the private Firemetrics container registry, unless you have a registry mirror configured.
@@ -109,6 +113,7 @@ Once deployed, this single parent application will create individual Argo CD App
 - Grafana monitoring
 - Bootstrap database initialization
 - Ingress configuration
-- MinIO object storage (if enabled)
+- MinIO object storage
+- DICOM receiver
 
 Each child application can be monitored and managed independently through the Argo CD UI while maintaining centralized configuration through the parent application.

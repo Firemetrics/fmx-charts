@@ -1,0 +1,72 @@
+{{- if .Values.components.dicom.enabled -}}
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: {{ include "receiverAppName" . }}
+  namespace: {{ .Values.argoCdNamespace | quote }}
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+
+  source:
+    repoURL: {{ .Values.chartRepoUrl | quote }}
+    {{ include "chartSelection" (dict "context" . "chart" "fmx-dicom") }}
+    targetRevision: {{ include "chartRevision" . | quote }}
+    helm:
+      releaseName: {{ include "receiverAppName" . }}
+      values: |
+      {{- if .Values.components.dicom.valuesOverride }}
+        {{- .Values.components.dicom.valuesOverride | toYaml | nindent 8 }}
+      {{- else }}
+        imagePullSecret: {{ .Values.imagePullSecret | quote }}
+
+        {{- with .Values.components.dicom.securityContext }}
+        securityContext: {{- . | toYaml | nindent 10 }}
+        {{- end }}
+
+        receiver:
+          enabled: {{ .Values.components.dicom.receiver.enabled }}
+          image: {{ .Values.components.dicom.receiver.image | quote }}
+          {{- with .Values.components.dicom.receiver.env }}
+          env: {{- . | toYaml | nindent 12 }}
+          {{- end }}
+          {{- with .Values.components.dicom.receiver.volumes }}
+          volumes: {{- . | toYaml | nindent 12 }}
+          {{- end }}
+          {{- with .Values.components.dicom.receiver.volumeMounts }}
+          volumeMounts: {{- . | toYaml | nindent 12 }}
+          {{- end }}
+          exposedService: {{- .Values.components.dicom.receiver.exposedService | toYaml | nindent 12 }}
+          migration: {{- .Values.components.dicom.receiver.migration | toYaml | nindent 12 }}
+          dicom: {{- .Values.components.dicom.receiver.dicom | toYaml | nindent 12 }}
+          database:
+            dbname: {{ .Values.database.dbname | quote }}
+            schema: dicom
+            port: {{ .Values.database.port }}
+            hostname: {{ include "databaseHostname" . | quote }}
+            userSecret: {{- .Values.components.dicom.receiver.databaseUserSecret | toYaml | nindent 14 }}
+          bootstrapDatabase:
+            enabled: true
+            image: {{ .Values.spiloImage | quote }}
+            databaseUserSecret:
+              name: {{ include "databaseSuperUserSecretName" . | quote }}
+
+        {{- if .Values.components.dicom.s3.enabled }}
+        s3: {{- .Values.components.dicom.s3 | toYaml | nindent 10 }}
+        {{- end }}
+
+        caCertsConfigMap:
+          enabled: {{ .Values.caCertsConfigMap.enabled }}
+          name: {{ include "caCertsConfigMapName" . | quote }}
+          fileName: {{ .Values.caCertsConfigMap.fileName | quote }}
+      {{- end }}
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: {{ .Release.Namespace }}
+
+  {{- with .Values.syncPolicy }}
+  syncPolicy: {{- . | toYaml | nindent 4 }}
+  {{- end -}}
+{{- end -}}
