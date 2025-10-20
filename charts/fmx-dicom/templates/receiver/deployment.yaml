@@ -1,6 +1,7 @@
 {{- if .Values.receiver.enabled -}}
 {{- $caCertsVolumeName := "ca-certs" -}}
 {{- $caCertsPath := "/etc/ssl/certs/ca-certificates.crt" -}}
+{{- $containerPort := "11112" -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -144,8 +145,6 @@ spec:
           env:
             - name: DICOM_TELEMETRY_LOGGING_LEVEL
               value: {{ .Values.receiver.dicom.logLevel | quote }}
-            - name: DICOM_PORT
-              value: "11112"
             - name: DICOM_AET
               value: {{ .Values.receiver.dicom.aet | quote }}
             - name: PG_HOST
@@ -188,8 +187,8 @@ spec:
           securityContext: {{- . | toYaml | nindent 12 }}
           {{- end }}
           ports:
-            - name: dicom
-              containerPort: 11112
+            - name: dimse
+              containerPort: {{ $containerPort }}
 
           {{- if or .Values.caCertsConfigMap.enabled .Values.receiver.volumeMounts }}
           volumeMounts:
@@ -209,7 +208,7 @@ spec:
             - name: DICOM_TELEMETRY_LOGGING_LEVEL
               value: {{ .Values.receiver.dicom.logLevel | quote }}
             - name: DICOM_PORT
-              value: "11112"
+              value: {{ $containerPort | quote }}
             - name: DICOM_AET
               value: {{ .Values.receiver.dicom.aet | quote }}
             - name: PG_HOST

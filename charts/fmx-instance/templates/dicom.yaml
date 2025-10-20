@@ -52,6 +52,22 @@ spec:
             databaseUserSecret:
               name: {{ include "databaseSuperUserSecretName" . | quote }}
 
+        web:
+          enabled: {{ .Values.components.dicom.web.enabled }}
+          image: {{ .Values.components.dicom.web.image | quote }}
+          {{- with .Values.components.dicom.web.env }}
+          env: {{- . | toYaml | nindent 12 }}
+          {{- end }}
+          {{- with .Values.components.dicom.web.volumes }}
+          volumes: {{- . | toYaml | nindent 12 }}
+          {{- end }}
+          {{- with .Values.components.dicom.web.volumeMounts }}
+          volumeMounts: {{- . | toYaml | nindent 12 }}
+          {{- end }}
+          exposedService: {{- .Values.components.dicom.web.exposedService | toYaml | nindent 12 }}
+          server: {{- .Values.components.dicom.web.server | toYaml | nindent 12 }}
+          s3: {{- .Values.components.dicom.web.s3 | toYaml | nindent 12 }}
+
         {{- if .Values.components.dicom.s3.enabled }}
         s3: {{- .Values.components.dicom.s3 | toYaml | nindent 10 }}
         {{- end }}

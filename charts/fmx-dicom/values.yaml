@@ -49,6 +49,45 @@ receiver:
       usernameKey: username
       passwordKey: password
 
+web:
+  # -- Enable the DICOMweb server component.
+  enabled: true
+  # -- The image used for the DICOMweb server.
+  image: ghcr.io/umessen/dicom-rst-s3:latest
+  # -- Extra init containers for the DICOMweb server.
+  initContainers: []
+  # -- Extra environment variables for the DICOMweb server.
+  env: []
+  # -- Extra volumes for the DICOMweb server.
+  volumes: []
+  # -- Extra volume mounts for the DICOMweb server.
+  volumeMounts: []
+  exposedService:
+    # -- Enable the creation of an exposed service for direct DICOMweb server access.
+    enabled: false
+    # -- The service port for the exposed DICOMweb server service (HTTP).
+    servicePort: 11122
+    # -- The service type for the exposed DICOMweb server service.
+    serviceType: LoadBalancer
+  server:
+    # -- The log level for the DICOMweb server.
+    logLevel: INFO
+    # -- The Application Entity Title (AET) for the DICOMweb server.
+    aet: FMX
+    # -- The maximum upload size in bytes for the DICOMweb server.
+    maxUploadSize: 50000000
+    # -- The request timeout in milliseconds for the DICOMweb server.
+    requestTimeout: 60000
+    # -- Enable graceful shutdown for the DICOMweb server.
+    gracefulShutdown: true
+  s3:
+    # -- The Application Entity Title (AET) for DICOM storage.
+    aet: S3_STORAGE
+    # -- The STOW-RS timeout in milliseconds.
+    stowTimeout: 10000
+    # -- The S3 concurrency level for the DICOMweb server.
+    concurrency: 8
+
 s3:
   # -- Enable S3 storage for DICOM files.
   enabled: false

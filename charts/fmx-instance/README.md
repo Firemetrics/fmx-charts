@@ -51,6 +51,22 @@
 | components.dicom.s3.userSecret.secretKeyKey | string | `"secretKey"` | The key in the secret containing the S3 secret key. |
 | components.dicom.securityContext | object | `{}` | The security context for the DICOM pods. |
 | components.dicom.valuesOverride | object | `{}` | Override the values for the DICOM Helm chart. |
+| components.dicom.web.enabled | bool | `true` | Enable the DICOMweb server. |
+| components.dicom.web.env | list | `[]` | Extra environment variables for the DICOMweb server pods. |
+| components.dicom.web.exposedService.enabled | bool | `false` | Enable the creation of an exposed service for direct DICOMweb server access. |
+| components.dicom.web.exposedService.servicePort | int | `11122` | The service port for the exposed DICOMweb server service (HTTP). |
+| components.dicom.web.exposedService.serviceType | string | `"LoadBalancer"` | The service type for the exposed DICOMweb server service. |
+| components.dicom.web.image | string | `"ghcr.io/umessen/dicom-rst-s3:latest"` | The image used for the DICOMweb server pods. |
+| components.dicom.web.s3.aet | string | `"S3_STORAGE"` | The Application Entity Title (AET) for DICOM storage. |
+| components.dicom.web.s3.concurrency | int | `8` | The S3 concurrency level for the DICOMweb server. |
+| components.dicom.web.s3.stowTimeout | int | `10000` | The STOW-RS timeout in milliseconds. |
+| components.dicom.web.server.aet | string | `"FMX"` | The Application Entity Title (AET) for the DICOMweb server. |
+| components.dicom.web.server.gracefulShutdown | bool | `true` | Enable graceful shutdown for the DICOMweb server. |
+| components.dicom.web.server.logLevel | string | `"INFO"` | The log level for the DICOMweb server. |
+| components.dicom.web.server.maxUploadSize | int | `50000000` | The maximum upload size in bytes for the DICOMweb server. |
+| components.dicom.web.server.requestTimeout | int | `60000` | The request timeout in milliseconds for the DICOMweb server. |
+| components.dicom.web.volumeMounts | list | `[]` | Extra volume mounts for the DICOMweb server pods. |
+| components.dicom.web.volumes | list | `[]` | Extra volumes for the DICOMweb server pods. |
 | components.fuego.enabled | bool | `true` | Enable the Fuego component. |
 | components.fuego.env | list | `[]` | Extra environment variables for the Fuego pods. |
 | components.fuego.hapi.enabled | bool | `true` | Enable the HAPI FHIR facade service. |

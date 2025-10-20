@@ -1,0 +1,40 @@
+{{- if .Values.web.enabled -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "webConfigMapName" . }}
+data:
+  config.yaml: |
+    telemetry:
+      level: {{ .Values.web.server.logLevel | quote }}
+    server:
+      aet: {{ .Values.web.server.aet | quote }}
+      http:
+        interface: "0.0.0.0"
+        port: {{ include "webContainerPort" . }}
+        max-upload-size: {{ .Values.web.server.maxUploadSize }}
+        request-timeout: {{ .Values.web.server.requestTimeout }}
+        graceful-shutdown: {{ .Values.web.server.gracefulShutdown }}
+      dimse: []
+    aets:
+      - aet: {{ .Values.web.s3.aet | quote }}
+        qido-rs:
+          timeout: 10000
+        stow-rs:
+          timeout: {{ .Values.web.s3.stowTimeout }}
+        wado-rs:
+          timeout: 30000
+          mode: concurrent
+          receivers:
+            - {{ .Values.web.server.aet | quote }}
+        concurrency: {{ .Values.web.s3.concurrency }}
+
+        backend: S3
+        endpoint: {{ .Values.s3.endpoint | quote }}
+        endpoint-style: {{ .Values.s3.endpointSyntax | quote }}
+        bucket: {{ .Values.s3.bucketName | quote }}
+        region: {{ .Values.s3.region | quote }}
+        credentials:
+          access-key-env: {{ include "s3AccessKeyEnvName" . | quote }}
+          secret-key-env: {{ include "s3SecretKeyEnvName" . | quote }}
+{{- end -}}

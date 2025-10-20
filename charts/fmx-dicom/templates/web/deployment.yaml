@@ -1,0 +1,101 @@
+{{- if .Values.web.enabled -}}
+{{- $caCertsVolumeName := "ca-certs" -}}
+{{- $caCertsPath := "/etc/ssl/certs/ca-certificates.crt" -}}
+{{- $configVolumeName := "config" -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "webAppName" . }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/part-of: {{ include "appName" . }}
+      app.kubernetes.io/component: dicom-web
+      app.kubernetes.io/name: {{ include "webPodLabel" . }}
+  template:
+    metadata:
+      name: {{ include "webAppName" . }}
+      labels:
+        app.kubernetes.io/part-of: {{ include "appName" . }}
+        app.kubernetes.io/component: dicom-web
+        app.kubernetes.io/name: {{ include "webPodLabel" . }}
+    spec:
+      {{- with .Values.serviceAccountName }}
+      serviceAccountName: {{ . }}
+      {{- end }}
+
+      {{- with .Values.imagePullSecret }}
+      imagePullSecrets:
+        - name: {{ . }}
+      {{- end }}
+
+      volumes:
+        - name: {{ $configVolumeName }}
+          configMap:
+            defaultMode: 0644
+            name: {{ include "webConfigMapName" . | quote }}
+
+        {{- if .Values.caCertsConfigMap.enabled }}
+        - name: {{ $caCertsVolumeName }}
+          configMap:
+            defaultMode: 0644
+            name: {{ .Values.caCertsConfigMap.name | quote }}
+        {{- end }}
+
+        {{- with .Values.web.volumes }}
+          {{- . | toYaml | nindent 8 }}
+        {{- end }}
+
+      {{- with .Values.web.initContainers }}
+      initContainers:
+        {{- . | toYaml | nindent 8 }}
+      {{- end }}
+
+      containers:
+        - name: main
+          image: {{ .Values.web.image | quote }}
+          {{- with .Values.securityContext }}
+          securityContext: {{- . | toYaml | nindent 12 }}
+          {{- end }}
+          ports:
+            - name: http
+              containerPort: {{ include "webContainerPort" . }}
+
+          volumeMounts:
+            - name: {{ $configVolumeName | quote }}
+              mountPath: /config.yaml
+              readOnly: true
+              subPath: config.yaml
+
+            {{- if .Values.caCertsConfigMap.enabled }}
+            - name: {{ $caCertsVolumeName | quote }}
+              mountPath: {{ $caCertsPath | quote }}
+              readOnly: true
+              subPath: {{ .Values.caCertsConfigMap.fileName | quote }}
+            {{- end }}
+
+            {{- with .Values.web.volumeMounts }}
+              {{- . | toYaml | nindent 12 }}
+            {{- end }}
+
+          {{- if or .Values.s3.enabled .Values.web.env }}
+          env:
+            {{- if .Values.s3.enabled }}
+            - name: {{ include "s3AccessKeyEnvName" . | quote }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.s3.userSecret.name | quote }}
+                  key: {{ .Values.s3.userSecret.accessKeyKey | quote }}
+            - name: {{ include "s3SecretKeyEnvName" . | quote }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.s3.userSecret.name | quote }}
+                  key: {{ .Values.s3.userSecret.secretKeyKey | quote }}
+            {{- end }}
+
+            {{- with .Values.web.env }}
+              {{- . | toYaml | nindent 12 }}
+            {{- end }}
+          {{- end }}
+{{- end -}}

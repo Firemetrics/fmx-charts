@@ -1,4 +1,4 @@
-{{- if .Values.receiver.exposedService.enabled -}}
+{{- if and .Values.receiver.enabled .Values.receiver.exposedService.enabled -}}
 apiVersion: v1
 kind: Service
 metadata:
@@ -10,7 +10,7 @@ spec:
     - name: dicom
       port: {{ .Values.receiver.exposedService.servicePort }}
       protocol: TCP
-      targetPort: 11112
+      targetPort: dimse
   selector:
     app.kubernetes.io/part-of: {{ include "appName" . }}
     app.kubernetes.io/component: dicom-receiver

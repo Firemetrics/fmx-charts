@@ -45,4 +45,21 @@
 | s3.userSecret.secretKeyKey | string | `"secretKey"` | The key in the secret containing the S3 secret key. |
 | securityContext | object | `{}` |  |
 | serviceAccountName | string | `""` |  |
+| web.enabled | bool | `true` | Enable the DICOMweb server component. |
+| web.env | list | `[]` | Extra environment variables for the DICOMweb server. |
+| web.exposedService.enabled | bool | `false` | Enable the creation of an exposed service for direct DICOMweb server access. |
+| web.exposedService.servicePort | int | `11122` | The service port for the exposed DICOMweb server service (HTTP). |
+| web.exposedService.serviceType | string | `"LoadBalancer"` | The service type for the exposed DICOMweb server service. |
+| web.image | string | `"ghcr.io/umessen/dicom-rst-s3:latest"` | The image used for the DICOMweb server. |
+| web.initContainers | list | `[]` | Extra init containers for the DICOMweb server. |
+| web.s3.aet | string | `"S3_STORAGE"` | The Application Entity Title (AET) for DICOM storage. |
+| web.s3.concurrency | int | `8` | The S3 concurrency level for the DICOMweb server. |
+| web.s3.stowTimeout | int | `10000` | The STOW-RS timeout in milliseconds. |
+| web.server.aet | string | `"FMX"` | The Application Entity Title (AET) for the DICOMweb server. |
+| web.server.gracefulShutdown | bool | `true` | Enable graceful shutdown for the DICOMweb server. |
+| web.server.logLevel | string | `"INFO"` | The log level for the DICOMweb server. |
+| web.server.maxUploadSize | int | `50000000` | The maximum upload size in bytes for the DICOMweb server. |
+| web.server.requestTimeout | int | `60000` | The request timeout in milliseconds for the DICOMweb server. |
+| web.volumeMounts | list | `[]` | Extra volume mounts for the DICOMweb server. |
+| web.volumes | list | `[]` | Extra volumes for the DICOMweb server. |
 

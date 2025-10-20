@@ -1,0 +1,18 @@
+{{- if and .Values.web.enabled .Values.web.exposedService.enabled -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "webSvcName" . }}-exposed
+  namespace: {{ .Release.Namespace }}
+spec:
+  type: {{ .Values.web.exposedService.serviceType }}
+  ports:
+    - name: http
+      port: {{ .Values.web.exposedService.servicePort }}
+      protocol: TCP
+      targetPort: http
+  selector:
+    app.kubernetes.io/part-of: {{ include "appName" . }}
+    app.kubernetes.io/component: dicom-web
+    app.kubernetes.io/name: {{ include "webPodLabel" . }}
+{{- end }}
