@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.8.1] - 2025-10-20
+
+### 🐛 Bug Fixes
+
+- Enable MinIO by default
+
+### 📚 Documentation
+
+- Update readme
 ## [1.8.0] - 2025-10-20
 
 ### 🚀 Features
