@@ -124,7 +124,7 @@
 | components.keycloak.volumes | list | `[]` | Extra volumes for the Keycloak pods. |
 | components.minio.chartRepoUrl | string | `"https://operator.min.io"` | The image used for the MinIO pods. |
 | components.minio.configSecretName | string | `"minio-config"` | The configuration secret for MinIO. |
-| components.minio.enabled | bool | `false` | Enable the MinIO component. |
+| components.minio.enabled | bool | `true` | Enable the MinIO component. |
 | components.minio.exposedService.enabled | bool | `false` | Enable the creation of an exposed service for direct MinIO access. |
 | components.minio.exposedService.servicePort | int | `9000` | The service port for the exposed MinIO service. |
 | components.minio.exposedService.serviceType | string | `"LoadBalancer"` | The service type for the exposed MinIO service. |

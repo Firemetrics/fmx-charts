@@ -318,7 +318,7 @@ components:
 
   minio:
     # -- Enable the MinIO component.
-    enabled: false
+    enabled: true
     # -- The image used for the MinIO pods.
     chartRepoUrl: "https://operator.min.io"
     # -- The size of the MinIO data volume.
