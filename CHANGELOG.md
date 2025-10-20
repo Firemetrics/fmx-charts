@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.8.0] - 2025-10-20
+
+### 🚀 Features
+
+- Add DICOMweb service
 ## [1.7.0] - 2025-10-14
 
 ### 🚀 Features
