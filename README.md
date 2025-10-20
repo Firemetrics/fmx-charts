@@ -24,13 +24,14 @@ Depending on the configuration, you may also need the following components:
 The `fmx-instance` chart implements the App of Apps pattern and is designed to be configured via Helm values. The parent application uses a single [values.yaml](charts/fmx-instance/values.yaml) file to configure all child applications in the ecosystem.
 
 Key configuration areas include:
+
 - **hostname**: Domain for the Firemetrics instance
 - **components**: Enable/disable individual services (postgres, keycloak, fuego, panel, grafana, etc.)
 - **oidc**: OIDC authentication settings propagated to all services
 - **tls**: TLS/SSL certificate configuration
 - **database**: PostgreSQL cluster configuration
 
-## Installation
+## Secrets
 
 The following secrets are required for the `fmx-instance` chart to function properly. Replace the values with your own secure credentials:
 
@@ -72,6 +73,28 @@ kubectl -n my-namespace create secret generic dicom-receiver-db-user \
   --from-literal password="$(openssl rand -base64 24)"
 ```
 
+For the configuration of MinIO, you will need two secrets: one for the services and one for the MinIO configuration.
+
+```bash
+MINIO_ROOT_PASSWORD="$(openssl rand -base64 24)"
+
+kubectl -n my-namespace create secret generic minio-user \
+  --from-literal accessKey=minio \
+  --from-literal secretKey="$MINIO_ROOT_PASSWORD"
+
+kubectl -n my-namespace apply -f - <<EOF
+apiVersion: v1
+kind: Secret
+metadata:
+  name: minio-config
+type: Opaque
+stringData:
+  config.env: |-
+    export MINIO_ROOT_USER=minio
+    export MINIO_ROOT_PASSWORD=$MINIO_ROOT_PASSWORD
+EOF
+```
+
 You will also need to create a secret for pulling images from the private Firemetrics container registry, unless you have a registry mirror configured.
 
 ```bash
@@ -82,15 +105,9 @@ kubectl -n my-namespace create secret docker-registry \
   docker-registry
 ```
 
-In case you have backups enabled, you will also need to create a secret for accessing the bucket.
+## Installation
 
-```bash
-kubectl -n my-namespace create secret generic backup-bucket-user \
-  --from-literal accessKey=user \
-  --from-literal secretKey="$(openssl rand -base64 24)"
-```
-
-Then create an Argo CD application for the `fmx-instance` chart. This parent application will automatically create and manage all child applications for the individual services:
+After creating the secrets, create an Argo CD application for the `fmx-instance` chart. This parent application will automatically create and manage all child applications for the individual services:
 
 ```bash
 argocd app create fmx \
@@ -105,7 +122,10 @@ argocd app create fmx \
   --self-heal
 ```
 
+Take a look at the configuration of the `fmx-instance` chart in the [values.yaml](https://github.com/Firemetrics/fmx-charts/blob/main/charts/fmx-instance/values.yaml) file for more details.
+
 Once deployed, this single parent application will create individual Argo CD Applications for:
+
 - PostgreSQL database cluster
 - Keycloak authentication service
 - Panel web interface
