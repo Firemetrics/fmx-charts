@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.9.0] - 2025-10-21
+
+### 🚀 Features
+
+- Add healthchecks for Fuego service
+- Add healthchecks for Grafana service
+
+### 🐛 Bug Fixes
+
+- Clean up DICOMweb service configuration
 ## [1.8.1] - 2025-10-20
 
 ### 🐛 Bug Fixes
