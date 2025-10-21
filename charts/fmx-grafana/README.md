@@ -32,6 +32,11 @@
 | image | string | `"ghcr.io/firemetrics/firemetrics-dashboards:01e5524"` |  |
 | imagePullSecret | string | `""` |  |
 | initContainers | list | `[]` |  |
+| livenessProbe.failureThreshold | int | `30` |  |
+| livenessProbe.httpGet.path | string | `"/api/health"` |  |
+| livenessProbe.httpGet.port | int | `3000` |  |
+| livenessProbe.periodSeconds | int | `10` |  |
+| livenessProbe.timeoutSeconds | int | `30` |  |
 | oidc.apiUrl | string | `"http://example.com/openid-connect/userinfo"` |  |
 | oidc.authUrl | string | `"http://example.com/openid-connect/auth"` |  |
 | oidc.clientSecret.idKey | string | `"id"` |  |
@@ -43,6 +48,12 @@
 | persistence.enabled | bool | `true` |  |
 | persistence.requestedStorage | string | `"2Gi"` |  |
 | publicPath | string | `""` |  |
+| readinessProbe.failureThreshold | int | `3` |  |
+| readinessProbe.httpGet.path | string | `"/api/health"` |  |
+| readinessProbe.httpGet.port | int | `3000` |  |
+| readinessProbe.initialDelaySeconds | int | `5` |  |
+| readinessProbe.periodSeconds | int | `10` |  |
+| readinessProbe.timeoutSeconds | int | `30` |  |
 | securityContext | object | `{}` |  |
 | service.enabled | bool | `true` |  |
 | service.nameOverride | string | `""` |  |

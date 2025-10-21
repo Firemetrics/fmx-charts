@@ -44,6 +44,14 @@ spec:
         securityContext: {{- . | toYaml | nindent 10 }}
         {{- end }}
 
+        {{- with .Values.components.grafana.livenessProbe }}
+        livenessProbe: {{- . | toYaml | nindent 10 }}
+        {{- end }}
+
+        {{- with .Values.components.grafana.readinessProbe }}
+        readinessProbe: {{- . | toYaml | nindent 10 }}
+        {{- end }}
+
         database:
           dbname: {{ .Values.database.dbname | quote }}
           port: {{ .Values.database.port }}

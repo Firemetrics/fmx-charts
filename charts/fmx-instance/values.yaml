@@ -275,6 +275,23 @@ components:
     volumeMounts: []
     # -- The security context for Grafana pods.
     securityContext: {}
+    # -- Liveness probe configuration for Grafana pods.
+    livenessProbe:
+      httpGet:
+        path: /api/health
+        port: 3000
+      periodSeconds: 10
+      timeoutSeconds: 30
+      failureThreshold: 30
+    # -- Readiness probe configuration for Grafana pods.
+    readinessProbe:
+      httpGet:
+        path: /api/health
+        port: 3000
+      initialDelaySeconds: 5
+      periodSeconds: 10
+      timeoutSeconds: 30
+      failureThreshold: 3
     databaseUserSecret:
       # -- The secret containing Grafana database user credentials.
       name: grafana-db-user

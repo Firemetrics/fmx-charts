@@ -8,6 +8,23 @@ volumes: []
 volumeMounts: []
 securityContext: {}
 
+livenessProbe:
+  httpGet:
+    path: /api/health
+    port: 3000
+  periodSeconds: 10
+  timeoutSeconds: 30
+  failureThreshold: 30
+
+readinessProbe:
+  httpGet:
+    path: /api/health
+    port: 3000
+  initialDelaySeconds: 5
+  periodSeconds: 10
+  timeoutSeconds: 30
+  failureThreshold: 3
+
 tls:
   enabled: false
 

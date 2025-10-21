@@ -96,12 +96,14 @@
 | components.grafana.enabled | bool | `true` | Enable the Grafana component. |
 | components.grafana.env | list | `[]` | Extra environment variables for Grafana pods. |
 | components.grafana.image | string | `"ghcr.io/firemetrics/firemetrics-dashboards:01e5524"` | The image used for Grafana pods. |
+| components.grafana.livenessProbe | object | `{"failureThreshold":30,"httpGet":{"path":"/api/health","port":3000},"periodSeconds":10,"timeoutSeconds":30}` | Liveness probe configuration for Grafana pods. |
 | components.grafana.oidcClientSecret.idKey | string | `"id"` | The key in the secret containing the OIDC client ID. |
 | components.grafana.oidcClientSecret.name | string | `"grafana-oidc-client"` | The secret containing the OIDC client credentials for Grafana. |
 | components.grafana.oidcClientSecret.secretKey | string | `"secret"` | The key in the secret containing the OIDC client secret. |
 | components.grafana.persistence.enabled | bool | `true` | Enable persistence for Grafana. |
 | components.grafana.persistence.requestedStorage | string | `"2Gi"` | The size of the Grafana data volume. |
 | components.grafana.publicPath | string | `"/grafana"` | The public path for Grafana. |
+| components.grafana.readinessProbe | object | `{"failureThreshold":3,"httpGet":{"path":"/api/health","port":3000},"initialDelaySeconds":5,"periodSeconds":10,"timeoutSeconds":30}` | Readiness probe configuration for Grafana pods. |
 | components.grafana.securityContext | object | `{}` | The security context for Grafana pods. |
 | components.grafana.valuesOverride | object | `{}` | Override the values for the Grafana Helm chart. |
 | components.grafana.volumeMounts | list | `[]` | Extra volume mounts for Grafana pods. |
