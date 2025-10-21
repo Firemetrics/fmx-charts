@@ -21,15 +21,11 @@ data:
         qido-rs:
           timeout: 10000
         stow-rs:
-          timeout: {{ .Values.web.s3.stowTimeout }}
+          timeout: 10000
         wado-rs:
           timeout: 30000
-          mode: concurrent
-          receivers:
-            - {{ .Values.web.server.aet | quote }}
-        concurrency: {{ .Values.web.s3.concurrency }}
-
         backend: S3
+        concurrency: {{ .Values.web.s3.concurrency }}
         endpoint: {{ .Values.s3.endpoint | quote }}
         endpoint-style: {{ .Values.s3.endpointSyntax | quote }}
         bucket: {{ .Values.s3.bucketName | quote }}
