@@ -144,6 +144,14 @@ spec:
             - name: http
               containerPort: 3000
 
+          {{- with .Values.livenessProbe }}
+          livenessProbe: {{- . | toYaml | nindent 12 }}
+          {{- end }}
+
+          {{- with .Values.readinessProbe }}
+          readinessProbe: {{- . | toYaml | nindent 12 }}
+          {{- end }}
+
           {{- if or .Values.caCertsConfigMap.enabled .Values.volumeMounts }}
           volumeMounts:
             - name: {{ $caCertsVolumeName | quote }}

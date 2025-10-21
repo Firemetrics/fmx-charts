@@ -26,6 +26,23 @@ securityContext:
   runAsNonRoot: true
   runAsUser: 1000
 
+livenessProbe:
+  exec:
+    command:
+      - /app/fuego_healthcheck
+  periodSeconds: 10
+  timeoutSeconds: 30
+  failureThreshold: 30
+
+readinessProbe:
+  exec:
+    command:
+      - /app/fuego_healthcheck
+  initialDelaySeconds: 5
+  periodSeconds: 10
+  timeoutSeconds: 30
+  failureThreshold: 3
+
 database:
   hostname: postgres
   dbname: firemetrics
