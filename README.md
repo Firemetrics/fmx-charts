@@ -33,17 +33,23 @@ Key configuration areas include:
 
 ## Secrets
 
-The following secrets are required for the `fmx-instance` chart to function properly. Replace the values with your own secure credentials:
+The following secrets are required for the `fmx-instance` chart to function properly. Replace the values with your own secure credentials.
+
+### Authentication Secrets
+
+Keycloak administrative access credentials:
 
 ```bash
 kubectl -n fmx create secret generic keycloak-admin \
   --from-literal username=admin \
   --from-literal password="$(openssl rand -base64 24)"
+```
 
-kubectl -n fmx create secret generic keycloak-db-user \
-  --from-literal username=keycloak \
-  --from-literal password="$(openssl rand -base64 24)"
+### OIDC Client Secrets
 
+Each application component requires OIDC client credentials for authentication:
+
+```bash
 kubectl -n fmx create secret generic fuego-oidc-client \
   --from-literal id=fuego \
   --from-literal secret="$(openssl rand -base64 24)"
@@ -52,28 +58,40 @@ kubectl -n fmx create secret generic hapi-oidc-client \
   --from-literal id=hapi \
   --from-literal secret="$(openssl rand -base64 24)"
 
-kubectl -n fmx create secret generic panel-db-user \
-  --from-literal username=panel \
-  --from-literal password="$(openssl rand -base64 24)"
-
 kubectl -n fmx create secret generic panel-oidc-client \
   --from-literal id=panel \
   --from-literal secret="$(openssl rand -base64 24)"
 
-kubectl -n fmx create secret generic grafana-db-user \
-  --from-literal username=grafana \
-  --from-literal password="$(openssl rand -base64 24)"
-
 kubectl -n fmx create secret generic grafana-oidc-client \
   --from-literal id=grafana \
   --from-literal secret="$(openssl rand -base64 24)"
+```
+
+### Database Secrets
+
+Application-specific database credentials:
+
+```bash
+kubectl -n fmx create secret generic keycloak-db-user \
+  --from-literal username=keycloak \
+  --from-literal password="$(openssl rand -base64 24)"
+
+kubectl -n fmx create secret generic panel-db-user \
+  --from-literal username=panel \
+  --from-literal password="$(openssl rand -base64 24)"
+
+kubectl -n fmx create secret generic grafana-db-user \
+  --from-literal username=grafana \
+  --from-literal password="$(openssl rand -base64 24)"
 
 kubectl -n fmx create secret generic dicom-receiver-db-user \
   --from-literal username=dicom_receiver \
   --from-literal password="$(openssl rand -base64 24)"
 ```
 
-For the configuration of MinIO, you will need two secrets: one for the services and one for the MinIO configuration.
+### Object Storage Secrets
+
+MinIO requires two secrets: one for services to access storage and one for MinIO configuration:
 
 ```bash
 MINIO_ROOT_PASSWORD="$(openssl rand -base64 24)"
@@ -95,7 +113,9 @@ stringData:
 EOF
 ```
 
-You will also need to create a secret for pulling images from the private Firemetrics container registry, unless you have a registry mirror configured.
+### Container Registry Secret
+
+Create a secret for pulling images from the private Firemetrics container registry (unless you have a registry mirror configured):
 
 ```bash
 kubectl -n fmx create secret docker-registry \
