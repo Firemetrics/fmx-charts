@@ -36,39 +36,39 @@ Key configuration areas include:
 The following secrets are required for the `fmx-instance` chart to function properly. Replace the values with your own secure credentials:
 
 ```bash
-kubectl -n my-namespace create secret generic keycloak-admin \
+kubectl -n fmx create secret generic keycloak-admin \
   --from-literal username=admin \
   --from-literal password="$(openssl rand -base64 24)"
 
-kubectl -n my-namespace create secret generic keycloak-db-user \
+kubectl -n fmx create secret generic keycloak-db-user \
   --from-literal username=keycloak \
   --from-literal password="$(openssl rand -base64 24)"
 
-kubectl -n my-namespace create secret generic fuego-oidc-client \
+kubectl -n fmx create secret generic fuego-oidc-client \
   --from-literal id=fuego \
   --from-literal secret="$(openssl rand -base64 24)"
 
-kubectl -n my-namespace create secret generic hapi-oidc-client \
+kubectl -n fmx create secret generic hapi-oidc-client \
   --from-literal id=hapi \
   --from-literal secret="$(openssl rand -base64 24)"
 
-kubectl -n my-namespace create secret generic panel-db-user \
+kubectl -n fmx create secret generic panel-db-user \
   --from-literal username=panel \
   --from-literal password="$(openssl rand -base64 24)"
 
-kubectl -n my-namespace create secret generic panel-oidc-client \
+kubectl -n fmx create secret generic panel-oidc-client \
   --from-literal id=panel \
   --from-literal secret="$(openssl rand -base64 24)"
 
-kubectl -n my-namespace create secret generic grafana-db-user \
+kubectl -n fmx create secret generic grafana-db-user \
   --from-literal username=grafana \
   --from-literal password="$(openssl rand -base64 24)"
 
-kubectl -n my-namespace create secret generic grafana-oidc-client \
+kubectl -n fmx create secret generic grafana-oidc-client \
   --from-literal id=grafana \
   --from-literal secret="$(openssl rand -base64 24)"
 
-kubectl -n my-namespace create secret generic dicom-receiver-db-user \
+kubectl -n fmx create secret generic dicom-receiver-db-user \
   --from-literal username=dicom_receiver \
   --from-literal password="$(openssl rand -base64 24)"
 ```
@@ -78,11 +78,11 @@ For the configuration of MinIO, you will need two secrets: one for the services 
 ```bash
 MINIO_ROOT_PASSWORD="$(openssl rand -base64 24)"
 
-kubectl -n my-namespace create secret generic minio-user \
+kubectl -n fmx create secret generic minio-user \
   --from-literal accessKey=minio \
   --from-literal secretKey="$MINIO_ROOT_PASSWORD"
 
-kubectl -n my-namespace apply -f - <<EOF
+kubectl -n fmx apply -f - <<EOF
 apiVersion: v1
 kind: Secret
 metadata:
@@ -98,7 +98,7 @@ EOF
 You will also need to create a secret for pulling images from the private Firemetrics container registry, unless you have a registry mirror configured.
 
 ```bash
-kubectl -n my-namespace create secret docker-registry \
+kubectl -n fmx create secret docker-registry \
   --docker-server ghcr.io \
   --docker-username user \
   --docker-password token \
@@ -115,7 +115,7 @@ argocd app create fmx \
   --helm-chart fmx-instance \
   --revision 'x.x.x' \
   --dest-server https://kubernetes.default.svc \
-  --dest-namespace my-namespace \
+  --dest-namespace fmx \
   --parameter imagePullSecret=docker-registry \
   --sync-policy automated \
   --auto-prune \
