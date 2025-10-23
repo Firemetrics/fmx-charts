@@ -279,6 +279,13 @@ spec:
               mountPath: /var/lib/grafana
             {{- end }}
 
+          {{- if .Values.caCertsConfigMap.enabled }}
+            - name: {{ $caCertsVolume | quote }}
+              mountPath: {{ $caCertsPath | quote }}
+              readOnly: true
+              subPath: {{ .Values.caCertsConfigMap.fileName | quote }}
+          {{- end }}
+
             {{- with .Values.volumeMounts }}
               {{- . | toYaml | nindent 12 }}
             {{- end }}
@@ -345,6 +352,11 @@ spec:
                 secretKeyRef:
                   name: {{ .Values.oidc.clientSecret.name | quote }}
                   key: {{ .Values.oidc.clientSecret.secretKey | quote }}
+            {{- end }}
+
+            {{- if .Values.caCertsConfigMap.enabled }}
+            - name: GF_AUTH_GENERIC_OAUTH_TLS_CLIENT_CA
+              value: {{ $caCertsPath | quote }}
             {{- end }}
 
             {{- with .Values.env }}
