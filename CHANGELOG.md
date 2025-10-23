@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.9.2] - 2025-10-23
+
+### 🐛 Bug Fixes
+
+- Fix Grafana custom CA config
+- Disable Fuego health check by default
 ## [1.9.1] - 2025-10-23
 
 ### 🐛 Bug Fixes
