@@ -79,6 +79,11 @@ spec:
           clientSecret: {{ .Values.components.grafana.oidcClientSecret | toYaml | nindent 12 }}
 
         persistence: {{- .Values.components.grafana.persistence | toYaml | nindent 10 }}
+
+        caCertsConfigMap:
+          enabled: {{ .Values.caCertsConfigMap.enabled }}
+          name: {{ include "caCertsConfigMapName" . | quote }}
+          fileName: {{ .Values.caCertsConfigMap.fileName | quote }}
       {{- end }}
 
   destination:
