@@ -161,22 +161,9 @@ components:
     # -- The security context for the Fuego pods.
     securityContext: {}
     # -- Liveness probe configuration for the Fuego pods.
-    livenessProbe:
-      exec:
-        command:
-          - /app/fuego_healthcheck
-      periodSeconds: 10
-      timeoutSeconds: 30
-      failureThreshold: 30
+    livenessProbe: {}
     # -- Readiness probe configuration for the Fuego pods.
-    readinessProbe:
-      exec:
-        command:
-          - /app/fuego_healthcheck
-      initialDelaySeconds: 5
-      periodSeconds: 10
-      timeoutSeconds: 30
-      failureThreshold: 3
+    readinessProbe: {}
     oidcClientSecret:
       # -- The secret containing the OIDC client credentials for Fuego.
       name: fuego-oidc-client

@@ -81,11 +81,11 @@
 | components.fuego.hapi.volumeMounts | list | `[]` | Extra volume mounts for the HAPI pods. |
 | components.fuego.hapi.volumes | list | `[]` | Extra volumes for the HAPI pods. |
 | components.fuego.image | string | `"ghcr.io/firemetrics/fuego:dfb02edc"` | The image used for the Fuego pods. |
-| components.fuego.livenessProbe | object | `{"exec":{"command":["/app/fuego_healthcheck"]},"failureThreshold":30,"periodSeconds":10,"timeoutSeconds":30}` | Liveness probe configuration for the Fuego pods. |
+| components.fuego.livenessProbe | object | `{}` | Liveness probe configuration for the Fuego pods. |
 | components.fuego.oidcClientSecret.idKey | string | `"id"` | The key in the secret containing the OIDC client ID. |
 | components.fuego.oidcClientSecret.name | string | `"fuego-oidc-client"` | The secret containing the OIDC client credentials for Fuego. |
 | components.fuego.oidcClientSecret.secretKey | string | `"secret"` | The key in the secret containing the OIDC client secret. |
-| components.fuego.readinessProbe | object | `{"exec":{"command":["/app/fuego_healthcheck"]},"failureThreshold":3,"initialDelaySeconds":5,"periodSeconds":10,"timeoutSeconds":30}` | Readiness probe configuration for the Fuego pods. |
+| components.fuego.readinessProbe | object | `{}` | Readiness probe configuration for the Fuego pods. |
 | components.fuego.securityContext | object | `{}` | The security context for the Fuego pods. |
 | components.fuego.valuesOverride | object | `{}` | Override the values for the Fuego Helm chart. |
 | components.fuego.volumeMounts | list | `[]` | Extra volume mounts for the Fuego pods. |
