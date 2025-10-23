@@ -1,6 +1,6 @@
 # fuego
 
-![Version: 1.9.0](https://img.shields.io/badge/Version-1.9.0-informational?style=flat-square)
+![Version: 1.9.1](https://img.shields.io/badge/Version-1.9.1-informational?style=flat-square)
 
 ## Values
 

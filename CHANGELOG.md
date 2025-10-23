@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.9.1] - 2025-10-23
+
+### 🐛 Bug Fixes
+
+- Fix grafana Keycloak bootstrapping
+
+### 📚 Documentation
+
+- Change namespace placeholder
+- Clean up documentation about secret generation
 ## [1.9.0] - 2025-10-21
 
 ### 🚀 Features
