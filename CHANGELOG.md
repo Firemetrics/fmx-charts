@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.9.3] - 2025-10-28
+
+### 🐛 Bug Fixes
+
+- Fix Keycloak CA bundle configuration
+- Remove unused Keycloak config values
 ## [1.9.2] - 2025-10-23
 
 ### 🐛 Bug Fixes
