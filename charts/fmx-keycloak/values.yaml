@@ -43,10 +43,6 @@ caCertsConfigMap:
   name: "ca-certs"
   fileName: "ca-certificates.crt"
 
-persistence:
-  enabled: true
-  size: 1Gi
-
 panel:
   oidcAudience: "panel"
 

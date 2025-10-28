@@ -32,8 +32,6 @@
 | importRealm.realmName | string | `"firemetrics"` |  |
 | initContainers | list | `[]` |  |
 | panel.oidcAudience | string | `"panel"` |  |
-| persistence.enabled | bool | `true` |  |
-| persistence.size | string | `"1Gi"` |  |
 | publicPath | string | `"/auth"` |  |
 | securityContext | object | `{}` |  |
 | service.enabled | bool | `true` |  |
