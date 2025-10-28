@@ -14,6 +14,9 @@
 | bootstrap.databaseUserSecret.usernameKey | string | `"username"` |  |
 | bootstrap.enabled | bool | `true` |  |
 | bootstrap.image | string | `"ghcr.io/zalando/spilo-17:4.0-p2"` |  |
+| caCertsConfigMap.enabled | bool | `false` |  |
+| caCertsConfigMap.fileName | string | `"ca-certificates.crt"` |  |
+| caCertsConfigMap.name | string | `"ca-certs"` |  |
 | database.dbname | string | `"keycloak"` |  |
 | database.hostname | string | `"postgres"` |  |
 | database.port | int | `5432` |  |

@@ -66,6 +66,11 @@ spec:
           enabled: true
           realmName: {{ .Values.oidc.keycloakRealm | quote }}
         {{- end }}
+
+        caCertsConfigMap:
+          enabled: {{ .Values.caCertsConfigMap.enabled }}
+          name: {{ include "caCertsConfigMapName" . | quote }}
+          fileName: {{ .Values.caCertsConfigMap.fileName | quote }}
       {{- end }}
 
   destination:

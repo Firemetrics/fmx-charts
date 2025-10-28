@@ -38,6 +38,11 @@ importRealm:
   enabled: true
   realmName: firemetrics
 
+caCertsConfigMap:
+  enabled: false
+  name: "ca-certs"
+  fileName: "ca-certificates.crt"
+
 persistence:
   enabled: true
   size: 1Gi

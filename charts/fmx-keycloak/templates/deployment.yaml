@@ -26,14 +26,24 @@ spec:
       {{- end }}
 
       {{- $importVolume := "keycloak-import" }}
+      {{- $caCertsVolumeName := "ca-certs" }}
+      {{- $caCertsPath := "/opt/cacerts/ca-certificates.crt" }}
 
-      {{- if or .Values.importRealm.enabled .Values.volumes }}
+      {{- if or .Values.importRealm.enabled .Values.caCertsConfigMap.enabled .Values.volumes }}
       volumes:
         {{- if .Values.importRealm.enabled }}
         - name: {{ $importVolume }}
           configMap:
             name: {{ include "importRealmConfigMapName" . | quote }}
         {{- end }}
+
+        {{- if .Values.caCertsConfigMap.enabled }}
+        - name: {{ $caCertsVolumeName }}
+          configMap:
+            defaultMode: 0644
+            name: {{ .Values.caCertsConfigMap.name | quote }}
+        {{- end }}
+
         {{- with .Values.volumes }}
           {{- . | toYaml | nindent 8 }}
         {{- end }}
@@ -129,16 +139,25 @@ spec:
           securityContext: {{- . | toYaml | nindent 12 }}
           {{- end }}
 
-          {{- if or .Values.importRealm.enabled .Values.volumeMounts }}
+          {{- if or .Values.importRealm.enabled .Values.caCertsConfigMap.enabled .Values.volumeMounts }}
           volumeMounts:
             {{- if .Values.importRealm.enabled }}
             - name: {{ $importVolume }}
               mountPath: /opt/keycloak/data/import
             {{- end }}
+
+            {{- if .Values.caCertsConfigMap.enabled }}
+            - name: {{ $caCertsVolumeName | quote }}
+              mountPath: {{ $caCertsPath | quote }}
+              readOnly: true
+              subPath: {{ .Values.caCertsConfigMap.fileName | quote }}
+            {{- end }}
+
             {{- with .Values.volumeMounts }}
               {{- . | toYaml | nindent 12 }}
             {{- end }}
           {{- end }}
+
 
           env:
             - name: KC_HOSTNAME
@@ -182,6 +201,12 @@ spec:
                 secretKeyRef:
                   name: {{ .Values.adminSecret.name | quote }}
                   key: {{ .Values.adminSecret.passwordKey | quote }}
+
+            {{- if .Values.caCertsConfigMap.enabled }}
+            - name: KC_TRUSTSTORE_PATHS
+              value: {{ $caCertsPath | quote }}
+            {{- end }}
+
             {{- with .Values.env }}
               {{- . | toYaml | nindent 12 }}
             {{- end }}
