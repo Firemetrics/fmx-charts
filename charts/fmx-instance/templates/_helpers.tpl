@@ -99,11 +99,7 @@
 {{- end -}}
 
 {{- define "keycloakRealmUrl" }}
-  {{- if .Values.oidc.discoveryUrlOverride -}}
-    {{ .Values.oidc.discoveryUrlOverride }}
-  {{- else -}}
-    {{ include "keycloakPublicUrl" . }}/realms/{{ .Values.oidc.keycloakRealm }}
-  {{- end -}}
+  {{ include "keycloakPublicUrl" . }}/realms/{{ .Values.oidc.keycloakRealm }}
 {{- end -}}
 
 {{- define "oidcDiscoveryUrl" }}
