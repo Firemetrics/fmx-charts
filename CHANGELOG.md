@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.10.0] - 2025-11-13
+
+### 🚀 Features
+
+- Update Firemetrics images to latest version
+
+### 🐛 Bug Fixes
+
+- Fix Keycloak realm URL template
+- Fix Keycloak realm URL template
 ## [1.9.3] - 2025-10-28
 
 ### 🐛 Bug Fixes
