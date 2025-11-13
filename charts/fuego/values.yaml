@@ -1,5 +1,5 @@
 publicUrl: "http://example.com/fhir"
-image: ghcr.io/firemetrics/fuego:dfb02edc
+image: ghcr.io/firemetrics/fuego:5128c164
 serviceAccountName: ""
 imagePullSecret: ""
 initContainers: []

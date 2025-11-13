@@ -1,4 +1,4 @@
-image: ghcr.io/firemetrics/spilo17:4.0-p2-f0457965
+image: ghcr.io/firemetrics/spilo17:4.0-p2-5128c164
 imagePullSecret: ""
 podServiceAccountNameOverride: ""
 numberOfInstances: 1
@@ -25,6 +25,19 @@ postgresql:
     shared_buffers: 2GB
     max_locks_per_transaction: "512"
     work_mem: "256MB"
+
+    # Do not omit some default extensions, otherwise bootstrap will fail
+    # https://github.com/zalando/spilo/issues/1043
+    shared_preload_libraries: "bg_mon,pg_stat_statements,pgextwlist,pg_auth_mon,set_user,timescaledb,pg_cron,pg_stat_kcache,fhirql"
+
+    # The name of the database the Firemetrics queue-workers and other internal processes will run against. No reference lookup, compartment handling, ... will happen if unset.
+    # fmx.database_name: "firemetrics"
+
+    # The count of workers to spawn to work in the background. Set to `0` to disable background processing.
+    fmx.worker_count: "4"
+
+    # The serviceBaseUrl for this FHIR respository (usually the same as fuego's server.public_url)
+    # fmx.base_url: "http://example.com/fhir"
 
 backup:
   # -- Enable WAL archiving for the Postgres cluster.

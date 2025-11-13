@@ -22,7 +22,6 @@
 | chartRepoUrl | string | `"https://nexus.firemetricshealth.com/repository/helm-firemetrics/"` | The URL of the Firemetrics Helm charts repository. |
 | chartRevisionOverride | string | `""` | The version of the Firemetrics Helm charts to use. Defaults to the current chart's version. |
 | components.bootstrap.enabled | bool | `true` | Enable the database bootstrap job. |
-| components.bootstrap.firemetrics.workerCount | int | `1` | The number of worker processes to start in the bootstrap job. |
 | components.bootstrap.securityContext | object | `{}` | The security context for the bootstrap job. |
 | components.bootstrap.valuesOverride | object | `{}` | Override the values for the bootstrap job Helm chart. |
 | components.dicom.enabled | bool | `true` | Enable the DICOM component. |
@@ -37,7 +36,7 @@
 | components.dicom.receiver.exposedService.enabled | bool | `false` | Enable the creation of an exposed service for direct DICOM receiver access. |
 | components.dicom.receiver.exposedService.servicePort | int | `11112` | The service port for the exposed DICOM receiver service. |
 | components.dicom.receiver.exposedService.serviceType | string | `"LoadBalancer"` | The service type for the exposed DICOM receiver service. |
-| components.dicom.receiver.image | string | `"ghcr.io/firemetrics/dicom_receiver:0a76e7d2"` | The image used for the DICOM receiver pods. |
+| components.dicom.receiver.image | string | `"ghcr.io/firemetrics/dicom_receiver:5128c164"` | The image used for the DICOM receiver pods. |
 | components.dicom.receiver.migration.enabled | bool | `false` | Enable the migration init container to run database migrations before starting the receiver. |
 | components.dicom.receiver.volumeMounts | list | `[]` | Extra volume mounts for the DICOM receiver pods. |
 | components.dicom.receiver.volumes | list | `[]` | Extra volumes for the DICOM receiver pods. |
@@ -80,7 +79,7 @@
 | components.fuego.hapi.securityContext | object | `{}` | The security context for the HAPI pods. |
 | components.fuego.hapi.volumeMounts | list | `[]` | Extra volume mounts for the HAPI pods. |
 | components.fuego.hapi.volumes | list | `[]` | Extra volumes for the HAPI pods. |
-| components.fuego.image | string | `"ghcr.io/firemetrics/fuego:dfb02edc"` | The image used for the Fuego pods. |
+| components.fuego.image | string | `"ghcr.io/firemetrics/fuego:5128c164"` | The image used for the Fuego pods. |
 | components.fuego.livenessProbe | object | `{}` | Liveness probe configuration for the Fuego pods. |
 | components.fuego.oidcClientSecret.idKey | string | `"id"` | The key in the secret containing the OIDC client ID. |
 | components.fuego.oidcClientSecret.name | string | `"fuego-oidc-client"` | The secret containing the OIDC client credentials for Fuego. |
@@ -158,7 +157,7 @@
 | components.postgres.extraEnv | list | `[]` | Extra environment variables for the Postgres cluster pods. |
 | components.postgres.numberOfInstances | int | `1` | The number of Postgres instances in the cluster. |
 | components.postgres.podServiceAccountNameOverride | string | `""` | The name of the Postgres cluster. Defaults to "postgres-pod". |
-| components.postgres.postgresql | object | `{"parameters":{"max_locks_per_transaction":"512","shared_buffers":"2GB","work_mem":"256MB"},"version":"17"}` | The [PostgreSQL parameters](https://github.com/zalando/postgres-operator/blob/v1.14.0/docs/reference/cluster_manifest.md#postgres-parameters). |
+| components.postgres.postgresql | object | `{"parameters":{"max_locks_per_transaction":"512","shared_buffers":"2GB","shared_preload_libraries":"bg_mon,pg_stat_statements,pgextwlist,pg_auth_mon,set_user,timescaledb,pg_cron,pg_stat_kcache,fhirql","work_mem":"256MB"},"version":"17"}` | The [PostgreSQL parameters](https://github.com/zalando/postgres-operator/blob/v1.14.0/docs/reference/cluster_manifest.md#postgres-parameters). |
 | components.postgres.resources | object | `{"limits":{"cpu":"32","memory":"128Gi"},"requests":{"cpu":"10m","memory":"100Mi"}}` | The resource requests and limits for the Postgres cluster pods. |
 | components.postgres.spiloFSGroup | int | `103` |  |
 | components.postgres.spiloRunAsGroup | int | `103` |  |
@@ -179,11 +178,12 @@
 | oidc.signoutUrlOverride | string | `""` | The OIDC sign-out URL. Defaults to the Keycloak instance created by this chart. |
 | oidc.tokenUrlOverride | string | `""` | The OIDC token URL. Defaults to the Keycloak instance created by this chart. |
 | oidc.userinfoUrlOverride | string | `""` | The OIDC user info URL. Defaults to the Keycloak instance created by this chart. |
-| spiloImage | string | `"ghcr.io/firemetrics/spilo17:4.0-p2-f0457965"` | The image used for the Spilo Postgres cluster pods. |
+| spiloImage | string | `"ghcr.io/firemetrics/spilo17:4.0-p2-5128c164"` | The image used for the Spilo Postgres cluster pods. |
 | syncPolicy | object | `{"automated":{"prune":false,"selfHeal":false}}` | The sync policy used for all applications created by this chart. |
 | tls.certManager.enabled | bool | `false` | Enable cert-manager integration for automatic TLS certificate management. |
 | tls.certManager.issuer | string | `"letsencrypt"` | Name of the cert-manager ClusterIssuer to use for TLS certificate issuance. |
 | tls.enabled | bool | `false` | Enable TLS for the Firemetrics instance. |
 | tls.existingSecret | bool | `false` | Disable automatic creation of the TLS secret. |
 | tls.secretNameOverride | string | `""` | Name of the Kubernetes secret containing the TLS certificate and key. Defaults to "{prefix}-tls-cert". |
+| workerCount | int | `4` | The number of worker processes to start for background tasks. |
 

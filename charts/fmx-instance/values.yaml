@@ -90,7 +90,10 @@ backup:
 imagePullSecret: ""
 
 # -- The image used for the Spilo Postgres cluster pods.
-spiloImage: ghcr.io/firemetrics/spilo17:4.0-p2-f0457965
+spiloImage: ghcr.io/firemetrics/spilo17:4.0-p2-5128c164
+
+# -- The number of worker processes to start for background tasks.
+workerCount: 4
 
 components:
   postgres:
@@ -130,6 +133,10 @@ components:
         max_locks_per_transaction: "512"
         work_mem: "256MB"
 
+        # Do not omit some default extensions, otherwise bootstrap will fail
+        # https://github.com/zalando/spilo/issues/1043
+        shared_preload_libraries: "bg_mon,pg_stat_statements,pgextwlist,pg_auth_mon,set_user,timescaledb,pg_cron,pg_stat_kcache,fhirql"
+
     # -- Extra environment variables for the Postgres cluster pods.
     extraEnv: []
 
@@ -141,9 +148,6 @@ components:
     enabled: true
     # -- The security context for the bootstrap job.
     securityContext: {}
-    firemetrics:
-      # -- The number of worker processes to start in the bootstrap job.
-      workerCount: 1
     # -- Override the values for the bootstrap job Helm chart.
     valuesOverride: {}
 
@@ -151,7 +155,7 @@ components:
     # -- Enable the Fuego component.
     enabled: true
     # -- The image used for the Fuego pods.
-    image: ghcr.io/firemetrics/fuego:dfb02edc
+    image: ghcr.io/firemetrics/fuego:5128c164
     # -- Extra environment variables for the Fuego pods.
     env: []
     # -- Extra volumes for the Fuego pods.
@@ -371,7 +375,7 @@ components:
       # -- Enable the DICOM receiver.
       enabled: true
       # -- The image used for the DICOM receiver pods.
-      image: ghcr.io/firemetrics/dicom_receiver:0a76e7d2
+      image: ghcr.io/firemetrics/dicom_receiver:5128c164
       # -- Extra environment variables for the DICOM receiver pods.
       env: []
       # -- Extra volumes for the DICOM receiver pods.

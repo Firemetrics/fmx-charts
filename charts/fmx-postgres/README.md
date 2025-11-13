@@ -15,12 +15,14 @@
 | backup.userSecret.secretKeyKey | string | `"secretKey"` | The key in the secret containing the S3 secret key. |
 | clusterNameOverride | string | `""` |  |
 | env | list | `[]` |  |
-| image | string | `"ghcr.io/firemetrics/spilo17:4.0-p2-f0457965"` |  |
+| image | string | `"ghcr.io/firemetrics/spilo17:4.0-p2-5128c164"` |  |
 | imagePullSecret | string | `""` |  |
 | numberOfInstances | int | `1` |  |
 | podServiceAccountNameOverride | string | `""` |  |
+| postgresql.parameters."fmx.worker_count" | string | `"4"` |  |
 | postgresql.parameters.max_locks_per_transaction | string | `"512"` |  |
 | postgresql.parameters.shared_buffers | string | `"2GB"` |  |
+| postgresql.parameters.shared_preload_libraries | string | `"bg_mon,pg_stat_statements,pgextwlist,pg_auth_mon,set_user,timescaledb,pg_cron,pg_stat_kcache,fhirql"` |  |
 | postgresql.parameters.work_mem | string | `"256MB"` |  |
 | postgresql.version | string | `"16"` |  |
 | resources.limits.cpu | string | `"32"` |  |

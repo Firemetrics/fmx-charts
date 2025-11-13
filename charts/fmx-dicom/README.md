@@ -30,7 +30,7 @@
 | receiver.exposedService.enabled | bool | `false` | Enable the creation of an exposed service for direct DICOM receiver access. |
 | receiver.exposedService.servicePort | int | `11112` | The service port for the exposed DICOM receiver service. |
 | receiver.exposedService.serviceType | string | `"LoadBalancer"` | The service type for the exposed DICOM receiver service. |
-| receiver.image | string | `"ghcr.io/firemetrics/dicom_receiver:0a76e7d2"` | The image used for the DICOM receiver. |
+| receiver.image | string | `"ghcr.io/firemetrics/dicom_receiver:5128c164"` | The image used for the DICOM receiver. |
 | receiver.initContainers | list | `[]` | Extra init containers for the DICOM receiver. |
 | receiver.migration.enabled | bool | `false` | Enable the migration init container to run database migrations before starting the receiver. |
 | receiver.volumeMounts | list | `[]` | Extra volume mounts for the DICOM receiver. |

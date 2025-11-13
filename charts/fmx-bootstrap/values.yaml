@@ -1,4 +1,4 @@
-image: ghcr.io/firemetrics/spilo16:3.3-p2-f0457965
+image: ghcr.io/firemetrics/spilo17:4.0-p2-5128c164
 imagePullSecret: ""
 jobNameOverride: ""
 securityContext: {}
@@ -8,6 +8,3 @@ database:
   port: 5432
   dbname: firemetrics
   userSecret: firemetrics-bootstrap-user
-
-firemetrics:
-  workerCount: 1
