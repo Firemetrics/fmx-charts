@@ -98,7 +98,7 @@
   {{ include "baseUrl" . }}{{ .Values.components.keycloak.publicPath }}
 {{- end -}}
 
-{{- define "keycloakRealmUrl" }}
+{{- define "keycloakRealmUrl" -}}
   {{ include "keycloakPublicUrl" . }}/realms/{{ .Values.oidc.keycloakRealm }}
 {{- end -}}
 
