@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.11.0] - 2025-11-14
+
+### 🚀 Features
+
+- Support ingress port configuration
 ## [1.10.0] - 2025-11-13
 
 ### 🚀 Features
