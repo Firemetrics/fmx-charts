@@ -161,7 +161,7 @@ spec:
 
           env:
             - name: KC_HOSTNAME
-              value: {{ .Values.hostname | quote }}
+              value: {{ .Values.publicUrl | quote }}
 
             - name: KC_DB
               value: postgres

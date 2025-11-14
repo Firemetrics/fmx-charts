@@ -54,8 +54,28 @@
   {{- end -}}
 {{- end -}}
 
+{{- define "portUrlPart" -}}
+  {{- if .Values.tls.enabled -}}
+    {{- if ne (int .Values.ingress.https_port) 443 -}}
+      :{{ .Values.ingress.https_port }}
+    {{- end -}}
+  {{- else -}}
+    {{- if ne (int .Values.ingress.http_port) 80 -}}
+      :{{ .Values.ingress.http_port }}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+
+{{- define "fqdn" -}}
+  {{- if .Values.hostname -}}
+    {{ .Values.hostname }}
+  {{- else -}}
+    {{ .Values.ingress.fqdn }}
+  {{- end -}}
+{{- end -}}
+
 {{- define "baseUrl" -}}
-  {{ include "httpScheme" . }}://{{ .Values.hostname }}
+  {{ include "httpScheme" . }}://{{ include "fqdn" . }}{{ include "portUrlPart" . }}
 {{- end -}}
 
 {{- define "panelUrl" -}}

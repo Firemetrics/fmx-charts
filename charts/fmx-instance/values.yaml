@@ -1,5 +1,13 @@
-# -- The hostname for the Firemetrics instance.
-hostname: "example.com"
+# -- The hostname for the Firemetrics instance (deprecated, use ingress.fqdn instead).
+hostname: ""
+
+ingress:
+  # -- The FQDN for the Firemetrics instance.
+  fqdn: "example.com"
+  # -- The HTTP port for the Firemetrics instance.
+  http_port: 80
+  # -- The HTTPS port for the Firemetrics instance.
+  https_port: 443
 
 tls:
   # -- Enable TLS for the Firemetrics instance.

@@ -19,7 +19,7 @@ spec:
       {{- if .Values.components.keycloak.valuesOverride }}
         {{- .Values.components.keycloak.valuesOverride | toYaml | nindent 8 }}
       {{- else }}
-        hostname: {{ .Values.hostname | quote }}
+        publicUrl: {{ printf "%s%s" (include "baseUrl" .) .Values.components.keycloak.publicPath | quote }}
         publicPath: {{ .Values.components.keycloak.publicPath | quote }}
 
         image: {{ .Values.components.keycloak.image | quote }}

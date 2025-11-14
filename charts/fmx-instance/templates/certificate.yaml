@@ -4,10 +4,10 @@ kind: Certificate
 metadata:
   name: {{ include "appName" . }}
 spec:
-  commonName: {{ .Values.hostname | quote }}
+  commonName: {{ include "fqdn" . | quote }}
   secretName: {{ include "tlsCertSecretName" . }}
   dnsNames:
-    - {{ .Values.hostname | quote }}
+    - {{ include "fqdn" . | quote }}
   issuerRef:
     kind: ClusterIssuer
     name: {{ .Values.tls.certManager.issuer | quote }}

@@ -1,4 +1,4 @@
-hostname: example.com
+publicUrl: http://example.com/auth
 publicPath: /auth
 image: quay.io/keycloak/keycloak:26.3.2
 imagePullSecret: ""

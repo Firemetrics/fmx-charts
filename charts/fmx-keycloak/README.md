@@ -25,7 +25,6 @@
 | database.userSecret.usernameKey | string | `"username"` |  |
 | env | list | `[]` |  |
 | fuego.oidcAudience | string | `"fuego"` |  |
-| hostname | string | `"example.com"` |  |
 | image | string | `"quay.io/keycloak/keycloak:26.3.2"` |  |
 | imagePullSecret | string | `""` |  |
 | importRealm.enabled | bool | `true` |  |
@@ -33,6 +32,7 @@
 | initContainers | list | `[]` |  |
 | panel.oidcAudience | string | `"panel"` |  |
 | publicPath | string | `"/auth"` |  |
+| publicUrl | string | `"http://example.com/auth"` |  |
 | securityContext | object | `{}` |  |
 | service.enabled | bool | `true` |  |
 | service.nameOverride | string | `""` |  |

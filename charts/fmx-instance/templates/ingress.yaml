@@ -19,7 +19,7 @@ spec:
       {{- if .Values.components.ingress.valuesOverride }}
         {{- .Values.components.ingress.valuesOverride | toYaml | nindent 8 }}
       {{- else }}
-        hostname: {{ .Values.hostname | quote }}
+        hostname: {{ include "fqdn" . | quote }}
         tls:
           enabled: {{ .Values.tls.enabled }}
           secretName: {{ include "tlsCertSecretName" . | quote }}

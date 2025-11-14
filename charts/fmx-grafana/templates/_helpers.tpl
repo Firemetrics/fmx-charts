@@ -30,10 +30,6 @@
   {{- end -}}
 {{- end -}}
 
-{{- define "baseUrl" -}}
-  {{ include "httpScheme" . }}://{{ .Values.hostname }}{{ .Values.publicPath }}/
-{{- end -}}
-
 {{- define "exampleDashboardsConfigMapName" -}}
   {{ include "appName" . }}-dashboards-data
 {{- end -}}

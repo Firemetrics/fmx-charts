@@ -28,7 +28,6 @@
 | database.userSecret.passwordKey | string | `"password"` |  |
 | database.userSecret.usernameKey | string | `"username"` |  |
 | env | list | `[]` |  |
-| hostname | string | `"example.com"` |  |
 | image | string | `"ghcr.io/firemetrics/firemetrics-dashboards:01e5524"` |  |
 | imagePullSecret | string | `""` |  |
 | initContainers | list | `[]` |  |
@@ -55,6 +54,7 @@
 | readinessProbe.periodSeconds | int | `10` |  |
 | readinessProbe.timeoutSeconds | int | `30` |  |
 | securityContext | object | `{}` |  |
+| serverRootUrl | string | `"http://example.com/grafana/"` |  |
 | service.enabled | bool | `true` |  |
 | service.nameOverride | string | `""` |  |
 | tls.enabled | bool | `false` |  |

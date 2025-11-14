@@ -1,4 +1,4 @@
-hostname: example.com
+serverRootUrl: http://example.com/grafana/
 publicPath: ""
 image: ghcr.io/firemetrics/firemetrics-dashboards:01e5524
 imagePullSecret: ""

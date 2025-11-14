@@ -19,7 +19,7 @@ spec:
       {{- if .Values.components.grafana.valuesOverride }}
         {{- .Values.components.grafana.valuesOverride | toYaml | nindent 8 }}
       {{- else }}
-        hostname: {{ .Values.hostname | quote }}
+        serverRootUrl: {{ printf "%s%s/" (include "baseUrl" .) .Values.components.grafana.publicPath | quote }}
         publicPath: {{ .Values.components.grafana.publicPath | quote }}
 
         image: {{ .Values.components.grafana.image | quote }}
