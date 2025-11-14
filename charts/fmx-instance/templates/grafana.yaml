@@ -65,7 +65,7 @@ spec:
             name: {{ include "databaseSuperUserSecretName" . | quote }}
 
         bootstrapKeycloak:
-          enabled: {{ .Values.components.keycloak.enabled }}
+          enabled: {{ and .Values.oidc.enabled .Values.components.keycloak.enabled }}
           url: {{ include "keycloakPublicUrl" . | quote }}
           realm: {{ .Values.oidc.keycloakRealm | quote }}
           adminUserSecret: {{- .Values.components.keycloak.adminSecret | toYaml | nindent 12 }}

@@ -46,7 +46,7 @@ spec:
         readinessProbe: {{ . | toYaml | nindent 10 }}
         {{- end }}
 
-        {{- if .Values.components.keycloak.enabled }}
+        {{- if and .Values.oidc.enabled .Values.components.keycloak.enabled }}
         bootstrapKeycloak:
           enabled: true
           url: {{ include "keycloakPublicUrl" . | quote }}
