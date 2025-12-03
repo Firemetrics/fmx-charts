@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.12.0] - 2025-12-03
+
+### 🚀 Features
+
+- Update Firemetrics images to latest version
+
+### 🐛 Bug Fixes
+
+- Fix Keycloak bootstrap config
+- Update default Admin Panel image
 ## [1.11.0] - 2025-11-14
 
 ### 🚀 Features
