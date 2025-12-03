@@ -1,4 +1,4 @@
-image: ghcr.io/firemetrics/spilo17:4.0-p2-5128c164
+image: ghcr.io/firemetrics/spilo17:4.0-p2-e849f807
 imagePullSecret: ""
 jobNameOverride: ""
 securityContext: {}

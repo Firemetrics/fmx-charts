@@ -6,7 +6,7 @@ receiver:
   # -- Enable the DICOM receiver component.
   enabled: true
   # -- The image used for the DICOM receiver.
-  image: ghcr.io/firemetrics/dicom_receiver:5128c164
+  image: ghcr.io/firemetrics/dicom_receiver:e849f807
   # -- Extra init containers for the DICOM receiver.
   initContainers: []
   # -- Extra environment variables for the DICOM receiver.
