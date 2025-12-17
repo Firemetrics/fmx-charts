@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.12.1] - 2025-12-17
+
+### 🐛 Bug Fixes
+
+- Update default Admin Panel image
+- Update default Firemetrics images
 ## [1.12.0] - 2025-12-03
 
 ### 🚀 Features
