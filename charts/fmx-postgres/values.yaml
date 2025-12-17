@@ -1,4 +1,4 @@
-image: ghcr.io/firemetrics/spilo17:4.0-p2-e849f807
+image: ghcr.io/firemetrics/spilo17:4.0-p2-v0.5.0
 imagePullSecret: ""
 podServiceAccountNameOverride: ""
 numberOfInstances: 1

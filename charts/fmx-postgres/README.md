@@ -15,7 +15,7 @@
 | backup.userSecret.secretKeyKey | string | `"secretKey"` | The key in the secret containing the S3 secret key. |
 | clusterNameOverride | string | `""` |  |
 | env | list | `[]` |  |
-| image | string | `"ghcr.io/firemetrics/spilo17:4.0-p2-e849f807"` |  |
+| image | string | `"ghcr.io/firemetrics/spilo17:4.0-p2-v0.5.0"` |  |
 | imagePullSecret | string | `""` |  |
 | numberOfInstances | int | `1` |  |
 | podServiceAccountNameOverride | string | `""` |  |

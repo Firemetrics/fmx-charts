@@ -98,7 +98,7 @@ backup:
 imagePullSecret: ""
 
 # -- The image used for the Spilo Postgres cluster pods.
-spiloImage: ghcr.io/firemetrics/spilo17:4.0-p2-e849f807
+spiloImage: ghcr.io/firemetrics/spilo17:4.0-p2-v0.5.0
 
 # -- The number of worker processes to start for background tasks.
 workerCount: 4
@@ -163,7 +163,7 @@ components:
     # -- Enable the Fuego component.
     enabled: true
     # -- The image used for the Fuego pods.
-    image: ghcr.io/firemetrics/fuego:e849f807
+    image: ghcr.io/firemetrics/fuego:v0.5.0
     # -- Extra environment variables for the Fuego pods.
     env: []
     # -- Extra volumes for the Fuego pods.
@@ -383,7 +383,7 @@ components:
       # -- Enable the DICOM receiver.
       enabled: true
       # -- The image used for the DICOM receiver pods.
-      image: ghcr.io/firemetrics/dicom_receiver:e849f807
+      image: ghcr.io/firemetrics/dicom_receiver:v0.5.0
       # -- Extra environment variables for the DICOM receiver pods.
       env: []
       # -- Extra volumes for the DICOM receiver pods.
