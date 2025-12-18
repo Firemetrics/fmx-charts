@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.13.0] - 2025-12-18
+
+### 🚀 Features
+
+- Support configuration of referential integrity
+- Allow configuration of external database access
+
+### 🐛 Bug Fixes
+
+- Configure startup probe for Fuego deployment
 ## [1.12.1] - 2025-12-17
 
 ### 🐛 Bug Fixes
