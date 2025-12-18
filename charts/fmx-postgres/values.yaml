@@ -39,6 +39,12 @@ postgresql:
     # The serviceBaseUrl for this FHIR respository (usually the same as fuego's server.public_url)
     # fmx.base_url: "http://example.com/fhir"
 
+    # When set to `true`, all writes (create, update) will enforce referential integrity by checking that all references point to existing resources. Defaults to `false` for performance reasons.
+    fmx.enforce_referential_integrity_on_write: "false"
+
+    # When set to `true`, all deletes will enforce referential integrity by checking that no other resources reference the resource being deleted. Defaults to `false` for performance reasons.
+    fmx.enforce_referential_integrity_on_delete: "false"
+
 backup:
   # -- Enable WAL archiving for the Postgres cluster.
   enabled: false

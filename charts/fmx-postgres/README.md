@@ -19,6 +19,8 @@
 | imagePullSecret | string | `""` |  |
 | numberOfInstances | int | `1` |  |
 | podServiceAccountNameOverride | string | `""` |  |
+| postgresql.parameters."fmx.enforce_referential_integrity_on_delete" | string | `"false"` |  |
+| postgresql.parameters."fmx.enforce_referential_integrity_on_write" | string | `"false"` |  |
 | postgresql.parameters."fmx.worker_count" | string | `"4"` |  |
 | postgresql.parameters.max_locks_per_transaction | string | `"512"` |  |
 | postgresql.parameters.shared_buffers | string | `"2GB"` |  |

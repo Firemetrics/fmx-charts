@@ -181,6 +181,8 @@
 | oidc.signoutUrlOverride | string | `""` | The OIDC sign-out URL. Defaults to the Keycloak instance created by this chart. |
 | oidc.tokenUrlOverride | string | `""` | The OIDC token URL. Defaults to the Keycloak instance created by this chart. |
 | oidc.userinfoUrlOverride | string | `""` | The OIDC user info URL. Defaults to the Keycloak instance created by this chart. |
+| referentialIntegrity.enforceOnDelete | bool | `false` | Enable referential integrity enforcement on delete operations. Defaults to `false` for performance reasons. |
+| referentialIntegrity.enforceOnWrite | bool | `false` | Enable referential integrity enforcement on create and update operations. Defaults to `false` for performance reasons. |
 | spiloImage | string | `"ghcr.io/firemetrics/spilo17:4.0-p2-v0.5.0"` | The image used for the Spilo Postgres cluster pods. |
 | syncPolicy | object | `{"automated":{"prune":false,"selfHeal":false}}` | The sync policy used for all applications created by this chart. |
 | tls.certManager.enabled | bool | `false` | Enable cert-manager integration for automatic TLS certificate management. |

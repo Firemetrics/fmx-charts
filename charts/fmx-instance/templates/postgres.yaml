@@ -38,7 +38,7 @@ spec:
 
         postgresql:
           version: {{ .Values.components.postgres.postgresql.version | quote }}
-          {{- with (dict "fmx.database_name" .Values.database.dbname "fmx.worker_count" (toString .Values.workerCount) "fmx.base_url" (include "fhirBaseUrl" .)) | merge (deepCopy .Values.components.postgres.postgresql.parameters) }}
+          {{- with (dict "fmx.database_name" .Values.database.dbname "fmx.worker_count" (toString .Values.workerCount) "fmx.base_url" (include "fhirBaseUrl" .) "fmx.enforce_referential_integrity_on_write" (toString .Values.referentialIntegrity.enforceOnWrite) "fmx.enforce_referential_integrity_on_delete" (toString .Values.referentialIntegrity.enforceOnDelete)) | merge (deepCopy .Values.components.postgres.postgresql.parameters) }}
           parameters: {{- . | toYaml | nindent 12 }}
           {{- end }}
 

@@ -103,6 +103,12 @@ spiloImage: ghcr.io/firemetrics/spilo17:4.0-p2-v0.5.0
 # -- The number of worker processes to start for background tasks.
 workerCount: 4
 
+referentialIntegrity:
+  # -- Enable referential integrity enforcement on create and update operations. Defaults to `false` for performance reasons.
+  enforceOnWrite: false
+  # -- Enable referential integrity enforcement on delete operations. Defaults to `false` for performance reasons.
+  enforceOnDelete: false
+
 components:
   postgres:
     # -- Enable the Postgres cluster managed by Postgres Operator.
