@@ -144,6 +144,14 @@ spec:
             - name: http
               containerPort: 3000
 
+          startupProbe:
+            exec:
+              command:
+                - /app/fuego_healthcheck
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            failureThreshold: 60
+
           {{- with .Values.livenessProbe }}
           livenessProbe: {{- . | toYaml | nindent 12 }}
           {{- end }}
