@@ -3,6 +3,14 @@ kind: postgresql
 metadata:
   name: {{ include "clusterName" . | quote }}
 spec:
+  enableMasterLoadBalancer: {{ .Values.enableMasterLoadBalancer }}
+  enableReplicaLoadBalancer: {{ .Values.enableReplicaLoadBalancer }}
+  {{- with .Values.allowedSourceRanges }}
+  allowedSourceRanges: {{- . | toYaml | nindent 4 }}
+  {{- else }}
+  allowedSourceRanges: []
+  {{- end }}
+
   teamId: {{ .Values.teamId | quote }}
   dockerImage: {{ .Values.image | quote }}
   numberOfInstances: {{ .Values.numberOfInstances | default 1 }}

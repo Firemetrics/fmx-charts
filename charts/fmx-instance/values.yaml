@@ -120,6 +120,14 @@ components:
     podServiceAccountNameOverride: ""
     # -- The name of the Postgres cluster. Defaults to "{prefix}-postgres".
     clusterNameOverride: ""
+
+    # -- Enable the creation of a LoadBalancer service for the Postgres master pod.
+    enableMasterLoadBalancer: false
+    # -- Enable the creation of a LoadBalancer service for the Postgres master pod.
+    enableReplicaLoadBalancer: false
+    # -- List of CIDR blocks allowed to access the Postgres cluster if `enableMasterLoadBalancer` is true. Use `["0.0.0.0/0"]` to allow access from anywhere.
+    allowedSourceRanges: []
+
     # -- The name of the team that owns the Postgres cluster.
     teamId: ""
     spiloRunAsUser: 101

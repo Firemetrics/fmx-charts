@@ -3,6 +3,14 @@ imagePullSecret: ""
 podServiceAccountNameOverride: ""
 numberOfInstances: 1
 clusterNameOverride: ""
+
+# -- Enable the creation of a LoadBalancer service for the Postgres master pod.
+enableMasterLoadBalancer: false
+# -- Enable the creation of a LoadBalancer service for the Postgres master pod.
+enableReplicaLoadBalancer: false
+# -- List of CIDR blocks allowed to access the Postgres cluster if `enableMasterLoadBalancer` is true. Use `["0.0.0.0/0"]` to allow access from anywhere.
+allowedSourceRanges: []
+
 teamId: ""
 spiloRunAsUser: 101
 spiloRunAsGroup: 103

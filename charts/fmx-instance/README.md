@@ -152,7 +152,10 @@
 | components.panel.valuesOverride | object | `{}` | Override the values for the Panel Helm chart. |
 | components.panel.volumeMounts | list | `[]` | Extra volume mounts for the Panel pods. |
 | components.panel.volumes | list | `[]` | Extra volumes for the Panel pods. |
+| components.postgres.allowedSourceRanges | list | `[]` | List of CIDR blocks allowed to access the Postgres cluster if `enableMasterLoadBalancer` is true. Use `["0.0.0.0/0"]` to allow access from anywhere. |
 | components.postgres.clusterNameOverride | string | `""` | The name of the Postgres cluster. Defaults to "{prefix}-postgres". |
+| components.postgres.enableMasterLoadBalancer | bool | `false` | Enable the creation of a LoadBalancer service for the Postgres master pod. |
+| components.postgres.enableReplicaLoadBalancer | bool | `false` | Enable the creation of a LoadBalancer service for the Postgres master pod. |
 | components.postgres.enabled | bool | `true` | Enable the Postgres cluster managed by Postgres Operator. |
 | components.postgres.extraEnv | list | `[]` | Extra environment variables for the Postgres cluster pods. |
 | components.postgres.numberOfInstances | int | `1` | The number of Postgres instances in the cluster. |

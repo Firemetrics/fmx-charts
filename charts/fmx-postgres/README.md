@@ -6,6 +6,7 @@
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
+| allowedSourceRanges | list | `[]` | List of CIDR blocks allowed to access the Postgres cluster if `enableMasterLoadBalancer` is true. Use `["0.0.0.0/0"]` to allow access from anywhere. |
 | backup.bucketName | string | `"backup"` | The name of the S3 bucket used for WAL archiving. |
 | backup.enabled | bool | `false` | Enable WAL archiving for the Postgres cluster. |
 | backup.endpoint | string | `"http://minio"` | The S3 bucket endpoint used for WAL archiving. |
@@ -14,6 +15,8 @@
 | backup.userSecret.name | string | `"backup-bucket-user"` | The secret containing the S3 user credentials for WAL archiving. |
 | backup.userSecret.secretKeyKey | string | `"secretKey"` | The key in the secret containing the S3 secret key. |
 | clusterNameOverride | string | `""` |  |
+| enableMasterLoadBalancer | bool | `false` | Enable the creation of a LoadBalancer service for the Postgres master pod. |
+| enableReplicaLoadBalancer | bool | `false` | Enable the creation of a LoadBalancer service for the Postgres master pod. |
 | env | list | `[]` |  |
 | image | string | `"ghcr.io/firemetrics/spilo17:4.0-p2-v0.5.0"` |  |
 | imagePullSecret | string | `""` |  |
