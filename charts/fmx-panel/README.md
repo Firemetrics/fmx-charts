@@ -27,6 +27,7 @@
 | database.userSecret.name | string | `"panel-db-user"` |  |
 | database.userSecret.passwordKey | string | `"password"` |  |
 | database.userSecret.usernameKey | string | `"username"` |  |
+| dicom.database.schema | string | `"dicom"` |  |
 | env | list | `[]` |  |
 | featureFlags | list | `["resource_explorer","nocode_builder","sql_editor"]` | The features enabled in the Panel. |
 | fhirBaseUrl | string | `"https://example.com/fhir"` |  |

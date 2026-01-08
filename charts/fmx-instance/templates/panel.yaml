@@ -78,6 +78,10 @@ spec:
           enabled: {{ .Values.caCertsConfigMap.enabled }}
           name: {{ include "caCertsConfigMapName" . | quote }}
           fileName: {{ .Values.caCertsConfigMap.fileName | quote }}
+
+        dicom:
+          database:
+            schema: {{ include "dicomDatabaseSchema" . | quote }}
       {{- end }}
 
   destination:

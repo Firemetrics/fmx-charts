@@ -61,6 +61,8 @@ spec:
                 secretKeyRef:
                   name: {{ .Values.database.userSecret.name | quote }}
                   key: {{ .Values.database.userSecret.passwordKey | quote }}
+            - name: DICOM_DB_SCHEMA
+              value: {{ .Values.dicom.database.schema | quote }}
           command:
             - /bin/bash
             - -c
@@ -80,13 +82,15 @@ spec:
                 psql -c "CREATE ROLE $BOOTSTRAP_DB_USERNAME LOGIN PASSWORD '$BOOTSTRAP_DB_PASSWORD'"
               fi
 
+              psql -d "$BOOTSTRAP_DB_NAME" -c "CREATE SCHEMA IF NOT EXISTS $DICOM_DB_SCHEMA"
+
               # Grant read-only privileges
               psql -d "$BOOTSTRAP_DB_NAME" -c "GRANT CONNECT ON DATABASE $BOOTSTRAP_DB_NAME TO $BOOTSTRAP_DB_USERNAME"
-              psql -d "$BOOTSTRAP_DB_NAME" -c "GRANT USAGE ON SCHEMA public TO $BOOTSTRAP_DB_USERNAME"
-              psql -d "$BOOTSTRAP_DB_NAME" -c "GRANT SELECT ON ALL TABLES IN SCHEMA public TO $BOOTSTRAP_DB_USERNAME"
-              psql -d "$BOOTSTRAP_DB_NAME" -c "GRANT SELECT ON ALL SEQUENCES IN SCHEMA public TO $BOOTSTRAP_DB_USERNAME"
-              psql -d "$BOOTSTRAP_DB_NAME" -c "ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON TABLES TO $BOOTSTRAP_DB_USERNAME"
-              psql -d "$BOOTSTRAP_DB_NAME" -c "ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON SEQUENCES TO $BOOTSTRAP_DB_USERNAME"
+              psql -d "$BOOTSTRAP_DB_NAME" -c "GRANT USAGE ON SCHEMA public, $DICOM_DB_SCHEMA TO $BOOTSTRAP_DB_USERNAME"
+              psql -d "$BOOTSTRAP_DB_NAME" -c "GRANT SELECT ON ALL TABLES IN SCHEMA public, $DICOM_DB_SCHEMA TO $BOOTSTRAP_DB_USERNAME"
+              psql -d "$BOOTSTRAP_DB_NAME" -c "GRANT SELECT ON ALL SEQUENCES IN SCHEMA public, $DICOM_DB_SCHEMA TO $BOOTSTRAP_DB_USERNAME"
+              psql -d "$BOOTSTRAP_DB_NAME" -c "ALTER DEFAULT PRIVILEGES IN SCHEMA public, $DICOM_DB_SCHEMA GRANT SELECT ON TABLES TO $BOOTSTRAP_DB_USERNAME"
+              psql -d "$BOOTSTRAP_DB_NAME" -c "ALTER DEFAULT PRIVILEGES IN SCHEMA public, $DICOM_DB_SCHEMA GRANT SELECT ON SEQUENCES TO $BOOTSTRAP_DB_USERNAME"
         {{- end }}
 
         {{- if .Values.bootstrapKeycloak.enabled }}

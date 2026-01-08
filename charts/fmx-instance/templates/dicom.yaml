@@ -42,7 +42,7 @@ spec:
           dicom: {{- .Values.components.dicom.receiver.dicom | toYaml | nindent 12 }}
           database:
             dbname: {{ .Values.database.dbname | quote }}
-            schema: dicom
+            schema: {{ include "dicomDatabaseSchema" . | quote }}
             port: {{ .Values.database.port }}
             hostname: {{ include "databaseHostname" . | quote }}
             userSecret: {{- .Values.components.dicom.receiver.databaseUserSecret | toYaml | nindent 14 }}

@@ -66,3 +66,7 @@ caCertsConfigMap:
   enabled: false
   name: "ca-certs"
   fileName: "ca-certificates.crt"
+
+dicom:
+  database:
+    schema: dicom

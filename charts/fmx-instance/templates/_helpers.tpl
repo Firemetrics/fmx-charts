@@ -38,6 +38,10 @@
   {{ include "appName" . }}-dicom
 {{- end -}}
 
+{{- define "dicomDatabaseSchema" -}}
+  dicom
+{{- end -}}
+
 {{- define "databaseHostname" -}}
   {{- if .Values.database.hostnameOverride -}}
     {{ .Values.database.hostnameOverride }}
