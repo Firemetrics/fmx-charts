@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.13.1] - 2026-01-08
+
+### 🐛 Bug Fixes
+
+- Fix `dicom`-schema access from SQL editor
 ## [1.13.0] - 2025-12-18
 
 ### 🚀 Features
