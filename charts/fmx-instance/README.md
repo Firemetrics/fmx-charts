@@ -36,7 +36,7 @@
 | components.dicom.receiver.exposedService.enabled | bool | `false` | Enable the creation of an exposed service for direct DICOM receiver access. |
 | components.dicom.receiver.exposedService.servicePort | int | `11112` | The service port for the exposed DICOM receiver service. |
 | components.dicom.receiver.exposedService.serviceType | string | `"LoadBalancer"` | The service type for the exposed DICOM receiver service. |
-| components.dicom.receiver.image | string | `"ghcr.io/firemetrics/dicom_receiver:v0.5.0"` | The image used for the DICOM receiver pods. |
+| components.dicom.receiver.image | string | `"ghcr.io/firemetrics/dicom_receiver:v0.6.0"` | The image used for the DICOM receiver pods. |
 | components.dicom.receiver.migration.enabled | bool | `false` | Enable the migration init container to run database migrations before starting the receiver. |
 | components.dicom.receiver.volumeMounts | list | `[]` | Extra volume mounts for the DICOM receiver pods. |
 | components.dicom.receiver.volumes | list | `[]` | Extra volumes for the DICOM receiver pods. |
@@ -79,7 +79,7 @@
 | components.fuego.hapi.securityContext | object | `{}` | The security context for the HAPI pods. |
 | components.fuego.hapi.volumeMounts | list | `[]` | Extra volume mounts for the HAPI pods. |
 | components.fuego.hapi.volumes | list | `[]` | Extra volumes for the HAPI pods. |
-| components.fuego.image | string | `"ghcr.io/firemetrics/fuego:v0.5.0"` | The image used for the Fuego pods. |
+| components.fuego.image | string | `"ghcr.io/firemetrics/fuego:v0.6.0"` | The image used for the Fuego pods. |
 | components.fuego.livenessProbe | object | `{}` | Liveness probe configuration for the Fuego pods. |
 | components.fuego.oidcClientSecret.idKey | string | `"id"` | The key in the secret containing the OIDC client ID. |
 | components.fuego.oidcClientSecret.name | string | `"fuego-oidc-client"` | The secret containing the OIDC client credentials for Fuego. |
@@ -186,7 +186,7 @@
 | oidc.userinfoUrlOverride | string | `""` | The OIDC user info URL. Defaults to the Keycloak instance created by this chart. |
 | referentialIntegrity.enforceOnDelete | bool | `false` | Enable referential integrity enforcement on delete operations. Defaults to `false` for performance reasons. |
 | referentialIntegrity.enforceOnWrite | bool | `false` | Enable referential integrity enforcement on create and update operations. Defaults to `false` for performance reasons. |
-| spiloImage | string | `"ghcr.io/firemetrics/spilo17:4.0-p2-v0.5.0"` | The image used for the Spilo Postgres cluster pods. |
+| spiloImage | string | `"ghcr.io/firemetrics/spilo17:4.0-p2-v0.6.0"` | The image used for the Spilo Postgres cluster pods. |
 | syncPolicy | object | `{"automated":{"prune":false,"selfHeal":false}}` | The sync policy used for all applications created by this chart. |
 | tls.certManager.enabled | bool | `false` | Enable cert-manager integration for automatic TLS certificate management. |
 | tls.certManager.issuer | string | `"letsencrypt"` | Name of the cert-manager ClusterIssuer to use for TLS certificate issuance. |
