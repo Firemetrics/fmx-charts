@@ -18,7 +18,7 @@
 | enableMasterLoadBalancer | bool | `false` | Enable the creation of a LoadBalancer service for the Postgres master pod. |
 | enableReplicaLoadBalancer | bool | `false` | Enable the creation of a LoadBalancer service for the Postgres master pod. |
 | env | list | `[]` |  |
-| image | string | `"ghcr.io/firemetrics/spilo17:4.0-p2-v0.6.0"` |  |
+| image | string | `"ghcr.io/firemetrics/spilo17:4.0-p2-v0.7.0"` |  |
 | imagePullSecret | string | `""` |  |
 | numberOfInstances | int | `1` |  |
 | podServiceAccountNameOverride | string | `""` |  |
