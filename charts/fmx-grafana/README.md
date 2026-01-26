@@ -1,6 +1,6 @@
 # fmx-grafana
 
-![Version: 1.13.2](https://img.shields.io/badge/Version-1.13.2-informational?style=flat-square)
+![Version: 1.13.3](https://img.shields.io/badge/Version-1.13.3-informational?style=flat-square)
 
 ## Values
 
