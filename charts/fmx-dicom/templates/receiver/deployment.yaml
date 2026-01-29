@@ -145,6 +145,8 @@ spec:
           env:
             - name: DICOM_TELEMETRY_LOGGING_LEVEL
               value: {{ .Values.receiver.dicom.logLevel | quote }}
+            - name: DICOM_TELEMETRY_LOGGING_FORMAT
+              value: {{ .Values.receiver.dicom.logFormat | quote }}
             - name: DICOM_AET
               value: {{ .Values.receiver.dicom.aet | quote }}
             - name: PG_HOST
@@ -207,6 +209,8 @@ spec:
           env:
             - name: DICOM_TELEMETRY_LOGGING_LEVEL
               value: {{ .Values.receiver.dicom.logLevel | quote }}
+            - name: DICOM_TELEMETRY_LOGGING_FORMAT
+              value: {{ .Values.receiver.dicom.logFormat | quote }}
             - name: DICOM_PORT
               value: {{ $containerPort | quote }}
             - name: DICOM_AET

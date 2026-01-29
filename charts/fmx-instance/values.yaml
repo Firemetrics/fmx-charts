@@ -180,6 +180,9 @@ components:
     image: ghcr.io/firemetrics/fuego:v0.7.0
     # -- Extra environment variables for the Fuego pods.
     env: []
+    logging:
+      # -- The log format for Fuego ("plain" or "json").
+      format: json
     # -- Extra volumes for the Fuego pods.
     volumes: []
     # -- Extra volume mounts for the Fuego pods.
@@ -417,6 +420,8 @@ components:
       dicom:
         # -- The log level for the DICOM receiver.
         logLevel: INFO
+        # -- The log format for the DICOM receiver ("plain" or "json").
+        logFormat: json
         # -- The Application Entity Title (AET) for the DICOM receiver.
         aet: FMX
         # -- The number of worker threads for the DICOM receiver.
@@ -483,4 +488,41 @@ components:
         # -- The key in the secret containing the S3 secret key.
         secretKeyKey: secretKey
     # -- Override the values for the DICOM Helm chart.
+    valuesOverride: {}
+
+  loki:
+    # -- Enable the Loki log aggregation component.
+    enabled: false
+    loki:
+      # -- Enable Loki deployment.
+      enabled: true
+      # -- The image used for Loki pods.
+      image: grafana/loki:3.4.2
+      config:
+        # -- Log retention period (default: 31 days).
+        retentionPeriod: 744h
+    persistence:
+      # -- Enable persistence for Loki data.
+      enabled: true
+      # -- The size of the Loki data volume.
+      requestedStorage: "10Gi"
+    service:
+      # -- Enable the Loki service.
+      enabled: true
+      # -- Override the service name.
+      nameOverride: ""
+    alloy:
+      # -- Enable Alloy log collector deployment.
+      enabled: true
+      # -- The image used for Alloy pods.
+      image: grafana/alloy:v1.12.2
+      config:
+        # -- List of namespaces to collect logs from. Empty list means all namespaces.
+        namespaces: []
+        jsonProcessing:
+          # -- JSON fields to extract and promote to indexed labels.
+          # -- Common fields: level, msg, message, error, caller, ts.
+          labelFields:
+            - level
+    # -- Override the values for the Loki Helm chart.
     valuesOverride: {}

@@ -80,6 +80,12 @@ spec:
 
         persistence: {{- .Values.components.grafana.persistence | toYaml | nindent 10 }}
 
+        loki:
+          enabled: {{ .Values.components.loki.enabled }}
+          {{- if .Values.components.loki.enabled }}
+          url: {{ include "internalLokiUrl" . | quote }}
+          {{- end }}
+
         caCertsConfigMap:
           enabled: {{ .Values.caCertsConfigMap.enabled }}
           name: {{ include "caCertsConfigMapName" . | quote }}

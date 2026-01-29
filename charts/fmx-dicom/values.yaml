@@ -28,6 +28,8 @@ receiver:
   dicom:
     # -- The log level for the DICOM receiver.
     logLevel: INFO
+    # -- The log format for the DICOM receiver ("plain" or "json").
+    logFormat: json
     # -- The Application Entity Title (AET) for the DICOM receiver.
     aet: FMX
     # -- The number of worker threads for the DICOM receiver.

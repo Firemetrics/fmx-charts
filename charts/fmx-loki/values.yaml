@@ -1,0 +1,37 @@
+# -- The image pull secret used for pulling images.
+imagePullSecret: ""
+
+loki:
+  # -- Enable Loki deployment.
+  enabled: true
+  # -- The image used for Loki pods.
+  image: grafana/loki:3.4.2
+  config:
+    # -- Log retention period (default: 31 days).
+    retentionPeriod: 744h
+
+persistence:
+  # -- Enable persistence for Loki data.
+  enabled: true
+  # -- The size of the Loki data volume.
+  requestedStorage: "10Gi"
+
+service:
+  # -- Enable the Loki service.
+  enabled: true
+  # -- Override the service name.
+  nameOverride: ""
+
+alloy:
+  # -- Enable Alloy log collector deployment.
+  enabled: true
+  # -- The image used for Alloy pods.
+  image: grafana/alloy:v1.12.2
+  config:
+    # -- List of namespaces to collect logs from. Empty list means all namespaces.
+    namespaces: []
+    jsonProcessing:
+      # -- JSON fields to extract and promote to indexed labels.
+      # -- Common fields: level, msg, message, error, caller, ts.
+      labelFields:
+        - level

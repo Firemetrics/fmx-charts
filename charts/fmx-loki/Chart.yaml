@@ -1,0 +1,4 @@
+apiVersion: v2
+name: fmx-loki
+description: Loki log aggregation with Alloy collector
+version: 1.13.3

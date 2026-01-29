@@ -1,0 +1,65 @@
+{{- if .Values.loki.enabled -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "lokiAppName" . }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/part-of: {{ include "appName" . }}
+      app.kubernetes.io/component: loki
+      app.kubernetes.io/name: {{ include "lokiPodLabel" . }}
+  template:
+    metadata:
+      name: {{ include "lokiAppName" . }}
+      labels:
+        app.kubernetes.io/part-of: {{ include "appName" . }}
+        app.kubernetes.io/component: loki
+        app.kubernetes.io/name: {{ include "lokiPodLabel" . }}
+    spec:
+      {{- with .Values.imagePullSecret }}
+      imagePullSecrets:
+        - name: {{ . }}
+      {{- end }}
+
+      volumes:
+        - name: config
+          configMap:
+            name: {{ include "lokiConfigMapName" . }}
+        {{- if .Values.persistence.enabled }}
+        - name: data
+          persistentVolumeClaim:
+            claimName: {{ include "lokiPvcName" . }}
+        {{- end }}
+
+      containers:
+        - name: loki
+          image: {{ .Values.loki.image | quote }}
+          args:
+            - -config.file=/etc/loki/loki.yaml
+            - -target=all
+          ports:
+            - name: http
+              containerPort: {{ include "lokiHttpPort" . }}
+              protocol: TCP
+          volumeMounts:
+            - name: config
+              mountPath: /etc/loki
+            {{- if .Values.persistence.enabled }}
+            - name: data
+              mountPath: /loki
+            {{- end }}
+          livenessProbe:
+            httpGet:
+              path: /ready
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 10
+{{- end -}}

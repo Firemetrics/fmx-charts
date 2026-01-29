@@ -45,6 +45,7 @@
 | imagePullSecret | string | `""` |  |
 | initContainers | list | `[]` |  |
 | livenessProbe | object | `{}` |  |
+| logging.format | string | `"json"` | The log format for Fuego ("plain" or "json"). |
 | oidc.clientSecret.idKey | string | `"id"` |  |
 | oidc.clientSecret.name | string | `"fuego-oidc-client"` |  |
 | oidc.clientSecret.secretKey | string | `"secret"` |  |

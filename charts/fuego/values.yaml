@@ -4,6 +4,9 @@ serviceAccountName: ""
 imagePullSecret: ""
 initContainers: []
 env: []
+logging:
+  # -- The log format for Fuego ("plain" or "json").
+  format: json
 volumes: []
 volumeMounts: []
 

@@ -23,6 +23,7 @@
 | receiver.database.userSecret.passwordKey | string | `"password"` |  |
 | receiver.database.userSecret.usernameKey | string | `"username"` |  |
 | receiver.dicom.aet | string | `"FMX"` | The Application Entity Title (AET) for the DICOM receiver. |
+| receiver.dicom.logFormat | string | `"json"` | The log format for the DICOM receiver ("plain" or "json"). |
 | receiver.dicom.logLevel | string | `"INFO"` | The log level for the DICOM receiver. |
 | receiver.dicom.numThreads | int | `8` | The number of worker threads for the DICOM receiver. |
 | receiver.enabled | bool | `true` | Enable the DICOM receiver component. |

@@ -30,6 +30,9 @@ spec:
         env: {{ . | toYaml | nindent 10 }}
         {{- end }}
 
+        logging:
+          format: {{ .Values.components.fuego.logging.format | quote }}
+
         {{- with .Values.components.fuego.volumes }}
         volumes: {{ . | toYaml | nindent 10 }}
         {{- end }}

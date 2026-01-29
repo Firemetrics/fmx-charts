@@ -74,6 +74,10 @@ service:
   enabled: true
   nameOverride: ""
 
+loki:
+  enabled: false
+  url: "http://loki.default.svc.cluster.local"
+
 caCertsConfigMap:
   enabled: false
   name: "ca-certs"

@@ -38,6 +38,10 @@
   {{ include "appName" . }}-dicom
 {{- end -}}
 
+{{- define "lokiAppName" -}}
+  {{ include "appName" . }}-loki
+{{- end -}}
+
 {{- define "dicomDatabaseSchema" -}}
   dicom
 {{- end -}}
@@ -176,6 +180,14 @@
 
 {{- define "internalFhirBaseUrl" -}}
   {{ include "internalFuegoUrl" . }}{{ include "fhirPath" . }}
+{{- end -}}
+
+{{- define "internalLokiUrl" -}}
+  {{- if .Values.components.loki.service.nameOverride -}}
+    http://{{ .Values.components.loki.service.nameOverride }}.{{ .Release.Namespace }}.svc.cluster.local
+  {{- else -}}
+    http://{{ include "lokiAppName" . }}-loki.{{ .Release.Namespace }}.svc.cluster.local
+  {{- end -}}
 {{- end -}}
 
 {{- define "tlsCertSecretName" -}}

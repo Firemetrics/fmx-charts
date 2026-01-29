@@ -29,6 +29,7 @@
 | components.dicom.receiver.databaseUserSecret.passwordKey | string | `"password"` | The key in the secret containing the DICOM receiver database password. |
 | components.dicom.receiver.databaseUserSecret.usernameKey | string | `"username"` | The key in the secret containing the DICOM receiver database username. |
 | components.dicom.receiver.dicom.aet | string | `"FMX"` | The Application Entity Title (AET) for the DICOM receiver. |
+| components.dicom.receiver.dicom.logFormat | string | `"json"` | The log format for the DICOM receiver ("plain" or "json"). |
 | components.dicom.receiver.dicom.logLevel | string | `"INFO"` | The log level for the DICOM receiver. |
 | components.dicom.receiver.dicom.numThreads | int | `8` | The number of worker threads for the DICOM receiver. |
 | components.dicom.receiver.enabled | bool | `true` | Enable the DICOM receiver. |
@@ -81,6 +82,7 @@
 | components.fuego.hapi.volumes | list | `[]` | Extra volumes for the HAPI pods. |
 | components.fuego.image | string | `"ghcr.io/firemetrics/fuego:v0.7.0"` | The image used for the Fuego pods. |
 | components.fuego.livenessProbe | object | `{}` | Liveness probe configuration for the Fuego pods. |
+| components.fuego.logging.format | string | `"json"` | The log format for Fuego ("plain" or "json"). |
 | components.fuego.oidcClientSecret.idKey | string | `"id"` | The key in the secret containing the OIDC client ID. |
 | components.fuego.oidcClientSecret.name | string | `"fuego-oidc-client"` | The secret containing the OIDC client credentials for Fuego. |
 | components.fuego.oidcClientSecret.secretKey | string | `"secret"` | The key in the secret containing the OIDC client secret. |
@@ -125,6 +127,19 @@
 | components.keycloak.valuesOverride | object | `{}` | Override the values for the Keycloak Helm chart. |
 | components.keycloak.volumeMounts | list | `[]` | Extra volume mounts for the Keycloak pods. |
 | components.keycloak.volumes | list | `[]` | Extra volumes for the Keycloak pods. |
+| components.loki.alloy.config.jsonProcessing.labelFields | list | `["level"]` | Common fields: level, msg, message, error, caller, ts. |
+| components.loki.alloy.config.namespaces | list | `[]` | List of namespaces to collect logs from. Empty list means all namespaces. |
+| components.loki.alloy.enabled | bool | `true` | Enable Alloy log collector deployment. |
+| components.loki.alloy.image | string | `"grafana/alloy:v1.12.2"` | The image used for Alloy pods. |
+| components.loki.enabled | bool | `false` | Enable the Loki log aggregation component. |
+| components.loki.loki.config.retentionPeriod | string | `"744h"` | Log retention period (default: 31 days). |
+| components.loki.loki.enabled | bool | `true` | Enable Loki deployment. |
+| components.loki.loki.image | string | `"grafana/loki:3.4.2"` | The image used for Loki pods. |
+| components.loki.persistence.enabled | bool | `true` | Enable persistence for Loki data. |
+| components.loki.persistence.requestedStorage | string | `"10Gi"` | The size of the Loki data volume. |
+| components.loki.service.enabled | bool | `true` | Enable the Loki service. |
+| components.loki.service.nameOverride | string | `""` | Override the service name. |
+| components.loki.valuesOverride | object | `{}` | Override the values for the Loki Helm chart. |
 | components.minio.chartRepoUrl | string | `"https://operator.min.io"` | The image used for the MinIO pods. |
 | components.minio.configSecretName | string | `"minio-config"` | The configuration secret for MinIO. |
 | components.minio.enabled | bool | `true` | Enable the MinIO component. |

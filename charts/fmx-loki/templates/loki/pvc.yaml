@@ -1,0 +1,12 @@
+{{- if and .Values.loki.enabled .Values.persistence.enabled -}}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "lokiPvcName" . }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.persistence.requestedStorage | quote }}
+{{- end -}}

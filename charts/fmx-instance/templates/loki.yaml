@@ -1,0 +1,52 @@
+{{- if .Values.components.loki.enabled -}}
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: {{ include "lokiAppName" . }}
+  namespace: {{ .Values.argoCdNamespace | quote }}
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+
+  source:
+    repoURL: {{ .Values.chartRepoUrl | quote }}
+    {{ include "chartSelection" (dict "context" . "chart" "fmx-loki") }}
+    targetRevision: {{ include "chartRevision" . | quote }}
+    helm:
+      releaseName: {{ include "lokiAppName" . }}
+      values: |
+      {{- if .Values.components.loki.valuesOverride }}
+        {{- .Values.components.loki.valuesOverride | toYaml | nindent 8 }}
+      {{- else }}
+        imagePullSecret: {{ .Values.imagePullSecret | quote }}
+        loki:
+          enabled: {{ .Values.components.loki.loki.enabled }}
+          image: {{ .Values.components.loki.loki.image | quote }}
+          config:
+            retentionPeriod: {{ .Values.components.loki.loki.config.retentionPeriod | quote }}
+        persistence:
+          enabled: {{ .Values.components.loki.persistence.enabled }}
+          requestedStorage: {{ .Values.components.loki.persistence.requestedStorage | quote }}
+        service:
+          enabled: {{ .Values.components.loki.service.enabled }}
+          {{- with .Values.components.loki.service.nameOverride }}
+          nameOverride: {{ . | quote }}
+          {{- end }}
+        alloy:
+          enabled: {{ .Values.components.loki.alloy.enabled }}
+          image: {{ .Values.components.loki.alloy.image | quote }}
+          config:
+            namespaces: {{ .Values.components.loki.alloy.config.namespaces | toJson }}
+            jsonProcessing:
+              labelFields: {{ .Values.components.loki.alloy.config.jsonProcessing.labelFields | toJson }}
+      {{- end }}
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: {{ .Release.Namespace }}
+
+  {{- with .Values.syncPolicy }}
+  syncPolicy: {{- . | toYaml | nindent 4 }}
+  {{- end -}}
+{{- end -}}

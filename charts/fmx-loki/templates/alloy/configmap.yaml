@@ -1,0 +1,106 @@
+{{- if .Values.alloy.enabled -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "alloyConfigMapName" . }}
+data:
+  config.alloy: |
+    // Discover pods in the cluster
+    discovery.kubernetes "pods" {
+      role = "pod"
+      {{- if .Values.alloy.config.namespaces }}
+      namespaces {
+        names = {{ .Values.alloy.config.namespaces | toJson }}
+      }
+      {{- end }}
+    }
+
+    // Relabel discovered pods to extract metadata
+    discovery.relabel "pods" {
+      targets = discovery.kubernetes.pods.targets
+
+      // Keep only pods with a container name
+      rule {
+        source_labels = ["__meta_kubernetes_pod_container_name"]
+        action        = "keep"
+        regex         = ".+"
+      }
+
+      // Set namespace label
+      rule {
+        source_labels = ["__meta_kubernetes_namespace"]
+        target_label  = "namespace"
+      }
+
+      // Set pod label
+      rule {
+        source_labels = ["__meta_kubernetes_pod_name"]
+        target_label  = "pod"
+      }
+
+      // Set container label
+      rule {
+        source_labels = ["__meta_kubernetes_pod_container_name"]
+        target_label  = "container"
+      }
+
+      // Set node label
+      rule {
+        source_labels = ["__meta_kubernetes_pod_node_name"]
+        target_label  = "node"
+      }
+
+      // Set job label from app.kubernetes.io/name pod label
+      rule {
+        source_labels = ["__meta_kubernetes_pod_label_app_kubernetes_io_name"]
+        regex         = "(.+)"
+        target_label  = "job"
+      }
+
+      // Fallback: extract job from pod name (only if job not already set)
+      rule {
+        source_labels = ["job", "__meta_kubernetes_pod_name"]
+        regex         = "^;(.+?)(-[a-z0-9]+)?(-[a-z0-9]+)?$"
+        target_label  = "job"
+        replacement   = "$1"
+      }
+    }
+
+    // Collect logs from Kubernetes pods
+    loki.source.kubernetes "pods" {
+      targets    = discovery.relabel.pods.output
+      forward_to = [loki.process.pods.receiver]
+    }
+
+    // Process logs - attempt JSON parsing
+    loki.process "pods" {
+      forward_to = [loki.write.default.receiver]
+
+      {{- if .Values.alloy.config.jsonProcessing.labelFields }}
+      // Extract JSON fields
+      stage.json {
+        expressions = {
+          {{- range .Values.alloy.config.jsonProcessing.labelFields }}
+          {{ . }} = {{ . | quote }},
+          {{- end }}
+        }
+      }
+
+      // Promote extracted fields to indexed labels
+      stage.labels {
+        values = {
+          {{- range .Values.alloy.config.jsonProcessing.labelFields }}
+          {{ . }} = "",
+          {{- end }}
+        }
+      }
+      {{- end }}
+    }
+
+    // Write logs to Loki
+    loki.write "default" {
+      endpoint {
+        url = "http://{{ include "lokiSvcName" . }}.{{ .Release.Namespace }}.svc.cluster.local/loki/api/v1/push"
+      }
+    }
+{{- end -}}

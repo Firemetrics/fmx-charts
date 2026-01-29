@@ -14,4 +14,11 @@ data:
         user: ${{ include "dbUsernameEnvVar" . }}
         secureJsonData:
           password: ${{ include "dbPasswordEnvVar" . }}
+      {{- if .Values.loki.enabled }}
+      - name: Loki
+        type: loki
+        access: proxy
+        url: {{ .Values.loki.url | quote }}
+        editable: true
+      {{- end }}
 

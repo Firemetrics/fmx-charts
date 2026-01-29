@@ -27,6 +27,7 @@ Each template in `charts/fmx-instance/templates/` creates a dedicated Argo CD Ap
 - **ingress**: Traefik ingress controller configuration
 - **minio**: Object storage
 - **dicom**: DICOM services
+- **loki**: Log aggregation with Alloy collector
 
 ### Benefits of This Pattern
 - **Single Deployment Point**: Deploy entire stack with one parent application
@@ -46,6 +47,7 @@ charts/
 ├── fmx-instance/      # Parent App of Apps chart (primary deployment entry point)
 │   └── templates/     # Creates child Argo CD Applications for each component
 ├── fmx-keycloak/      # Keycloak authentication service
+├── fmx-loki/          # Loki log aggregation with Alloy collector
 ├── fmx-minio/         # MinIO object storage
 ├── fmx-panel/         # Panel UI component
 ├── fmx-postgres/      # PostgreSQL database
@@ -134,7 +136,7 @@ The `fmx-instance` chart implements the App of Apps pattern to coordinate multip
 1. **Authentication Layer**: Keycloak provides OIDC/OAuth2 authentication
 2. **Data Layer**: PostgreSQL databases managed by Postgres Operator
 3. **Application Layer**: Panel (UI), Fuego (API), and other microservices
-4. **Observability**: Grafana with custom dashboards
+4. **Observability**: Grafana with custom dashboards, Loki for log aggregation
 5. **Storage**: MinIO for object storage and backups
 6. **Networking**: Traefik for ingress and service mesh
 

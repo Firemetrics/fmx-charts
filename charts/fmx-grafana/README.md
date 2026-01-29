@@ -36,6 +36,8 @@
 | livenessProbe.httpGet.port | int | `3000` |  |
 | livenessProbe.periodSeconds | int | `10` |  |
 | livenessProbe.timeoutSeconds | int | `30` |  |
+| loki.enabled | bool | `false` |  |
+| loki.url | string | `"http://loki.default.svc.cluster.local"` |  |
 | oidc.apiUrl | string | `"http://example.com/openid-connect/userinfo"` |  |
 | oidc.authUrl | string | `"http://example.com/openid-connect/auth"` |  |
 | oidc.clientSecret.idKey | string | `"id"` |  |
