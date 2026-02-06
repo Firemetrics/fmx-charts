@@ -1,6 +1,6 @@
 # fmx-dicom
 
-![Version: 1.13.3](https://img.shields.io/badge/Version-1.13.3-informational?style=flat-square)
+![Version: 1.14.0](https://img.shields.io/badge/Version-1.14.0-informational?style=flat-square)
 
 ## Values
 

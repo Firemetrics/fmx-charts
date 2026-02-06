@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.14.0] - 2026-02-06
+
+### 🚀 Features
+
+- Add fmx-loki chart for log aggregation
+- Centralize Firemetrics image version management
+
+### 🐛 Bug Fixes
+
+- Update default Firemetrics images
 ## [1.13.3] - 2026-01-26
 
 ### 🐛 Bug Fixes
