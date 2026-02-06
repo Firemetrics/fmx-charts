@@ -214,6 +214,30 @@
   {{- end -}}
 {{- end -}}
 
+{{- define "spiloImage" -}}
+  {{- if .Values.spiloImage -}}
+    {{ .Values.spiloImage }}
+  {{- else -}}
+    ghcr.io/firemetrics/spilo17:{{ .Values.spiloImagePrefix }}{{ .Values.firemetricsVersion }}
+  {{- end -}}
+{{- end -}}
+
+{{- define "fuegoImage" -}}
+  {{- if .Values.components.fuego.image -}}
+    {{ .Values.components.fuego.image }}
+  {{- else -}}
+    ghcr.io/firemetrics/fuego:{{ .Values.firemetricsVersion }}
+  {{- end -}}
+{{- end -}}
+
+{{- define "dicomReceiverImage" -}}
+  {{- if .Values.components.dicom.receiver.image -}}
+    {{ .Values.components.dicom.receiver.image }}
+  {{- else -}}
+    ghcr.io/firemetrics/dicom_receiver:{{ .Values.firemetricsVersion }}
+  {{- end -}}
+{{- end -}}
+
 {{- define "chartSelection" -}}
   {{- if hasSuffix ".git" .context.Values.chartRepoUrl -}}
     path: charts/{{ .chart }}

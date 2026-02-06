@@ -37,7 +37,7 @@
 | components.dicom.receiver.exposedService.enabled | bool | `false` | Enable the creation of an exposed service for direct DICOM receiver access. |
 | components.dicom.receiver.exposedService.servicePort | int | `11112` | The service port for the exposed DICOM receiver service. |
 | components.dicom.receiver.exposedService.serviceType | string | `"LoadBalancer"` | The service type for the exposed DICOM receiver service. |
-| components.dicom.receiver.image | string | `"ghcr.io/firemetrics/dicom_receiver:v0.7.0"` | The image used for the DICOM receiver pods. |
+| components.dicom.receiver.image | string | `""` | Override the full DICOM receiver image (bypasses firemetricsVersion). |
 | components.dicom.receiver.migration.enabled | bool | `false` | Enable the migration init container to run database migrations before starting the receiver. |
 | components.dicom.receiver.volumeMounts | list | `[]` | Extra volume mounts for the DICOM receiver pods. |
 | components.dicom.receiver.volumes | list | `[]` | Extra volumes for the DICOM receiver pods. |
@@ -80,7 +80,7 @@
 | components.fuego.hapi.securityContext | object | `{}` | The security context for the HAPI pods. |
 | components.fuego.hapi.volumeMounts | list | `[]` | Extra volume mounts for the HAPI pods. |
 | components.fuego.hapi.volumes | list | `[]` | Extra volumes for the HAPI pods. |
-| components.fuego.image | string | `"ghcr.io/firemetrics/fuego:v0.7.0"` | The image used for the Fuego pods. |
+| components.fuego.image | string | `""` | Override the full Fuego image (bypasses firemetricsVersion). |
 | components.fuego.livenessProbe | object | `{}` | Liveness probe configuration for the Fuego pods. |
 | components.fuego.logging.format | string | `"json"` | The log format for Fuego ("plain" or "json"). |
 | components.fuego.oidcClientSecret.idKey | string | `"id"` | The key in the secret containing the OIDC client ID. |
@@ -187,6 +187,7 @@
 | database.existingSuperUserSecret | string | `""` | The database super user used by the Firemetrics instance to manage the Postgres instance. Defaults to the user created by Postgres Operator. |
 | database.hostnameOverride | string | `""` | The database host used by the Firemetrics instance. Defaults to the Postgres cluster created by this chart. |
 | database.port | int | `5432` | The database port used by the Firemetrics instance. |
+| firemetricsVersion | string | `"v0.7.0"` | The version tag for core Firemetrics images (fuego, dicom_receiver, spilo). |
 | hostname | string | `""` | The hostname for the Firemetrics instance (deprecated, use ingress.fqdn instead). |
 | imagePullSecret | string | `""` | The image pull secret used for the Firemetrics instance. |
 | ingress.fqdn | string | `"example.com"` | The FQDN for the Firemetrics instance. |
@@ -201,7 +202,8 @@
 | oidc.userinfoUrlOverride | string | `""` | The OIDC user info URL. Defaults to the Keycloak instance created by this chart. |
 | referentialIntegrity.enforceOnDelete | bool | `false` | Enable referential integrity enforcement on delete operations. Defaults to `false` for performance reasons. |
 | referentialIntegrity.enforceOnWrite | bool | `false` | Enable referential integrity enforcement on create and update operations. Defaults to `false` for performance reasons. |
-| spiloImage | string | `"ghcr.io/firemetrics/spilo17:4.0-p2-v0.7.0"` | The image used for the Spilo Postgres cluster pods. |
+| spiloImage | string | `""` | Override the full Spilo image (bypasses firemetricsVersion). |
+| spiloImagePrefix | string | `"4.0-p2-"` | The tag prefix for the Spilo Postgres image (prepended to firemetricsVersion). |
 | syncPolicy | object | `{"automated":{"prune":false,"selfHeal":false}}` | The sync policy used for all applications created by this chart. |
 | tls.certManager.enabled | bool | `false` | Enable cert-manager integration for automatic TLS certificate management. |
 | tls.certManager.issuer | string | `"letsencrypt"` | Name of the cert-manager ClusterIssuer to use for TLS certificate issuance. |

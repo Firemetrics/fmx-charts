@@ -27,7 +27,7 @@ spec:
 
         receiver:
           enabled: {{ .Values.components.dicom.receiver.enabled }}
-          image: {{ .Values.components.dicom.receiver.image | quote }}
+          image: {{ include "dicomReceiverImage" . | quote }}
           {{- with .Values.components.dicom.receiver.env }}
           env: {{- . | toYaml | nindent 12 }}
           {{- end }}
@@ -48,7 +48,7 @@ spec:
             userSecret: {{- .Values.components.dicom.receiver.databaseUserSecret | toYaml | nindent 14 }}
           bootstrapDatabase:
             enabled: true
-            image: {{ .Values.spiloImage | quote }}
+            image: {{ include "spiloImage" . | quote }}
             databaseUserSecret:
               name: {{ include "databaseSuperUserSecretName" . | quote }}
 

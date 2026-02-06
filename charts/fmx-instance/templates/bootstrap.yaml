@@ -19,7 +19,7 @@ spec:
       {{- if .Values.components.bootstrap.valuesOverride }}
         {{- .Values.components.bootstrap.valuesOverride | toYaml | nindent 8 }}
       {{- else }}
-        image: {{ .Values.spiloImage | quote }}
+        image: {{ include "spiloImage" . | quote }}
         imagePullSecret: {{ .Values.imagePullSecret | quote }}
 
         {{- with .Values.components.bootstrap.securityContext }}

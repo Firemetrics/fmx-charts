@@ -60,7 +60,7 @@ spec:
 
         bootstrapDatabase:
           enabled: true
-          image: {{ .Values.spiloImage | quote }}
+          image: {{ include "spiloImage" . | quote }}
           databaseUserSecret:
             name: {{ include "databaseSuperUserSecretName" . | quote }}
 

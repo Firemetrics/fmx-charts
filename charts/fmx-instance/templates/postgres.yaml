@@ -19,7 +19,7 @@ spec:
       {{- if .Values.components.postgres.valuesOverride }}
         {{- .Values.components.postgres.valuesOverride | toYaml | nindent 8 }}
       {{- else }}
-        image: {{ .Values.spiloImage | quote }}
+        image: {{ include "spiloImage" . | quote }}
         imagePullSecret: {{ .Values.imagePullSecret | quote }}
         podServiceAccountNameOverride: {{ .Values.components.postgres.podServiceAccountNameOverride | quote }}
         numberOfInstances: {{ .Values.components.postgres.numberOfInstances }}

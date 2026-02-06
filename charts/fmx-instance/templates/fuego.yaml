@@ -19,7 +19,7 @@ spec:
       {{- if .Values.components.fuego.valuesOverride }}
         {{- .Values.components.fuego.valuesOverride | toYaml | nindent 8 }}
       {{- else }}
-        image: {{ .Values.components.fuego.image | quote }}
+        image: {{ include "fuegoImage" . | quote }}
         imagePullSecret: {{ .Values.imagePullSecret | quote }}
 
         {{- with .Values.components.fuego.securityContext }}
