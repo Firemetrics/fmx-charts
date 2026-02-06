@@ -10,7 +10,7 @@
 | database.hostname | string | `"postgres"` |  |
 | database.port | int | `5432` |  |
 | database.userSecret | string | `"firemetrics-bootstrap-user"` |  |
-| image | string | `"ghcr.io/firemetrics/spilo17:4.0-p2-v0.8.0"` |  |
+| image | string | `"ghcr.io/firemetrics/spilo17:4.0-p2-v0.8.1"` |  |
 | imagePullSecret | string | `""` |  |
 | jobNameOverride | string | `""` |  |
 | securityContext | object | `{}` |  |

@@ -98,7 +98,7 @@ backup:
 imagePullSecret: ""
 
 # -- The version tag for core Firemetrics images (fuego, dicom_receiver, spilo).
-firemetricsVersion: "v0.8.0"
+firemetricsVersion: "v0.8.1"
 
 # -- The tag prefix for the Spilo Postgres image (prepended to firemetricsVersion).
 spiloImagePrefix: "4.0-p2-"
