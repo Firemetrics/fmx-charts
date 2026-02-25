@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.14.3] - 2026-02-25
+
+### 🐛 Bug Fixes
+
+- Update default fmx-panel image to v1.4.0
+- Update default Firemetrics images to v0.8.6
 ## [1.14.2] - 2026-02-16
 
 ### 🐛 Bug Fixes
