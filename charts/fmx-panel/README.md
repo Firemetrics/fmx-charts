@@ -32,7 +32,7 @@
 | featureFlags | list | `["resource_explorer","nocode_builder","sql_editor"]` | The features enabled in the Panel. |
 | fhirBaseUrl | string | `"https://example.com/fhir"` |  |
 | grafanaUrl | string | `""` |  |
-| image | string | `"ghcr.io/firemetrics/fmx-panel:v1.3.0"` |  |
+| image | string | `"ghcr.io/firemetrics/fmx-panel:v1.4.0"` |  |
 | imagePullSecret | string | `""` |  |
 | initContainers | list | `[]` |  |
 | oidc.audience | string | `""` | Defaults to the public URL. |
