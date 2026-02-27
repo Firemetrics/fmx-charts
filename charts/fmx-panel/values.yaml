@@ -1,4 +1,4 @@
-image: ghcr.io/firemetrics/fmx-panel:v1.4.0
+image: ghcr.io/firemetrics/fmx-panel:v1.5.0
 serviceAccountName: ""
 imagePullSecret: ""
 initContainers: []
@@ -54,6 +54,8 @@ oidc:
     secretKey: secret
 
 fhirBaseUrl: "https://example.com/fhir"
+# -- The FHIR base URL used by the frontend (browser). Falls back to fhirBaseUrl if empty.
+frontendFhirBaseUrl: ""
 
 grafanaUrl: ""
 
