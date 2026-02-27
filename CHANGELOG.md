@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.14.4] - 2026-02-27
+
+### 🐛 Bug Fixes
+
+- Update default fmx-panel image to v1.5.0
 ## [1.14.3] - 2026-02-25
 
 ### 🐛 Bug Fixes
