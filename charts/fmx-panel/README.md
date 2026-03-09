@@ -33,7 +33,7 @@
 | fhirBaseUrl | string | `"https://example.com/fhir"` |  |
 | frontendFhirBaseUrl | string | `""` | The FHIR base URL used by the frontend (browser). Falls back to fhirBaseUrl if empty. |
 | grafanaUrl | string | `""` |  |
-| image | string | `"ghcr.io/firemetrics/fmx-panel:v1.5.0"` |  |
+| image | string | `"ghcr.io/firemetrics/fmx-panel:v1.5.1"` |  |
 | imagePullSecret | string | `""` |  |
 | initContainers | list | `[]` |  |
 | oidc.audience | string | `""` | Defaults to the public URL. |
