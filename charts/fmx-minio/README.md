@@ -1,6 +1,6 @@
 # fmx-minio
 
-![Version: 1.14.4](https://img.shields.io/badge/Version-1.14.4-informational?style=flat-square)
+![Version: 1.14.5](https://img.shields.io/badge/Version-1.14.5-informational?style=flat-square)
 
 ## Values
 
