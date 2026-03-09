@@ -21,6 +21,7 @@ spec:
       {{- else }}
         image: {{ include "spiloImage" . | quote }}
         imagePullSecret: {{ .Values.imagePullSecret | quote }}
+        firemetricsVersion: {{ .Values.firemetricsVersion | quote }}
 
         {{- with .Values.components.bootstrap.securityContext }}
         securityContext: {{- . | toYaml | nindent 10 }}
