@@ -11,7 +11,7 @@
 | database.port | int | `5432` |  |
 | database.userSecret | string | `"firemetrics-bootstrap-user"` |  |
 | firemetricsVersion | string | `""` | The Firemetrics version, appended to job name when set to ensure unique jobs per version |
-| image | string | `"ghcr.io/firemetrics/spilo17:4.0-p2-v0.8.6"` |  |
+| image | string | `"ghcr.io/firemetrics/spilo17:4.0-p2-v0.9.0"` |  |
 | imagePullSecret | string | `""` |  |
 | jobNameOverride | string | `""` |  |
 | securityContext | object | `{}` |  |
