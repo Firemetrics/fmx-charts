@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.15.0] - 2026-04-01
+
+### 🚀 Features
+
+- Update fmx-panel to v1.6.0 and add MCP server configuration
 ## [1.14.6] - 2026-03-13
 
 ### 🐛 Bug Fixes
