@@ -33,9 +33,13 @@
 | fhirBaseUrl | string | `"https://example.com/fhir"` |  |
 | frontendFhirBaseUrl | string | `""` | The FHIR base URL used by the frontend (browser). Falls back to fhirBaseUrl if empty. |
 | grafanaUrl | string | `""` |  |
-| image | string | `"ghcr.io/firemetrics/fmx-panel:v1.5.1"` |  |
+| image | string | `"ghcr.io/firemetrics/fmx-panel:v1.6.0"` |  |
 | imagePullSecret | string | `""` |  |
 | initContainers | list | `[]` |  |
+| mcpApiKeySecret.enabled | bool | `false` |  |
+| mcpApiKeySecret.key | string | `"api-key"` |  |
+| mcpApiKeySecret.name | string | `"mcp-api-key"` |  |
+| mcpUrl | string | `"https://mcp.firemetrics.ai/mcp"` |  |
 | oidc.audience | string | `""` | Defaults to the public URL. |
 | oidc.clientSecret.idKey | string | `"id"` |  |
 | oidc.clientSecret.name | string | `"panel-oidc-client"` |  |

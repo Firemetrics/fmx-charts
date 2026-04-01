@@ -1,4 +1,4 @@
-image: ghcr.io/firemetrics/fmx-panel:v1.5.1
+image: ghcr.io/firemetrics/fmx-panel:v1.6.0
 serviceAccountName: ""
 imagePullSecret: ""
 initContainers: []
@@ -62,6 +62,13 @@ grafanaUrl: ""
 openaiApiKeySecret:
   enabled: false
   name: openai-api-key
+  key: api-key
+
+mcpUrl: "https://mcp.firemetrics.ai/mcp"
+
+mcpApiKeySecret:
+  enabled: false
+  name: mcp-api-key
   key: api-key
 
 caCertsConfigMap:

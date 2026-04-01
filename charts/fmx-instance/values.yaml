@@ -239,7 +239,7 @@ components:
     # -- Enable the Panel component.
     enabled: true
     # -- The image used for the Panel pods.
-    image: ghcr.io/firemetrics/fmx-panel:v1.5.1
+    image: ghcr.io/firemetrics/fmx-panel:v1.6.0
     # -- Extra environment variables for the Panel pods.
     env: []
     # -- Extra volumes for the Panel pods.
@@ -278,6 +278,15 @@ components:
       # -- The secret containing the OpenAI API key for the Panel.
       name: openai-api-key
       # -- The key in the secret containing the OpenAI API key for the Panel.
+      key: api-key
+    # -- The MCP server URL for the Panel AI assistant.
+    mcpUrl: "https://mcp.firemetrics.ai/mcp"
+    mcpApiKeySecret:
+      # -- Enable the MCP API key for the Panel AI assistant.
+      enabled: false
+      # -- The secret containing the MCP API key.
+      name: mcp-api-key
+      # -- The key in the secret containing the MCP API key.
       key: api-key
     # -- Override the values for the Panel Helm chart.
     valuesOverride: {}
