@@ -33,6 +33,13 @@ spec:
         logging:
           format: {{ .Values.components.fuego.logging.format | quote }}
 
+        audit:
+          otel:
+            enable: {{ .Values.components.fuego.audit.otel.enable }}
+            includeRequestBody: {{ .Values.components.fuego.audit.otel.includeRequestBody }}
+            includeResponseBody: {{ .Values.components.fuego.audit.otel.includeResponseBody }}
+            maxBodyBytes: {{ .Values.components.fuego.audit.otel.maxBodyBytes }}
+
         {{- with .Values.components.fuego.volumes }}
         volumes: {{ . | toYaml | nindent 10 }}
         {{- end }}

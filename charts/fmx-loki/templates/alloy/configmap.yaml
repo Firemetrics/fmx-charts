@@ -80,8 +80,8 @@ data:
       // Extract JSON fields
       stage.json {
         expressions = {
-          {{- range .Values.alloy.config.jsonProcessing.labelFields }}
-          {{ . }} = {{ . | quote }},
+          {{- range $label, $expr := .Values.alloy.config.jsonProcessing.labelFields }}
+          {{ $label }} = {{ $expr | quote }},
           {{- end }}
         }
       }
@@ -89,8 +89,8 @@ data:
       // Promote extracted fields to indexed labels
       stage.labels {
         values = {
-          {{- range .Values.alloy.config.jsonProcessing.labelFields }}
-          {{ . }} = "",
+          {{- range $label, $expr := .Values.alloy.config.jsonProcessing.labelFields }}
+          {{ $label }} = "",
           {{- end }}
         }
       }

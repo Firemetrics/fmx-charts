@@ -45,6 +45,10 @@ spec:
         grafanaUrl: {{ printf "%s%s" (include "baseUrl" .) .Values.components.grafana.publicPath | quote }}
         {{- end }}
 
+        {{- if .Values.components.loki.enabled }}
+        lokiBaseUrl: {{ include "internalLokiUrl" . | quote }}
+        {{- end }}
+
         openaiApiKeySecret: {{- .Values.components.panel.openaiApiKeySecret | toYaml | nindent 10 }}
 
         {{- with .Values.components.panel.mcpUrl }}

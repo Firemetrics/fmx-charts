@@ -1,4 +1,4 @@
-image: ghcr.io/firemetrics/fmx-panel:v1.6.0
+image: ghcr.io/firemetrics/fmx-panel:v1.7.0
 serviceAccountName: ""
 imagePullSecret: ""
 initContainers: []
@@ -7,7 +7,8 @@ env: []
 volumes: []
 volumeMounts: []
 
-# -- The features enabled in the Panel.
+# -- The features enabled in the Panel. Note: `audit_logs` additionally
+# requires `lokiBaseUrl` to be set.
 featureFlags:
   - resource_explorer
   - nocode_builder
@@ -58,6 +59,11 @@ fhirBaseUrl: "https://example.com/fhir"
 frontendFhirBaseUrl: ""
 
 grafanaUrl: ""
+
+# -- Base URL of a Loki instance the Panel queries to render the audit logs
+# page. Leave empty to disable. Required when the `audit_logs` feature flag
+# is enabled.
+lokiBaseUrl: ""
 
 openaiApiKeySecret:
   enabled: false

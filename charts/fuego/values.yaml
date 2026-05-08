@@ -7,6 +7,21 @@ env: []
 logging:
   # -- The log format for Fuego ("plain" or "json").
   format: json
+
+audit:
+  otel:
+    # -- Emit a structured audit event with OpenTelemetry semantic-convention
+    # field names (`http.request.method`, `url.path`, `client.address`, ...)
+    # for every FHIR request the server processes. Required for fmx-panel's
+    # audit logs page.
+    enable: true
+    # -- Include the FHIR request body in the emitted audit event.
+    includeRequestBody: true
+    # -- Include the FHIR response body in the emitted audit event.
+    includeResponseBody: true
+    # -- Truncate request/response bodies to this many bytes. Empty disables
+    # truncation.
+    maxBodyBytes: 10000
 volumes: []
 volumeMounts: []
 

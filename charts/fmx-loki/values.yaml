@@ -31,7 +31,12 @@ alloy:
     # -- List of namespaces to collect logs from. Empty list means all namespaces.
     namespaces: []
     jsonProcessing:
-      # -- JSON fields to extract and promote to indexed labels.
-      # -- Common fields: level, msg, message, error, caller, ts.
+      # -- Map of indexed Loki label name to JSON expression (JMESPath, as
+      # accepted by Alloy's `stage.json`). Use plain field names for top-level
+      # keys (`level: level`) or nested expressions for nested keys
+      # (`fmx_audit_event_type: 'fields."fmx.audit_event_type"'`). The
+      # `fmx_*` defaults are required by fmx-panel's audit logs page.
       labelFields:
-        - level
+        level: level
+        fmx_service_name: 'fields."fmx.service_name"'
+        fmx_audit_event_type: 'fields."fmx.audit_event_type"'

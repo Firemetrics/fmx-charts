@@ -181,6 +181,19 @@ spec:
               value: {{ .Values.publicUrl | quote }}
             - name: FUEGO__LOGGING__FORMAT
               value: {{ .Values.logging.format | quote }}
+
+            {{- if .Values.audit.otel.enable }}
+            - name: FUEGO__AUDIT__OTEL__ENABLE
+              value: "true"
+            - name: FUEGO__AUDIT__OTEL__INCLUDE_REQUEST_BODY
+              value: {{ .Values.audit.otel.includeRequestBody | quote }}
+            - name: FUEGO__AUDIT__OTEL__INCLUDE_RESPONSE_BODY
+              value: {{ .Values.audit.otel.includeResponseBody | quote }}
+            {{- with .Values.audit.otel.maxBodyBytes }}
+            - name: FUEGO__AUDIT__OTEL__MAX_BODY_BYTES
+              value: {{ . | quote }}
+            {{- end }}
+            {{- end }}
             - name: FUEGO__DATABASE__HOST
               value: {{ .Values.database.hostname | quote }}
             - name: FUEGO__DATABASE__PORT

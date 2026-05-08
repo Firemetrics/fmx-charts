@@ -29,13 +29,14 @@
 | database.userSecret.usernameKey | string | `"username"` |  |
 | dicom.database.schema | string | `"dicom"` |  |
 | env | list | `[]` |  |
-| featureFlags | list | `["resource_explorer","nocode_builder","sql_editor"]` | The features enabled in the Panel. |
+| featureFlags | list | `["resource_explorer","nocode_builder","sql_editor"]` | The features enabled in the Panel. Note: `audit_logs` additionally requires `lokiBaseUrl` to be set. |
 | fhirBaseUrl | string | `"https://example.com/fhir"` |  |
 | frontendFhirBaseUrl | string | `""` | The FHIR base URL used by the frontend (browser). Falls back to fhirBaseUrl if empty. |
 | grafanaUrl | string | `""` |  |
-| image | string | `"ghcr.io/firemetrics/fmx-panel:v1.6.0"` |  |
+| image | string | `"ghcr.io/firemetrics/fmx-panel:v1.7.0"` |  |
 | imagePullSecret | string | `""` |  |
 | initContainers | list | `[]` |  |
+| lokiBaseUrl | string | `""` | Base URL of a Loki instance the Panel queries to render the audit logs page. Leave empty to disable. Required when the `audit_logs` feature flag is enabled. |
 | mcpApiKeySecret.enabled | bool | `false` |  |
 | mcpApiKeySecret.key | string | `"api-key"` |  |
 | mcpApiKeySecret.name | string | `"mcp-api-key"` |  |

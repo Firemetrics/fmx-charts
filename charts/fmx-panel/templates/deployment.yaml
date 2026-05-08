@@ -260,6 +260,11 @@ spec:
               value: {{ . | quote }}
             {{- end }}
 
+            {{- with .Values.lokiBaseUrl }}
+            - name: FMXPANEL_LOKI_BASE_URL
+              value: {{ . | quote }}
+            {{- end }}
+
             {{- if .Values.openaiApiKeySecret.enabled }}
             - name: FMXPANEL_OPENAI_API_KEY
               valueFrom:

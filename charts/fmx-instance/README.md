@@ -67,6 +67,10 @@
 | components.dicom.web.server.requestTimeout | int | `60000` | The request timeout in milliseconds for the DICOMweb server. |
 | components.dicom.web.volumeMounts | list | `[]` | Extra volume mounts for the DICOMweb server pods. |
 | components.dicom.web.volumes | list | `[]` | Extra volumes for the DICOMweb server pods. |
+| components.fuego.audit.otel.enable | bool | `true` | Emit an OpenTelemetry-shaped audit event for every FHIR request. Required for fmx-panel's audit logs page. |
+| components.fuego.audit.otel.includeRequestBody | bool | `true` | Include the FHIR request body in the emitted audit event. |
+| components.fuego.audit.otel.includeResponseBody | bool | `true` | Include the FHIR response body in the emitted audit event. |
+| components.fuego.audit.otel.maxBodyBytes | int | `10000` | Truncate request/response bodies to this many bytes. Empty disables truncation. |
 | components.fuego.enabled | bool | `true` | Enable the Fuego component. |
 | components.fuego.env | list | `[]` | Extra environment variables for the Fuego pods. |
 | components.fuego.hapi.enabled | bool | `true` | Enable the HAPI FHIR facade service. |
@@ -127,7 +131,7 @@
 | components.keycloak.valuesOverride | object | `{}` | Override the values for the Keycloak Helm chart. |
 | components.keycloak.volumeMounts | list | `[]` | Extra volume mounts for the Keycloak pods. |
 | components.keycloak.volumes | list | `[]` | Extra volumes for the Keycloak pods. |
-| components.loki.alloy.config.jsonProcessing.labelFields | list | `["level"]` | Common fields: level, msg, message, error, caller, ts. |
+| components.loki.alloy.config.jsonProcessing.labelFields | object | `{"fmx_audit_event_type":"fields.\"fmx.audit_event_type\"","fmx_service_name":"fields.\"fmx.service_name\"","level":"level"}` | Map of indexed Loki label name to JSON expression. Plain field names extract top-level keys; nested expressions like `fields."fmx.audit_event_type"` extract nested keys. The `fmx_*` defaults are required by fmx-panel's audit logs page. |
 | components.loki.alloy.config.namespaces | list | `[]` | List of namespaces to collect logs from. Empty list means all namespaces. |
 | components.loki.alloy.enabled | bool | `true` | Enable Alloy log collector deployment. |
 | components.loki.alloy.image | string | `"grafana/alloy:v1.12.2"` | The image used for Alloy pods. |
@@ -153,8 +157,8 @@
 | components.panel.databaseUserSecret.usernameKey | string | `"username"` | The key in the secret containing the Panel database username. |
 | components.panel.enabled | bool | `true` | Enable the Panel component. |
 | components.panel.env | list | `[]` | Extra environment variables for the Panel pods. |
-| components.panel.featureFlags | list | `["resource_explorer","nocode_builder","sql_editor"]` | The features enabled in the Panel. |
-| components.panel.image | string | `"ghcr.io/firemetrics/fmx-panel:v1.6.0"` | The image used for the Panel pods. |
+| components.panel.featureFlags | list | `["resource_explorer","nocode_builder","sql_editor","audit_logs"]` | The features enabled in the Panel. `audit_logs` requires `components.loki.enabled: true` so the Panel can query Loki. |
+| components.panel.image | string | `"ghcr.io/firemetrics/fmx-panel:v1.7.0"` | The image used for the Panel pods. |
 | components.panel.mcpApiKeySecret.enabled | bool | `false` | Enable the MCP API key for the Panel AI assistant. |
 | components.panel.mcpApiKeySecret.key | string | `"api-key"` | The key in the secret containing the MCP API key. |
 | components.panel.mcpApiKeySecret.name | string | `"mcp-api-key"` | The secret containing the MCP API key. |
