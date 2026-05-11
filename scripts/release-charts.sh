@@ -29,5 +29,8 @@ helm-docs
 
 git add "$CHARTS_DIR" ./CHANGELOG.md
 git commit -m "v$TARGET_VERSION"
-git tag "v$TARGET_VERSION"
+# Force a lightweight tag (matches existing release history) even when
+# tag.gpgSign is enabled globally, which would otherwise turn `git tag`
+# into a signed annotated tag and fail without a message.
+git -c tag.gpgSign=false tag "v$TARGET_VERSION"
 
