@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.16.0] - 2026-05-11
+
+### 🚀 Features
+
+- Update fmx-panel to v1.7.0 and wire up Loki for audit logs
 ## [1.15.2] - 2026-05-07
 
 ### 🐛 Bug Fixes
