@@ -45,7 +45,7 @@
 | hapi.serviceAccountName | string | `""` |  |
 | hapi.volumeMounts | list | `[]` |  |
 | hapi.volumes | list | `[]` |  |
-| image | string | `"ghcr.io/firemetrics/fuego:v0.11.0"` |  |
+| image | string | `"ghcr.io/firemetrics/fuego:v0.11.1"` |  |
 | imagePullSecret | string | `""` |  |
 | initContainers | list | `[]` |  |
 | livenessProbe | object | `{}` |  |
