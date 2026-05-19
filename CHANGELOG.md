@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.17.1] - 2026-05-19
+
+### 🐛 Bug Fixes
+
+- Update default Firemetrics images to v0.11.1
 ## [1.17.0] - 2026-05-19
 
 ### 🚀 Features
