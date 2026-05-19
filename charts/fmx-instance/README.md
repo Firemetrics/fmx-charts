@@ -68,8 +68,8 @@
 | components.dicom.web.volumeMounts | list | `[]` | Extra volume mounts for the DICOMweb server pods. |
 | components.dicom.web.volumes | list | `[]` | Extra volumes for the DICOMweb server pods. |
 | components.fuego.audit.otel.enable | bool | `true` | Emit an OpenTelemetry-shaped audit event for every FHIR request. Required for fmx-panel's audit logs page. |
-| components.fuego.audit.otel.includeRequestBody | bool | `true` | Include the FHIR request body in the emitted audit event. |
-| components.fuego.audit.otel.includeResponseBody | bool | `true` | Include the FHIR response body in the emitted audit event. |
+| components.fuego.audit.otel.includeRequestBody | bool | `false` | Include the FHIR request body in the emitted audit event. |
+| components.fuego.audit.otel.includeResponseBody | bool | `false` | Include the FHIR response body in the emitted audit event. |
 | components.fuego.audit.otel.maxBodyBytes | int | `10000` | Truncate request/response bodies to this many bytes. Empty disables truncation. |
 | components.fuego.enabled | bool | `true` | Enable the Fuego component. |
 | components.fuego.env | list | `[]` | Extra environment variables for the Fuego pods. |

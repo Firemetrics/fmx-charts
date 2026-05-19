@@ -195,9 +195,9 @@ components:
         # Required for fmx-panel's audit logs page.
         enable: true
         # -- Include the FHIR request body in the emitted audit event.
-        includeRequestBody: true
+        includeRequestBody: false
         # -- Include the FHIR response body in the emitted audit event.
-        includeResponseBody: true
+        includeResponseBody: false
         # -- Truncate request/response bodies to this many bytes. Empty
         # disables truncation.
         maxBodyBytes: 10000

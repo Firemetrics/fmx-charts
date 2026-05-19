@@ -7,8 +7,8 @@
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | audit.otel.enable | bool | `true` | Emit a structured audit event with OpenTelemetry semantic-convention field names (`http.request.method`, `url.path`, `client.address`, ...) for every FHIR request the server processes. Required for fmx-panel's audit logs page. |
-| audit.otel.includeRequestBody | bool | `true` | Include the FHIR request body in the emitted audit event. |
-| audit.otel.includeResponseBody | bool | `true` | Include the FHIR response body in the emitted audit event. |
+| audit.otel.includeRequestBody | bool | `false` | Include the FHIR request body in the emitted audit event. |
+| audit.otel.includeResponseBody | bool | `false` | Include the FHIR response body in the emitted audit event. |
 | audit.otel.maxBodyBytes | int | `10000` | Truncate request/response bodies to this many bytes. Empty disables truncation. |
 | bootstrapKeycloak.adminUserSecret.name | string | `"keycloak-admin"` |  |
 | bootstrapKeycloak.adminUserSecret.passwordKey | string | `"password"` |  |
