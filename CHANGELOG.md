@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.17.0] - 2026-05-19
+
+### 🚀 Features
+
+- Default Fuego audit body inclusion to false
+
+### ⚙️ Miscellaneous Tasks
+
+- Override tag.gpgSign in release-charts script
 ## [1.16.0] - 2026-05-11
 
 ### 🚀 Features
