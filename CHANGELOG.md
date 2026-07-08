@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.18.0] - 2026-07-08
+
+### 🚀 Features
+
+- Update panel to v1.8.1
 ## [1.17.1] - 2026-05-19
 
 ### 🐛 Bug Fixes

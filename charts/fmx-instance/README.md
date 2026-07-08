@@ -1,6 +1,6 @@
 # fmx-instance
 
-![Version: 1.17.1](https://img.shields.io/badge/Version-1.17.1-informational?style=flat-square)
+![Version: 1.18.0](https://img.shields.io/badge/Version-1.18.0-informational?style=flat-square)
 
 ## Values
 
@@ -158,7 +158,7 @@
 | components.panel.enabled | bool | `true` | Enable the Panel component. |
 | components.panel.env | list | `[]` | Extra environment variables for the Panel pods. |
 | components.panel.featureFlags | list | `["resource_explorer","nocode_builder","sql_editor","audit_logs"]` | The features enabled in the Panel. `audit_logs` requires `components.loki.enabled: true` so the Panel can query Loki. |
-| components.panel.image | string | `"ghcr.io/firemetrics/fmx-panel:v1.7.0"` | The image used for the Panel pods. |
+| components.panel.image | string | `"ghcr.io/firemetrics/fmx-panel:v1.8.1"` | The image used for the Panel pods. |
 | components.panel.mcpApiKeySecret.enabled | bool | `false` | Enable the MCP API key for the Panel AI assistant. |
 | components.panel.mcpApiKeySecret.key | string | `"api-key"` | The key in the secret containing the MCP API key. |
 | components.panel.mcpApiKeySecret.name | string | `"mcp-api-key"` | The secret containing the MCP API key. |
