@@ -1,6 +1,6 @@
 # fmx-panel
 
-![Version: 1.18.0](https://img.shields.io/badge/Version-1.18.0-informational?style=flat-square)
+![Version: 1.19.0](https://img.shields.io/badge/Version-1.19.0-informational?style=flat-square)
 
 ## Values
 
@@ -33,7 +33,7 @@
 | fhirBaseUrl | string | `"https://example.com/fhir"` |  |
 | frontendFhirBaseUrl | string | `""` | The FHIR base URL used by the frontend (browser). Falls back to fhirBaseUrl if empty. |
 | grafanaUrl | string | `""` |  |
-| image | string | `"ghcr.io/firemetrics/fmx-panel:v1.8.1"` |  |
+| image | string | `"ghcr.io/firemetrics/fmx-panel:v1.9.0"` |  |
 | imagePullSecret | string | `""` |  |
 | initContainers | list | `[]` |  |
 | lokiBaseUrl | string | `""` | Base URL of a Loki instance the Panel queries to render the audit logs page. Leave empty to disable. Required when the `audit_logs` feature flag is enabled. |

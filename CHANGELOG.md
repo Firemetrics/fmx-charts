@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.19.0] - 2026-08-12
+
+### 🚀 Features
+
+- Update fmx-panel to 1.9.0
 ## [1.18.0] - 2026-07-08
 
 ### 🚀 Features
