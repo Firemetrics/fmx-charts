@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.20.0] - 2026-08-14
+
+### 🚀 Features
+
+- Update default Firemetrics images to v1.13.0
 ## [1.19.0] - 2026-08-12
 
 ### 🚀 Features

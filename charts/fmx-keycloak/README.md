@@ -1,6 +1,6 @@
 # fmx-keycloak
 
-![Version: 1.19.0](https://img.shields.io/badge/Version-1.19.0-informational?style=flat-square)
+![Version: 1.20.0](https://img.shields.io/badge/Version-1.20.0-informational?style=flat-square)
 
 ## Values
 
