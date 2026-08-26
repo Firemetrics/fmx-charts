@@ -22,19 +22,31 @@ After the upgrade has synced, prune the orphaned resources once:
 argocd app sync <instance>-loki --prune
 ```
 
-or delete them manually (note the old ClusterRole/Binding name has no
-namespace suffix):
+or delete them by name (the old resources carry no metadata labels; note the
+old ClusterRole/Binding name has no namespace suffix):
 
 ```sh
-kubectl -n <namespace> delete daemonset,configmap,serviceaccount -l 'app.kubernetes.io/component=alloy'
+kubectl -n <namespace> delete daemonset/<instance>-loki-alloy serviceaccount/<instance>-loki-alloy configmap/<instance>-loki-alloy-config
 kubectl delete clusterrole,clusterrolebinding <instance>-loki-alloy
 ```
 
 ### Removed values
 
 - `components.loki.alloy.image` — the Alloy image is now configured at
-  `components.monitoring.alloy.image`. `components.loki.alloy.enabled` and
+  `components.monitoring.alloy.image`. Setting the old key fails the render
+  with a pointer to the new one. `components.loki.alloy.enabled` and
   `components.loki.alloy.config.*` remain and still control the log pipeline.
+- Alloy settings inside `components.loki.valuesOverride` no longer apply:
+  that override reaches only the fmx-loki chart, which no longer contains
+  Alloy. Move any `alloy:` keys there (e.g. a namespaces allowlist or custom
+  labelFields) to `components.loki.alloy.config.*`, or to
+  `components.monitoring.valuesOverride` — silently, nothing else warns
+  about this.
+- Standalone (non-Argo CD) users of the individually published `fmx-loki`
+  chart: `helm upgrade` deletes the Alloy collector with the removed
+  manifests and log ingestion stops while Loki itself stays healthy. Install
+  `fmx-monitoring` with `logs.enabled: true` and `logs.lokiUrl` pointing at
+  your Loki service to restore collection.
 
 ### Enabling monitoring on an existing install
 

@@ -30,6 +30,6 @@ data:
         url: {{ .Values.prometheus.url | quote }}
         editable: false
         jsonData:
-          timeInterval: 60s
+          timeInterval: {{ .Values.prometheus.timeInterval | quote }}
       {{- end }}
 

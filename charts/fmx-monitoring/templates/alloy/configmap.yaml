@@ -139,9 +139,16 @@ data:
       forward_to      = [prometheus.relabel.keep.receiver]
     }
 
-    // Kubelet (PVC volume stats) and cAdvisor (container CPU/memory)
+    // Kubelet (PVC volume stats) and cAdvisor (container CPU/memory).
+    // Restricted to this pod's own node so each DaemonSet pod scrapes only
+    // its local kubelet (avoids N^2 scrapes on multi-node clusters).
     discovery.kubernetes "nodes" {
       role = "node"
+
+      selectors {
+        role  = "node"
+        field = "metadata.name=" + sys.env("HOSTNAME")
+      }
     }
 
     prometheus.scrape "kubelet" {
@@ -248,6 +255,14 @@ data:
         source_labels = ["__name__"]
         regex         = {{ .Values.metrics.keepList | join "|" | quote }}
         action        = "keep"
+      }
+
+      // cAdvisor emits pod-aggregate (container="") and pause-container
+      // (container="POD") series that no dashboard query reads; drop them.
+      rule {
+        source_labels = ["__name__", "container"]
+        regex         = "container_.*;(|POD)"
+        action        = "drop"
       }
     }
 

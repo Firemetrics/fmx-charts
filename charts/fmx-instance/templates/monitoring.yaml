@@ -1,3 +1,6 @@
+{{- if (.Values.components.loki.alloy).image -}}
+  {{- fail "components.loki.alloy.image has moved to components.monitoring.alloy.image" -}}
+{{- end -}}
 {{- $logsEnabled := and .Values.components.loki.enabled .Values.components.loki.alloy.enabled -}}
 {{- if or .Values.components.monitoring.enabled $logsEnabled -}}
 apiVersion: argoproj.io/v1alpha1
@@ -24,6 +27,9 @@ spec:
         metrics:
           enabled: {{ .Values.components.monitoring.enabled }}
           scrapeInterval: {{ .Values.components.monitoring.scrapeInterval | quote }}
+          {{- with .Values.components.monitoring.keepList }}
+          keepList: {{ . | toJson }}
+          {{- end }}
         logs:
           enabled: {{ $logsEnabled }}
           {{- if .Values.components.loki.enabled }}

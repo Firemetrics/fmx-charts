@@ -8,15 +8,14 @@ metrics:
   # -- The interval applied to all metric scrapes and probes.
   scrapeInterval: 60s
   # -- Metric names stored in Prometheus; everything else is dropped before
-  # remote write. Extend this list before adding dashboard panels that need
-  # additional metrics — history for a metric starts when its name is added.
+  # remote write. Every entry is consumed by the shipped FMX Cluster Health
+  # dashboard. Extend this list before adding dashboard panels that need
+  # additional metrics — history for a metric starts when its name is added
+  # (KSM metrics may also require extending kubeStateMetrics.resources).
   keepList:
     - up
     - probe_success
-    - probe_http_status_code
-    - probe_duration_seconds
     - node_cpu_seconds_total
-    - node_load1
     - node_memory_MemTotal_bytes
     - node_memory_MemAvailable_bytes
     - node_filesystem_size_bytes
@@ -26,24 +25,14 @@ metrics:
     - kubelet_volume_stats_capacity_bytes
     - kubelet_volume_stats_used_bytes
     - kubelet_volume_stats_available_bytes
-    - kube_node_status_condition
     - kube_pod_info
     - kube_pod_status_phase
     - kube_pod_status_ready
     - kube_pod_container_status_restarts_total
-    - kube_pod_container_status_last_terminated_reason
-    - kube_deployment_spec_replicas
-    - kube_deployment_status_replicas_available
-    - kube_daemonset_status_desired_number_scheduled
-    - kube_daemonset_status_number_ready
-    - kube_statefulset_replicas
-    - kube_statefulset_status_replicas_ready
     - traefik_entrypoint_requests_total
-    - traefik_service_requests_total
     - traefik_entrypoint_request_duration_seconds_sum
     - traefik_entrypoint_request_duration_seconds_count
     - certmanager_certificate_expiration_timestamp_seconds
-    - certmanager_certificate_ready_status
 
 logs:
   # -- Enable the log pipeline (ship pod logs to Loki).
@@ -84,15 +73,11 @@ prometheus:
 kubeStateMetrics:
   # -- The image used for the kube-state-metrics pod.
   image: registry.k8s.io/kube-state-metrics/kube-state-metrics:v2.16.0
-  # -- The Kubernetes resource types kube-state-metrics exports metrics for.
+  # -- The Kubernetes resource types kube-state-metrics exports metrics for
+  # (the ClusterRole rules are derived from this list). Only pod metrics are
+  # consumed by the shipped dashboard; extend together with metrics.keepList.
   resources:
-    - daemonsets
-    - deployments
-    - jobs
-    - nodes
-    - persistentvolumeclaims
     - pods
-    - statefulsets
 
 scrape:
   traefik:

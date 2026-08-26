@@ -90,6 +90,7 @@ spec:
           enabled: {{ .Values.components.monitoring.enabled }}
           {{- if .Values.components.monitoring.enabled }}
           url: {{ include "internalPrometheusUrl" . | quote }}
+          timeInterval: {{ .Values.components.monitoring.scrapeInterval | quote }}
           {{- end }}
 
         caCertsConfigMap:

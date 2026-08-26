@@ -153,6 +153,7 @@
 | components.minio.valuesOverride | object | `{}` | Override the values for the MinIO Helm chart. |
 | components.monitoring.alloy.image | string | `"grafana/alloy:v1.12.2"` | The image used for the Alloy collector pods. |
 | components.monitoring.enabled | bool | `false` | Enable the cluster monitoring component: metric collection via the Alloy collector, a local Prometheus, kube-state-metrics, and the infrastructure dashboard in Grafana. The Alloy collector is also deployed when Loki is enabled (it hosts the log pipeline). |
+| components.monitoring.keepList | list | `[]` | Replace the monitoring chart's default metric keep-list (empty uses the chart default). Prefer this over valuesOverride for storing additional metrics. |
 | components.monitoring.kubeStateMetrics.image | string | `"registry.k8s.io/kube-state-metrics/kube-state-metrics:v2.16.0"` | The image used for the kube-state-metrics pod. |
 | components.monitoring.prometheus.image | string | `"docker.io/prom/prometheus:v3.5.0"` | The image used for the Prometheus pod. |
 | components.monitoring.prometheus.persistence.enabled | bool | `true` | Enable persistence for Prometheus data. |
@@ -164,7 +165,7 @@
 | components.monitoring.scrape.traefik.address | string | `"traefik-metrics.traefik.svc.cluster.local:9100"` | Address of the Traefik Prometheus metrics endpoint. |
 | components.monitoring.scrape.traefik.enabled | bool | `true` | Scrape the Traefik ingress controller. Disable if the cluster uses its own ingress instead of the Traefik installed by fmx-cluster. |
 | components.monitoring.scrapeInterval | string | `"60s"` | The interval applied to all metric scrapes and probes. |
-| components.monitoring.valuesOverride | object | `{}` | Override the values for the monitoring Helm chart. |
+| components.monitoring.valuesOverride | object | `{}` | Override the values for the monitoring Helm chart. Caution: this replaces ALL generated values, including the log-pipeline wiring the Loki component depends on (logs.enabled, lokiUrl, labelFields) and the probe targets — when set, you must provide those yourself. To only extend the stored metrics, use monitoring.keepList instead. |
 | components.panel.databaseUserSecret.name | string | `"panel-db-user"` | The secret containing Panel database user credentials. |
 | components.panel.databaseUserSecret.passwordKey | string | `"password"` | The key in the secret containing the Panel database password. |
 | components.panel.databaseUserSecret.usernameKey | string | `"username"` | The key in the secret containing the Panel database username. |

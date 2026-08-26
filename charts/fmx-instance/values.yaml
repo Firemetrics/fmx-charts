@@ -567,6 +567,10 @@ components:
     enabled: false
     # -- The interval applied to all metric scrapes and probes.
     scrapeInterval: 60s
+    # -- Replace the monitoring chart's default metric keep-list (empty uses
+    # the chart default). Prefer this over valuesOverride for storing
+    # additional metrics.
+    keepList: []
     alloy:
       # -- The image used for the Alloy collector pods.
       image: grafana/alloy:v1.12.2
@@ -600,5 +604,9 @@ components:
         enabled: true
         # -- Address of the cert-manager Prometheus metrics endpoint.
         address: "cert-manager.cert-manager.svc.cluster.local:9402"
-    # -- Override the values for the monitoring Helm chart.
+    # -- Override the values for the monitoring Helm chart. Caution: this
+    # replaces ALL generated values, including the log-pipeline wiring the
+    # Loki component depends on (logs.enabled, lokiUrl, labelFields) and the
+    # probe targets — when set, you must provide those yourself. To only
+    # extend the stored metrics, use monitoring.keepList instead.
     valuesOverride: {}
