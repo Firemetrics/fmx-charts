@@ -1,0 +1,11 @@
+{{- if .Values.metrics.enabled -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "prometheusConfigMapName" . }}
+data:
+  # Prometheus runs storage-only: Alloy pushes samples via remote write, so
+  # there are no scrape configurations here.
+  prometheus.yml: |
+    global: {}
+{{- end -}}

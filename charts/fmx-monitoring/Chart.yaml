@@ -1,0 +1,4 @@
+apiVersion: v2
+name: fmx-monitoring
+description: Cluster monitoring with the Alloy collector, Prometheus, and kube-state-metrics
+version: 1.20.1

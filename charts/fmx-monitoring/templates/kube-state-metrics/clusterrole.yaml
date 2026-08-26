@@ -1,0 +1,29 @@
+{{- if .Values.metrics.enabled -}}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "ksmClusterRoleName" . }}
+rules:
+  - apiGroups: [""]
+    resources:
+      - nodes
+      - pods
+      - persistentvolumeclaims
+    verbs:
+      - list
+      - watch
+  - apiGroups: ["apps"]
+    resources:
+      - daemonsets
+      - deployments
+      - statefulsets
+    verbs:
+      - list
+      - watch
+  - apiGroups: ["batch"]
+    resources:
+      - jobs
+    verbs:
+      - list
+      - watch
+{{- end -}}
