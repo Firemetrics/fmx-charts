@@ -42,6 +42,10 @@
   {{ include "appName" . }}-loki
 {{- end -}}
 
+{{- define "monitoringAppName" -}}
+  {{ include "appName" . }}-monitoring
+{{- end -}}
+
 {{- define "dicomDatabaseSchema" -}}
   dicom
 {{- end -}}
@@ -180,6 +184,18 @@
 
 {{- define "internalFhirBaseUrl" -}}
   {{ include "internalFuegoUrl" . }}{{ include "fhirPath" . }}
+{{- end -}}
+
+{{- define "internalPrometheusUrl" -}}
+  http://{{ include "monitoringAppName" . }}-prometheus.{{ .Release.Namespace }}.svc.cluster.local
+{{- end -}}
+
+{{- define "internalGrafanaUrl" -}}
+  http://{{ include "grafanaAppName" . }}.{{ .Release.Namespace }}.svc.cluster.local
+{{- end -}}
+
+{{- define "internalKeycloakRealmUrl" -}}
+  http://{{ include "keycloakAppName" . }}.{{ .Release.Namespace }}.svc.cluster.local{{ .Values.components.keycloak.publicPath }}/realms/{{ .Values.oidc.keycloakRealm }}
 {{- end -}}
 
 {{- define "internalLokiUrl" -}}

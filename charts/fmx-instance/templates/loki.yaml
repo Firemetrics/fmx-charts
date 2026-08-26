@@ -33,13 +33,6 @@ spec:
           {{- with .Values.components.loki.service.nameOverride }}
           nameOverride: {{ . | quote }}
           {{- end }}
-        alloy:
-          enabled: {{ .Values.components.loki.alloy.enabled }}
-          image: {{ .Values.components.loki.alloy.image | quote }}
-          config:
-            namespaces: {{ .Values.components.loki.alloy.config.namespaces | toJson }}
-            jsonProcessing:
-              labelFields: {{ .Values.components.loki.alloy.config.jsonProcessing.labelFields | toJson }}
       {{- end }}
 
   destination:

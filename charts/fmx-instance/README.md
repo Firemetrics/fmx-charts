@@ -133,8 +133,7 @@
 | components.keycloak.volumes | list | `[]` | Extra volumes for the Keycloak pods. |
 | components.loki.alloy.config.jsonProcessing.labelFields | object | `{"fmx_audit_event_type":"fields.\"fmx.audit_event_type\"","fmx_service_name":"fields.\"fmx.service_name\"","level":"level"}` | Map of indexed Loki label name to JSON expression. Plain field names extract top-level keys; nested expressions like `fields."fmx.audit_event_type"` extract nested keys. The `fmx_*` defaults are required by fmx-panel's audit logs page. |
 | components.loki.alloy.config.namespaces | list | `[]` | List of namespaces to collect logs from. Empty list means all namespaces. |
-| components.loki.alloy.enabled | bool | `true` | Enable Alloy log collector deployment. |
-| components.loki.alloy.image | string | `"grafana/alloy:v1.12.2"` | The image used for Alloy pods. |
+| components.loki.alloy.enabled | bool | `true` | Enable log collection (the Alloy collector is deployed by the monitoring component; this flag controls its log pipeline). |
 | components.loki.enabled | bool | `false` | Enable the Loki log aggregation component. |
 | components.loki.loki.config.retentionPeriod | string | `"744h"` | Log retention period (default: 31 days). |
 | components.loki.loki.enabled | bool | `true` | Enable Loki deployment. |
@@ -152,6 +151,20 @@
 | components.minio.exposedService.serviceType | string | `"LoadBalancer"` | The service type for the exposed MinIO service. |
 | components.minio.size | string | `"10Gi"` | The size of the MinIO data volume. |
 | components.minio.valuesOverride | object | `{}` | Override the values for the MinIO Helm chart. |
+| components.monitoring.alloy.image | string | `"grafana/alloy:v1.12.2"` | The image used for the Alloy collector pods. |
+| components.monitoring.enabled | bool | `false` | Enable the cluster monitoring component: metric collection via the Alloy collector, a local Prometheus, kube-state-metrics, and the infrastructure dashboard in Grafana. The Alloy collector is also deployed when Loki is enabled (it hosts the log pipeline). |
+| components.monitoring.kubeStateMetrics.image | string | `"registry.k8s.io/kube-state-metrics/kube-state-metrics:v2.16.0"` | The image used for the kube-state-metrics pod. |
+| components.monitoring.prometheus.image | string | `"docker.io/prom/prometheus:v3.5.0"` | The image used for the Prometheus pod. |
+| components.monitoring.prometheus.persistence.enabled | bool | `true` | Enable persistence for Prometheus data. |
+| components.monitoring.prometheus.persistence.requestedStorage | string | `"5Gi"` | The size of the Prometheus data volume. |
+| components.monitoring.prometheus.retentionSize | string | `"4GB"` | Size-based retention cap for stored metrics (hard backstop; keep below the data volume size). |
+| components.monitoring.prometheus.retentionTime | string | `"10d"` | Time-based retention for stored metrics. |
+| components.monitoring.scrape.certManager.address | string | `"cert-manager.cert-manager.svc.cluster.local:9402"` | Address of the cert-manager Prometheus metrics endpoint. |
+| components.monitoring.scrape.certManager.enabled | bool | `true` | Scrape cert-manager. Disable if the cluster uses its own certificate management instead of the cert-manager installed by fmx-cluster. |
+| components.monitoring.scrape.traefik.address | string | `"traefik-metrics.traefik.svc.cluster.local:9100"` | Address of the Traefik Prometheus metrics endpoint. |
+| components.monitoring.scrape.traefik.enabled | bool | `true` | Scrape the Traefik ingress controller. Disable if the cluster uses its own ingress instead of the Traefik installed by fmx-cluster. |
+| components.monitoring.scrapeInterval | string | `"60s"` | The interval applied to all metric scrapes and probes. |
+| components.monitoring.valuesOverride | object | `{}` | Override the values for the monitoring Helm chart. |
 | components.panel.databaseUserSecret.name | string | `"panel-db-user"` | The secret containing Panel database user credentials. |
 | components.panel.databaseUserSecret.passwordKey | string | `"password"` | The key in the secret containing the Panel database password. |
 | components.panel.databaseUserSecret.usernameKey | string | `"username"` | The key in the secret containing the Panel database username. |
