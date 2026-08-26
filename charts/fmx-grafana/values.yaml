@@ -78,6 +78,10 @@ loki:
   enabled: false
   url: "http://loki.default.svc.cluster.local"
 
+prometheus:
+  enabled: false
+  url: "http://prometheus.default.svc.cluster.local"
+
 caCertsConfigMap:
   enabled: false
   name: "ca-certs"

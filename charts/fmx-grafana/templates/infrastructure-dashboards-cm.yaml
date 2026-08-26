@@ -1,0 +1,7 @@
+{{- if .Values.prometheus.enabled -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "infrastructureDashboardsConfigMapName" . }}
+data: {{- (.Files.Glob "data/infrastructure/*").AsConfig | nindent 2 }}
+{{- end -}}
