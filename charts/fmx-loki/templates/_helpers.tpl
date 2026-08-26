@@ -30,24 +30,3 @@
 {{- define "lokiHttpPort" -}}
   3100
 {{- end }}
-
-{{/* Alloy helpers */}}
-{{- define "alloyAppName" -}}
-  {{ include "appName" . }}-alloy
-{{- end }}
-
-{{- define "alloyPodLabel" -}}
-  {{ include "alloyAppName" . }}
-{{- end }}
-
-{{- define "alloyConfigMapName" -}}
-  {{ include "alloyAppName" . }}-config
-{{- end }}
-
-{{- define "alloyServiceAccountName" -}}
-  {{ include "alloyAppName" . }}
-{{- end }}
-
-{{- define "alloyClusterRoleName" -}}
-  {{ include "alloyAppName" . }}
-{{- end }}
