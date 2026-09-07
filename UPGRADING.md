@@ -56,7 +56,11 @@ kubectl delete clusterrole,clusterrolebinding <instance>-loki-alloy
    is a wildcard pull-through, so this is a server-side Nexus check only.
 2. For ingress traffic metrics, re-run the fmx-cluster infrastructure playbook
    (it now exposes Traefik's metrics service); or set
-   `components.monitoring.scrape.traefik.enabled: false`.
+   `components.monitoring.scrape.traefik.enabled: false`. The same playbook
+   run also sets `defaultVolumeType: local` on the `local-path` StorageClass,
+   which the PVC dashboard panels need — without it (or for volumes
+   provisioned before it), the PVC panels show "No data" because hostPath
+   volumes have no kubelet volume stats.
 3. Set `components.monitoring.enabled: true`.
 4. The Grafana pod must restart to load the new Prometheus datasource —
    changing datasources does not restart it automatically. The image/values
