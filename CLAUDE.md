@@ -75,6 +75,27 @@ helm package charts/fmx-instance/
 helm-docs
 ```
 
+### Image Version Bumps
+```bash
+# Show the current tag of every image, across parent and leaf charts
+./scripts/bump-images.sh --list
+
+# Bump the Firemetrics monorepo images (fuego, dicom_receiver, spilo17)
+# and firemetricsVersion in one step
+./scripts/bump-images.sh --firemetrics vX.Y.Z
+
+# Bump an individually pinned component (parent + leaf together)
+./scripts/bump-images.sh --panel vX.Y.Z
+
+# Verify parent and leaf image tags have not drifted (also run in CI)
+./scripts/bump-images.sh --check
+```
+
+Never edit image tags by hand: every image exists in both the parent chart
+(`charts/fmx-instance/values.yaml`, what deployed clusters use) and the leaf
+chart's own `values.yaml` (used for standalone renders). The script rewrites
+both.
+
 ### Release Management
 ```bash
 # Create new release (bumps version, updates changelog, tags)
