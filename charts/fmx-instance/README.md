@@ -1,6 +1,6 @@
 # fmx-instance
 
-![Version: 1.20.1](https://img.shields.io/badge/Version-1.20.1-informational?style=flat-square)
+![Version: 1.20.2](https://img.shields.io/badge/Version-1.20.2-informational?style=flat-square)
 
 ## Values
 
@@ -195,7 +195,7 @@
 | database.existingSuperUserSecret | string | `""` | The database super user used by the Firemetrics instance to manage the Postgres instance. Defaults to the user created by Postgres Operator. |
 | database.hostnameOverride | string | `""` | The database host used by the Firemetrics instance. Defaults to the Postgres cluster created by this chart. |
 | database.port | int | `5432` | The database port used by the Firemetrics instance. |
-| firemetricsVersion | string | `"v0.13.0"` | The version tag for core Firemetrics images (fuego, dicom_receiver, spilo). |
+| firemetricsVersion | string | `"v0.13.1"` | The version tag for core Firemetrics images (fuego, dicom_receiver, spilo). |
 | hostname | string | `""` | The hostname for the Firemetrics instance (deprecated, use ingress.fqdn instead). |
 | imagePullSecret | string | `""` | The image pull secret used for the Firemetrics instance. |
 | ingress.fqdn | string | `"example.com"` | The FQDN for the Firemetrics instance. |

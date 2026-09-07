@@ -1,6 +1,6 @@
 # fmx-loki
 
-![Version: 1.20.1](https://img.shields.io/badge/Version-1.20.1-informational?style=flat-square)
+![Version: 1.20.2](https://img.shields.io/badge/Version-1.20.2-informational?style=flat-square)
 
 Loki log aggregation with Alloy collector
 

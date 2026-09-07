@@ -1,6 +1,6 @@
 # fmx-postgres
 
-![Version: 1.20.1](https://img.shields.io/badge/Version-1.20.1-informational?style=flat-square)
+![Version: 1.20.2](https://img.shields.io/badge/Version-1.20.2-informational?style=flat-square)
 
 ## Values
 
@@ -18,7 +18,7 @@
 | enableMasterLoadBalancer | bool | `false` | Enable the creation of a LoadBalancer service for the Postgres master pod. |
 | enableReplicaLoadBalancer | bool | `false` | Enable the creation of a LoadBalancer service for the Postgres master pod. |
 | env | list | `[]` |  |
-| image | string | `"ghcr.io/firemetrics/spilo17:4.0-p2-v0.13.0"` |  |
+| image | string | `"ghcr.io/firemetrics/spilo17:4.0-p2-v0.13.1"` |  |
 | imagePullSecret | string | `""` |  |
 | numberOfInstances | int | `1` |  |
 | podServiceAccountNameOverride | string | `""` |  |

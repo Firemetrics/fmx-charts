@@ -1,6 +1,6 @@
 # fuego
 
-![Version: 1.20.1](https://img.shields.io/badge/Version-1.20.1-informational?style=flat-square)
+![Version: 1.20.2](https://img.shields.io/badge/Version-1.20.2-informational?style=flat-square)
 
 ## Values
 
@@ -45,7 +45,7 @@
 | hapi.serviceAccountName | string | `""` |  |
 | hapi.volumeMounts | list | `[]` |  |
 | hapi.volumes | list | `[]` |  |
-| image | string | `"ghcr.io/firemetrics/fuego:v0.13.0"` |  |
+| image | string | `"ghcr.io/firemetrics/fuego:v0.13.1"` |  |
 | imagePullSecret | string | `""` |  |
 | initContainers | list | `[]` |  |
 | livenessProbe | object | `{}` |  |
