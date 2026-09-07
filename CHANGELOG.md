@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.20.3] - 2026-09-07
+
+### 🐛 Bug Fixes
+
+- Skip directories without a Chart.yaml when releasing and packaging
 ## [1.20.2] - 2026-09-07
 
 ### 🐛 Bug Fixes
