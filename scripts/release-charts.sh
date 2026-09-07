@@ -22,6 +22,8 @@ else
 fi
 
 for chart in "$CHARTS_DIR"/*/; do
+  # Skip work-in-progress directories that are not charts yet.
+  [ -f "$chart/Chart.yaml" ] || { echo "Skipping $chart (no Chart.yaml)"; continue; }
   "${SED_INPLACE[@]}" -e "s/^version:.*/version: $TARGET_VERSION/" "$chart/Chart.yaml"
 done
 
