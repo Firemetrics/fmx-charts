@@ -1,6 +1,6 @@
 # fmx-monitoring
 
-![Version: 1.20.1](https://img.shields.io/badge/Version-1.20.1-informational?style=flat-square)
+![Version: 2.0.0](https://img.shields.io/badge/Version-2.0.0-informational?style=flat-square)
 
 Cluster monitoring with the Alloy collector, Prometheus, and kube-state-metrics
 

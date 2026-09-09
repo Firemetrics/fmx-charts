@@ -2,6 +2,29 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.0.0] - 2026-09-09
+
+### 🚀 Features
+
+- *(fmx-monitoring)* Add cluster monitoring chart
+- *(fmx-instance)* Wire monitoring component
+- *(fmx-grafana)* Add Prometheus datasource and cluster health dashboard
+
+### 🐛 Bug Fixes
+
+- Address code-review findings on the monitoring stack
+
+### 🚜 Refactor
+
+- *(fmx-loki)* [**breaking**] Move Alloy collector to fmx-monitoring
+
+### 📚 Documentation
+
+- Add monitoring upgrade notes and spec
+
+### ⚙️ Miscellaneous Tasks
+
+- UPGRADING fix
 ## [1.20.3] - 2026-09-07
 
 ### 🐛 Bug Fixes
