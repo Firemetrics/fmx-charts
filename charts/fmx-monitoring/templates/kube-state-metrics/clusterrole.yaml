@@ -1,0 +1,38 @@
+{{- if .Values.metrics.enabled -}}
+{{/*
+Derive the RBAC rules from kubeStateMetrics.resources so the exported
+resource types and the permissions can never drift apart.
+*/}}
+{{- $apiGroupFor := dict
+  "daemonsets" "apps"
+  "deployments" "apps"
+  "replicasets" "apps"
+  "statefulsets" "apps"
+  "cronjobs" "batch"
+  "jobs" "batch"
+  "horizontalpodautoscalers" "autoscaling"
+  "ingresses" "networking.k8s.io"
+  "networkpolicies" "networking.k8s.io"
+  "poddisruptionbudgets" "policy"
+-}}
+{{- $byGroup := dict -}}
+{{- range .Values.kubeStateMetrics.resources -}}
+  {{- $group := get $apiGroupFor . | default "" -}}
+  {{- $_ := set $byGroup $group (append (get $byGroup $group | default list) .) -}}
+{{- end -}}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "ksmClusterRoleName" . }}
+rules:
+  {{- range $group, $resources := $byGroup }}
+  - apiGroups: [{{ $group | quote }}]
+    resources:
+      {{- range $resources | sortAlpha }}
+      - {{ . }}
+      {{- end }}
+    verbs:
+      - list
+      - watch
+  {{- end }}
+{{- end -}}

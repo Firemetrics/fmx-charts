@@ -1,0 +1,78 @@
+{{- if .Values.metrics.enabled -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "prometheusAppName" . }}
+spec:
+  replicas: 1
+  # Recreate: the data volume is ReadWriteOnce.
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/part-of: {{ include "appName" . }}
+      app.kubernetes.io/component: prometheus
+      app.kubernetes.io/name: {{ include "prometheusPodLabel" . }}
+  template:
+    metadata:
+      name: {{ include "prometheusAppName" . }}
+      labels:
+        app.kubernetes.io/part-of: {{ include "appName" . }}
+        app.kubernetes.io/component: prometheus
+        app.kubernetes.io/name: {{ include "prometheusPodLabel" . }}
+    spec:
+      {{- with .Values.imagePullSecret }}
+      imagePullSecrets:
+        - name: {{ . }}
+      {{- end }}
+
+      # The prometheus image runs as nobody (65534); fsGroup makes the data
+      # volume writable.
+      securityContext:
+        runAsUser: 65534
+        runAsGroup: 65534
+        fsGroup: 65534
+
+      volumes:
+        - name: config
+          configMap:
+            name: {{ include "prometheusConfigMapName" . }}
+        - name: data
+          {{- if .Values.prometheus.persistence.enabled }}
+          persistentVolumeClaim:
+            claimName: {{ include "prometheusPvcName" . }}
+          {{- else }}
+          emptyDir: {}
+          {{- end }}
+
+      containers:
+        - name: prometheus
+          image: {{ .Values.prometheus.image | quote }}
+          args:
+            - --config.file=/etc/prometheus/prometheus.yml
+            - --storage.tsdb.path=/prometheus
+            - --storage.tsdb.retention.time={{ .Values.prometheus.retentionTime }}
+            - --storage.tsdb.retention.size={{ .Values.prometheus.retentionSize }}
+            - --web.enable-remote-write-receiver
+          ports:
+            - name: http
+              containerPort: {{ include "prometheusPodHttpPort" . }}
+              protocol: TCP
+          volumeMounts:
+            - name: config
+              mountPath: /etc/prometheus
+            - name: data
+              mountPath: /prometheus
+          livenessProbe:
+            httpGet:
+              path: /-/healthy
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /-/ready
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 10
+{{- end -}}

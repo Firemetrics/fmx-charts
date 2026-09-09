@@ -48,6 +48,9 @@
 | oidc.tokenUrl | string | `"http://example.com/openid-connect/token"` |  |
 | persistence.enabled | bool | `true` |  |
 | persistence.requestedStorage | string | `"2Gi"` |  |
+| prometheus.enabled | bool | `false` |  |
+| prometheus.timeInterval | string | `"60s"` |  |
+| prometheus.url | string | `"http://prometheus.default.svc.cluster.local"` |  |
 | publicPath | string | `""` |  |
 | readinessProbe.failureThreshold | int | `3` |  |
 | readinessProbe.httpGet.path | string | `"/api/health"` |  |

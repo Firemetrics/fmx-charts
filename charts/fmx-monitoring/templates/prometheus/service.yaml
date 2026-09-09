@@ -1,0 +1,16 @@
+{{- if .Values.metrics.enabled -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "prometheusSvcName" . }}
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 80
+      targetPort: http
+  selector:
+    app.kubernetes.io/part-of: {{ include "appName" . }}
+    app.kubernetes.io/component: prometheus
+    app.kubernetes.io/name: {{ include "prometheusPodLabel" . }}
+{{- end -}}

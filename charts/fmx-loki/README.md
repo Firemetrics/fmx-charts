@@ -2,16 +2,12 @@
 
 ![Version: 1.20.3](https://img.shields.io/badge/Version-1.20.3-informational?style=flat-square)
 
-Loki log aggregation with Alloy collector
+Loki log aggregation (log collection is handled by the Alloy collector in fmx-monitoring)
 
 ## Values
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| alloy.config.jsonProcessing.labelFields | object | `{"fmx_audit_event_type":"fields.\"fmx.audit_event_type\"","fmx_service_name":"fields.\"fmx.service_name\"","level":"level"}` | Map of indexed Loki label name to JSON expression (JMESPath, as accepted by Alloy's `stage.json`). Use plain field names for top-level keys (`level: level`) or nested expressions for nested keys (`fmx_audit_event_type: 'fields."fmx.audit_event_type"'`). The `fmx_*` defaults are required by fmx-panel's audit logs page. |
-| alloy.config.namespaces | list | `[]` | List of namespaces to collect logs from. Empty list means all namespaces. |
-| alloy.enabled | bool | `true` | Enable Alloy log collector deployment. |
-| alloy.image | string | `"grafana/alloy:v1.12.2"` | The image used for Alloy pods. |
 | imagePullSecret | string | `""` | The image pull secret used for pulling images. |
 | loki.config.retentionPeriod | string | `"744h"` | Log retention period (default: 31 days). |
 | loki.enabled | bool | `true` | Enable Loki deployment. |

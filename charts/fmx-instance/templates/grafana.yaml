@@ -86,6 +86,13 @@ spec:
           url: {{ include "internalLokiUrl" . | quote }}
           {{- end }}
 
+        prometheus:
+          enabled: {{ .Values.components.monitoring.enabled }}
+          {{- if .Values.components.monitoring.enabled }}
+          url: {{ include "internalPrometheusUrl" . | quote }}
+          timeInterval: {{ .Values.components.monitoring.scrapeInterval | quote }}
+          {{- end }}
+
         caCertsConfigMap:
           enabled: {{ .Values.caCertsConfigMap.enabled }}
           name: {{ include "caCertsConfigMapName" . | quote }}

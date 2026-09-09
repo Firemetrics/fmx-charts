@@ -1,4 +1,4 @@
-{{- if .Values.alloy.enabled -}}
+{{- if (include "alloyEnabled" .) -}}
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
@@ -16,6 +16,8 @@ spec:
         app.kubernetes.io/part-of: {{ include "appName" . }}
         app.kubernetes.io/component: alloy
         app.kubernetes.io/name: {{ include "alloyPodLabel" . }}
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/alloy/configmap.yaml") . | sha256sum }}
     spec:
       serviceAccountName: {{ include "alloyServiceAccountName" . }}
 
@@ -28,12 +30,25 @@ spec:
         - name: config
           configMap:
             name: {{ include "alloyConfigMapName" . }}
+        {{- if .Values.logs.enabled }}
         - name: varlog
           hostPath:
             path: /var/log
         - name: dockercontainers
           hostPath:
             path: /var/lib/docker/containers
+        {{- end }}
+        {{- if .Values.metrics.enabled }}
+        - name: proc
+          hostPath:
+            path: /proc
+        - name: sys
+          hostPath:
+            path: /sys
+        - name: root
+          hostPath:
+            path: /
+        {{- end }}
 
       containers:
         - name: alloy
@@ -50,12 +65,26 @@ spec:
           volumeMounts:
             - name: config
               mountPath: /etc/alloy
+            {{- if .Values.logs.enabled }}
             - name: varlog
               mountPath: /var/log
               readOnly: true
             - name: dockercontainers
               mountPath: /var/lib/docker/containers
               readOnly: true
+            {{- end }}
+            {{- if .Values.metrics.enabled }}
+            - name: proc
+              mountPath: /host/proc
+              readOnly: true
+            - name: sys
+              mountPath: /host/sys
+              readOnly: true
+            - name: root
+              mountPath: /host/root
+              readOnly: true
+              mountPropagation: HostToContainer
+            {{- end }}
           env:
             - name: HOSTNAME
               valueFrom:

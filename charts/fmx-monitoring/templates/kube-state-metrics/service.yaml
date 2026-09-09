@@ -1,0 +1,16 @@
+{{- if .Values.metrics.enabled -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "ksmSvcName" . }}
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: {{ include "ksmPodHttpPort" . }}
+      targetPort: http
+  selector:
+    app.kubernetes.io/part-of: {{ include "appName" . }}
+    app.kubernetes.io/component: kube-state-metrics
+    app.kubernetes.io/name: {{ include "ksmPodLabel" . }}
+{{- end -}}

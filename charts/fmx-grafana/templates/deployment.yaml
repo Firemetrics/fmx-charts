@@ -47,6 +47,12 @@ spec:
           configMap:
             name: {{ include "datasourcesConfigMapName" . | quote }}
 
+        {{- if .Values.prometheus.enabled }}
+        - name: infrastructure-dashboards
+          configMap:
+            name: {{ include "infrastructureDashboardsConfigMapName" . | quote }}
+        {{- end }}
+
         {{- if .Values.persistence.enabled }}
         - name: {{ $dataVolume }}
           persistentVolumeClaim:
@@ -273,6 +279,11 @@ spec:
               mountPath: {{ include "dashboardsMountPath" . | quote }}
             - name: {{ $datasourcesVolume }}
               mountPath: {{ include "datasourcesMountPath" . | quote }}
+
+            {{- if .Values.prometheus.enabled }}
+            - name: infrastructure-dashboards
+              mountPath: {{ include "infrastructureDashboardsMountPath" . | quote }}
+            {{- end }}
 
             {{- if .Values.persistence.enabled }}
             - name: {{ $dataVolume }}

@@ -42,6 +42,14 @@
   {{ include "dashboardsDataPath" . }}/Firemetrics Examples
 {{- end -}}
 
+{{- define "infrastructureDashboardsConfigMapName" -}}
+  {{ include "appName" . }}-infrastructure-dashboards
+{{- end -}}
+
+{{- define "infrastructureDashboardsMountPath" -}}
+  {{ include "dashboardsDataPath" . }}/Infrastructure
+{{- end -}}
+
 {{- define "dashboardsConfigMapName" -}}
   {{ include "appName" . }}-dashboards
 {{- end -}}

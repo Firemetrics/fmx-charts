@@ -1,0 +1,276 @@
+{{- if (include "alloyEnabled" .) -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "alloyConfigMapName" . }}
+data:
+  config.alloy: |
+    {{- if .Values.logs.enabled }}
+    // ================= Logs pipeline =================
+
+    // Discover pods in the cluster
+    discovery.kubernetes "pods" {
+      role = "pod"
+      {{- if .Values.logs.namespaces }}
+      namespaces {
+        names = {{ .Values.logs.namespaces | toJson }}
+      }
+      {{- end }}
+    }
+
+    // Relabel discovered pods to extract metadata
+    discovery.relabel "pods" {
+      targets = discovery.kubernetes.pods.targets
+
+      // Keep only pods with a container name
+      rule {
+        source_labels = ["__meta_kubernetes_pod_container_name"]
+        action        = "keep"
+        regex         = ".+"
+      }
+
+      // Set namespace label
+      rule {
+        source_labels = ["__meta_kubernetes_namespace"]
+        target_label  = "namespace"
+      }
+
+      // Set pod label
+      rule {
+        source_labels = ["__meta_kubernetes_pod_name"]
+        target_label  = "pod"
+      }
+
+      // Set container label
+      rule {
+        source_labels = ["__meta_kubernetes_pod_container_name"]
+        target_label  = "container"
+      }
+
+      // Set node label
+      rule {
+        source_labels = ["__meta_kubernetes_pod_node_name"]
+        target_label  = "node"
+      }
+
+      // Set job label from app.kubernetes.io/name pod label
+      rule {
+        source_labels = ["__meta_kubernetes_pod_label_app_kubernetes_io_name"]
+        regex         = "(.+)"
+        target_label  = "job"
+      }
+
+      // Fallback: extract job from pod name (only if job not already set)
+      rule {
+        source_labels = ["job", "__meta_kubernetes_pod_name"]
+        regex         = "^;(.+?)(-[a-z0-9]+)?(-[a-z0-9]+)?$"
+        target_label  = "job"
+        replacement   = "$1"
+      }
+    }
+
+    // Collect logs from Kubernetes pods
+    loki.source.kubernetes "pods" {
+      targets    = discovery.relabel.pods.output
+      forward_to = [loki.process.pods.receiver]
+    }
+
+    // Process logs - attempt JSON parsing
+    loki.process "pods" {
+      forward_to = [loki.write.default.receiver]
+
+      {{- if .Values.logs.jsonProcessing.labelFields }}
+      // Extract JSON fields
+      stage.json {
+        expressions = {
+          {{- range $label, $expr := .Values.logs.jsonProcessing.labelFields }}
+          {{ $label }} = {{ $expr | quote }},
+          {{- end }}
+        }
+      }
+
+      // Promote extracted fields to indexed labels
+      stage.labels {
+        values = {
+          {{- range $label, $expr := .Values.logs.jsonProcessing.labelFields }}
+          {{ $label }} = "",
+          {{- end }}
+        }
+      }
+      {{- end }}
+    }
+
+    // Write logs to Loki
+    loki.write "default" {
+      endpoint {
+        url = "{{ .Values.logs.lokiUrl }}/loki/api/v1/push"
+      }
+    }
+    {{- end }}
+
+    {{- if .Values.metrics.enabled }}
+    // ================= Metrics pipeline =================
+
+    // Node-level host metrics via the embedded node exporter
+    prometheus.exporter.unix "node" {
+      procfs_path = "/host/proc"
+      sysfs_path  = "/host/sys"
+      rootfs_path = "/host/root"
+
+      filesystem {
+        mount_points_exclude = "^/(dev|proc|sys|run|var/lib/docker/.+|var/lib/kubelet/.+)($|/)"
+      }
+    }
+
+    // The exporter stamps its own job label ("integrations/unix"); force the
+    // stable name the dashboard queries rely on.
+    discovery.relabel "node" {
+      targets = prometheus.exporter.unix.node.targets
+
+      rule {
+        target_label = "job"
+        replacement  = "node"
+      }
+    }
+
+    prometheus.scrape "node" {
+      targets         = discovery.relabel.node.output
+      scrape_interval = {{ .Values.metrics.scrapeInterval | quote }}
+      forward_to      = [prometheus.relabel.keep.receiver]
+    }
+
+    // Kubelet (PVC volume stats) and cAdvisor (container CPU/memory).
+    // Restricted to this pod's own node so each DaemonSet pod scrapes only
+    // its local kubelet (avoids N^2 scrapes on multi-node clusters).
+    discovery.kubernetes "nodes" {
+      role = "node"
+
+      selectors {
+        role  = "node"
+        field = "metadata.name=" + sys.env("HOSTNAME")
+      }
+    }
+
+    prometheus.scrape "kubelet" {
+      job_name          = "kubelet"
+      targets           = discovery.kubernetes.nodes.targets
+      scheme            = "https"
+      bearer_token_file = "/var/run/secrets/kubernetes.io/serviceaccount/token"
+      tls_config {
+        insecure_skip_verify = true
+      }
+      scrape_interval = {{ .Values.metrics.scrapeInterval | quote }}
+      forward_to      = [prometheus.relabel.keep.receiver]
+    }
+
+    prometheus.scrape "cadvisor" {
+      job_name          = "cadvisor"
+      targets           = discovery.kubernetes.nodes.targets
+      scheme            = "https"
+      metrics_path      = "/metrics/cadvisor"
+      bearer_token_file = "/var/run/secrets/kubernetes.io/serviceaccount/token"
+      tls_config {
+        insecure_skip_verify = true
+      }
+      scrape_interval = {{ .Values.metrics.scrapeInterval | quote }}
+      forward_to      = [prometheus.relabel.keep.receiver]
+    }
+
+    // Kubernetes object state (pod health, restarts, replica status)
+    prometheus.scrape "kube_state_metrics" {
+      job_name        = "kube-state-metrics"
+      targets         = [{ __address__ = "{{ include "ksmSvcName" . }}.{{ .Release.Namespace }}.svc.cluster.local:{{ include "ksmPodHttpPort" . }}" }]
+      scrape_interval = {{ .Values.metrics.scrapeInterval | quote }}
+      forward_to      = [prometheus.relabel.keep.receiver]
+    }
+
+    {{- if .Values.scrape.traefik.enabled }}
+    // Ingress traffic and error rates
+    prometheus.scrape "traefik" {
+      job_name        = "traefik"
+      targets         = [{ __address__ = {{ .Values.scrape.traefik.address | quote }} }]
+      scrape_interval = {{ .Values.metrics.scrapeInterval | quote }}
+      forward_to      = [prometheus.relabel.keep.receiver]
+    }
+    {{- end }}
+
+    {{- if .Values.scrape.certManager.enabled }}
+    // Certificate expiry
+    prometheus.scrape "cert_manager" {
+      job_name        = "cert-manager"
+      targets         = [{ __address__ = {{ .Values.scrape.certManager.address | quote }} }]
+      scrape_interval = {{ .Values.metrics.scrapeInterval | quote }}
+      forward_to      = [prometheus.relabel.keep.receiver]
+    }
+    {{- end }}
+
+    {{- if .Values.probes.targets }}
+    // Synthetic HTTP probes of component health endpoints
+    prometheus.exporter.blackbox "endpoints" {
+      config = "{ modules: { http_2xx: { prober: http, timeout: 5s } } }"
+
+      {{- range .Values.probes.targets }}
+      target {
+        name    = {{ .name | quote }}
+        address = {{ .url | quote }}
+        module  = "http_2xx"
+      }
+      {{- end }}
+    }
+
+    // The exporter stamps its own job and instance labels; force the stable
+    // job name and set instance to the probe target's name (matched via the
+    // probed URL in __param_target).
+    discovery.relabel "endpoints" {
+      targets = prometheus.exporter.blackbox.endpoints.targets
+
+      rule {
+        target_label = "job"
+        replacement  = "blackbox"
+      }
+
+      {{- range .Values.probes.targets }}
+      rule {
+        source_labels = ["__param_target"]
+        regex         = {{ .url | regexQuoteMeta | quote }}
+        target_label  = "instance"
+        replacement   = {{ .name | quote }}
+      }
+      {{- end }}
+    }
+
+    prometheus.scrape "endpoints" {
+      targets         = discovery.relabel.endpoints.output
+      scrape_interval = {{ .Values.metrics.scrapeInterval | quote }}
+      forward_to      = [prometheus.relabel.keep.receiver]
+    }
+    {{- end }}
+
+    // Keep-list: only metrics used by the shipped dashboard are stored.
+    // Extend metrics.keepList before adding panels that need more.
+    prometheus.relabel "keep" {
+      forward_to = [prometheus.remote_write.default.receiver]
+
+      rule {
+        source_labels = ["__name__"]
+        regex         = {{ .Values.metrics.keepList | join "|" | quote }}
+        action        = "keep"
+      }
+
+      // cAdvisor emits pod-aggregate (container="") and pause-container
+      // (container="POD") series that no dashboard query reads; drop them.
+      rule {
+        source_labels = ["__name__", "container"]
+        regex         = "container_.*;(|POD)"
+        action        = "drop"
+      }
+    }
+
+    // Write metrics to the local Prometheus
+    prometheus.remote_write "default" {
+      endpoint {
+        url = "http://{{ include "prometheusSvcName" . }}.{{ .Release.Namespace }}.svc.cluster.local/api/v1/write"
+      }
+    }
+    {{- end }}
+{{- end -}}

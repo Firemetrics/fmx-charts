@@ -78,6 +78,13 @@ loki:
   enabled: false
   url: "http://loki.default.svc.cluster.local"
 
+prometheus:
+  enabled: false
+  url: "http://prometheus.default.svc.cluster.local"
+  # Must match the scrape interval of the metrics pipeline so Grafana's
+  # $__rate_interval stays aligned with the actual sample cadence.
+  timeInterval: 60s
+
 caCertsConfigMap:
   enabled: false
   name: "ca-certs"

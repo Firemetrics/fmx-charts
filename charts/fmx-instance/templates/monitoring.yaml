@@ -1,0 +1,82 @@
+{{- if (.Values.components.loki.alloy).image -}}
+  {{- fail "components.loki.alloy.image has moved to components.monitoring.alloy.image" -}}
+{{- end -}}
+{{- $logsEnabled := and .Values.components.loki.enabled .Values.components.loki.alloy.enabled -}}
+{{- if or .Values.components.monitoring.enabled $logsEnabled -}}
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: {{ include "monitoringAppName" . }}
+  namespace: {{ .Values.argoCdNamespace | quote }}
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+
+  source:
+    repoURL: {{ .Values.chartRepoUrl | quote }}
+    {{ include "chartSelection" (dict "context" . "chart" "fmx-monitoring") }}
+    targetRevision: {{ include "chartRevision" . | quote }}
+    helm:
+      releaseName: {{ include "monitoringAppName" . }}
+      values: |
+      {{- if .Values.components.monitoring.valuesOverride }}
+        {{- .Values.components.monitoring.valuesOverride | toYaml | nindent 8 }}
+      {{- else }}
+        imagePullSecret: {{ .Values.imagePullSecret | quote }}
+        metrics:
+          enabled: {{ .Values.components.monitoring.enabled }}
+          scrapeInterval: {{ .Values.components.monitoring.scrapeInterval | quote }}
+          {{- with .Values.components.monitoring.keepList }}
+          keepList: {{ . | toJson }}
+          {{- end }}
+        logs:
+          enabled: {{ $logsEnabled }}
+          {{- if .Values.components.loki.enabled }}
+          lokiUrl: {{ include "internalLokiUrl" . | quote }}
+          {{- end }}
+          namespaces: {{ .Values.components.loki.alloy.config.namespaces | toJson }}
+          jsonProcessing:
+            labelFields: {{ .Values.components.loki.alloy.config.jsonProcessing.labelFields | toJson }}
+        alloy:
+          image: {{ .Values.components.monitoring.alloy.image | quote }}
+        prometheus:
+          image: {{ .Values.components.monitoring.prometheus.image | quote }}
+          retentionTime: {{ .Values.components.monitoring.prometheus.retentionTime | quote }}
+          retentionSize: {{ .Values.components.monitoring.prometheus.retentionSize | quote }}
+          persistence:
+            enabled: {{ .Values.components.monitoring.prometheus.persistence.enabled }}
+            requestedStorage: {{ .Values.components.monitoring.prometheus.persistence.requestedStorage | quote }}
+        kubeStateMetrics:
+          image: {{ .Values.components.monitoring.kubeStateMetrics.image | quote }}
+        scrape:
+          traefik:
+            enabled: {{ .Values.components.monitoring.scrape.traefik.enabled }}
+            address: {{ .Values.components.monitoring.scrape.traefik.address | quote }}
+          certManager:
+            enabled: {{ .Values.components.monitoring.scrape.certManager.enabled }}
+            address: {{ .Values.components.monitoring.scrape.certManager.address | quote }}
+        probes:
+          targets:
+            {{- if .Values.components.fuego.enabled }}
+            - name: fuego
+              url: {{ printf "%s/$healthcheck" (include "internalFhirBaseUrl" .) | quote }}
+            {{- end }}
+            {{- if .Values.components.grafana.enabled }}
+            - name: grafana
+              url: {{ printf "%s/api/health" (include "internalGrafanaUrl" .) | quote }}
+            {{- end }}
+            {{- if .Values.components.keycloak.enabled }}
+            - name: keycloak
+              url: {{ include "internalKeycloakRealmUrl" . | quote }}
+            {{- end }}
+      {{- end }}
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: {{ .Release.Namespace }}
+
+  {{- with .Values.syncPolicy }}
+  syncPolicy: {{- . | toYaml | nindent 4 }}
+  {{- end -}}
+{{- end -}}

@@ -1,0 +1,100 @@
+# -- The image pull secret used for pulling images.
+imagePullSecret: ""
+
+metrics:
+  # -- Enable the metrics pipeline (Prometheus, kube-state-metrics, and all
+  # metric scrapes performed by Alloy).
+  enabled: true
+  # -- The interval applied to all metric scrapes and probes.
+  scrapeInterval: 60s
+  # -- Metric names stored in Prometheus; everything else is dropped before
+  # remote write. Every entry is consumed by the shipped FMX Cluster Health
+  # dashboard. Extend this list before adding dashboard panels that need
+  # additional metrics — history for a metric starts when its name is added
+  # (KSM metrics may also require extending kubeStateMetrics.resources).
+  keepList:
+    - up
+    - probe_success
+    - node_cpu_seconds_total
+    - node_memory_MemTotal_bytes
+    - node_memory_MemAvailable_bytes
+    - node_filesystem_size_bytes
+    - node_filesystem_avail_bytes
+    - container_cpu_usage_seconds_total
+    - container_memory_working_set_bytes
+    - kubelet_volume_stats_capacity_bytes
+    - kubelet_volume_stats_used_bytes
+    - kubelet_volume_stats_available_bytes
+    - kube_pod_info
+    - kube_pod_status_phase
+    - kube_pod_status_ready
+    - kube_pod_container_status_restarts_total
+    - traefik_entrypoint_requests_total
+    - traefik_entrypoint_request_duration_seconds_sum
+    - traefik_entrypoint_request_duration_seconds_count
+    - certmanager_certificate_expiration_timestamp_seconds
+
+logs:
+  # -- Enable the log pipeline (ship pod logs to Loki).
+  enabled: false
+  # -- Base URL of the Loki instance to push logs to.
+  lokiUrl: "http://loki.default.svc.cluster.local"
+  # -- List of namespaces to collect logs from. Empty list means all namespaces.
+  namespaces: []
+  jsonProcessing:
+    # -- Map of indexed Loki label name to JSON expression (JMESPath, as
+    # accepted by Alloy's `stage.json`). Use plain field names for top-level
+    # keys (`level: level`) or nested expressions for nested keys
+    # (`fmx_audit_event_type: 'fields."fmx.audit_event_type"'`). The
+    # `fmx_*` defaults are required by fmx-panel's audit logs page.
+    labelFields:
+      level: level
+      fmx_service_name: 'fields."fmx.service_name"'
+      fmx_audit_event_type: 'fields."fmx.audit_event_type"'
+
+alloy:
+  # -- The image used for the Alloy collector pods.
+  image: grafana/alloy:v1.12.2
+
+prometheus:
+  # -- The image used for the Prometheus pod.
+  image: docker.io/prom/prometheus:v3.5.0
+  # -- Time-based retention for stored metrics.
+  retentionTime: 10d
+  # -- Size-based retention cap for stored metrics (hard backstop; keep below
+  # the data volume size).
+  retentionSize: 4GB
+  persistence:
+    # -- Enable persistence for Prometheus data.
+    enabled: true
+    # -- The size of the Prometheus data volume.
+    requestedStorage: "5Gi"
+
+kubeStateMetrics:
+  # -- The image used for the kube-state-metrics pod.
+  image: registry.k8s.io/kube-state-metrics/kube-state-metrics:v2.16.0
+  # -- The Kubernetes resource types kube-state-metrics exports metrics for
+  # (the ClusterRole rules are derived from this list). Only pod metrics are
+  # consumed by the shipped dashboard; extend together with metrics.keepList.
+  resources:
+    - pods
+
+scrape:
+  traefik:
+    # -- Scrape the Traefik ingress controller. Disable if the cluster uses
+    # its own ingress instead of the Traefik installed by fmx-cluster.
+    enabled: true
+    # -- Address of the Traefik Prometheus metrics endpoint.
+    address: "traefik-metrics.traefik.svc.cluster.local:9100"
+  certManager:
+    # -- Scrape cert-manager. Disable if the cluster uses its own certificate
+    # management instead of the cert-manager installed by fmx-cluster.
+    enabled: true
+    # -- Address of the cert-manager Prometheus metrics endpoint.
+    address: "cert-manager.cert-manager.svc.cluster.local:9402"
+
+probes:
+  # -- HTTP health endpoints probed from inside the cluster. Each entry needs
+  # a `name` and a `url`; results are stored as `probe_*` metrics. Populated
+  # by fmx-instance with the health endpoints of the enabled components.
+  targets: []

@@ -1,0 +1,14 @@
+{{- if .Values.metrics.enabled -}}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ include "ksmClusterRoleName" . }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ include "ksmClusterRoleName" . }}
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "ksmServiceAccountName" . }}
+    namespace: {{ .Release.Namespace }}
+{{- end -}}

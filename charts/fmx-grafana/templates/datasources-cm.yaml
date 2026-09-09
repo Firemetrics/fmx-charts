@@ -21,4 +21,15 @@ data:
         url: {{ .Values.loki.url | quote }}
         editable: true
       {{- end }}
+      {{- if .Values.prometheus.enabled }}
+      - name: Prometheus
+        # Stable uid referenced by the provisioned infrastructure dashboard.
+        uid: prometheus
+        type: prometheus
+        access: proxy
+        url: {{ .Values.prometheus.url | quote }}
+        editable: false
+        jsonData:
+          timeInterval: {{ .Values.prometheus.timeInterval | quote }}
+      {{- end }}
 

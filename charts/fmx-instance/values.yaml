@@ -541,10 +541,9 @@ components:
       # -- Override the service name.
       nameOverride: ""
     alloy:
-      # -- Enable Alloy log collector deployment.
+      # -- Enable log collection (the Alloy collector is deployed by the
+      # monitoring component; this flag controls its log pipeline).
       enabled: true
-      # -- The image used for Alloy pods.
-      image: grafana/alloy:v1.12.2
       config:
         # -- List of namespaces to collect logs from. Empty list means all namespaces.
         namespaces: []
@@ -558,4 +557,56 @@ components:
             fmx_service_name: 'fields."fmx.service_name"'
             fmx_audit_event_type: 'fields."fmx.audit_event_type"'
     # -- Override the values for the Loki Helm chart.
+    valuesOverride: {}
+
+  monitoring:
+    # -- Enable the cluster monitoring component: metric collection via the
+    # Alloy collector, a local Prometheus, kube-state-metrics, and the
+    # infrastructure dashboard in Grafana. The Alloy collector is also
+    # deployed when Loki is enabled (it hosts the log pipeline).
+    enabled: false
+    # -- The interval applied to all metric scrapes and probes.
+    scrapeInterval: 60s
+    # -- Replace the monitoring chart's default metric keep-list (empty uses
+    # the chart default). Prefer this over valuesOverride for storing
+    # additional metrics.
+    keepList: []
+    alloy:
+      # -- The image used for the Alloy collector pods.
+      image: grafana/alloy:v1.12.2
+    prometheus:
+      # -- The image used for the Prometheus pod.
+      image: docker.io/prom/prometheus:v3.5.0
+      # -- Time-based retention for stored metrics.
+      retentionTime: 10d
+      # -- Size-based retention cap for stored metrics (hard backstop; keep
+      # below the data volume size).
+      retentionSize: 4GB
+      persistence:
+        # -- Enable persistence for Prometheus data.
+        enabled: true
+        # -- The size of the Prometheus data volume.
+        requestedStorage: "5Gi"
+    kubeStateMetrics:
+      # -- The image used for the kube-state-metrics pod.
+      image: registry.k8s.io/kube-state-metrics/kube-state-metrics:v2.16.0
+    scrape:
+      traefik:
+        # -- Scrape the Traefik ingress controller. Disable if the cluster
+        # uses its own ingress instead of the Traefik installed by fmx-cluster.
+        enabled: true
+        # -- Address of the Traefik Prometheus metrics endpoint.
+        address: "traefik-metrics.traefik.svc.cluster.local:9100"
+      certManager:
+        # -- Scrape cert-manager. Disable if the cluster uses its own
+        # certificate management instead of the cert-manager installed by
+        # fmx-cluster.
+        enabled: true
+        # -- Address of the cert-manager Prometheus metrics endpoint.
+        address: "cert-manager.cert-manager.svc.cluster.local:9402"
+    # -- Override the values for the monitoring Helm chart. Caution: this
+    # replaces ALL generated values, including the log-pipeline wiring the
+    # Loki component depends on (logs.enabled, lokiUrl, labelFields) and the
+    # probe targets — when set, you must provide those yourself. To only
+    # extend the stored metrics, use monitoring.keepList instead.
     valuesOverride: {}

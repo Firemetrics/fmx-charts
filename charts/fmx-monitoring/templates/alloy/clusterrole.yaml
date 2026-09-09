@@ -1,4 +1,4 @@
-{{- if .Values.alloy.enabled -}}
+{{- if (include "alloyEnabled" .) -}}
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
@@ -17,6 +17,13 @@ rules:
       - get
       - list
       - watch
+  # Scraping the kubelet's /metrics and /metrics/cadvisor endpoints directly
+  # (port 10250) is authorized by the kubelet as a GET on nodes/metrics.
+  - apiGroups: [""]
+    resources:
+      - nodes/metrics
+    verbs:
+      - get
   - apiGroups: ["discovery.k8s.io"]
     resources:
       - endpointslices
