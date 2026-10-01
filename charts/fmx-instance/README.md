@@ -190,6 +190,7 @@
 | components.panel.volumeMounts | list | `[]` | Extra volume mounts for the Panel pods. |
 | components.panel.volumes | list | `[]` | Extra volumes for the Panel pods. |
 | components.postgres.allowedSourceRanges | list | `[]` | List of CIDR blocks allowed to access the Postgres cluster if `enableMasterLoadBalancer` is true. Use `["0.0.0.0/0"]` to allow access from anywhere. |
+| components.postgres.clone | object | `{}` | Bootstrap the Postgres cluster from the WAL archive written by `backup` instead of initialising an empty one. Passed through verbatim to the Postgres Operator's `clone` spec. Empty in normal operation; set only to restore. See `charts/fmx-postgres/templates/manifest.yaml` for the expected shape. |
 | components.postgres.clusterNameOverride | string | `""` | The name of the Postgres cluster. Defaults to "{prefix}-postgres". |
 | components.postgres.enableMasterLoadBalancer | bool | `false` | Enable the creation of a LoadBalancer service for the Postgres master pod. |
 | components.postgres.enableReplicaLoadBalancer | bool | `false` | Enable the creation of a LoadBalancer service for the Postgres master pod. |
