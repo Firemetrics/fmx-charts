@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.1.0] - 2026-10-01
+
+### 🚀 Features
+
+- *(postgres)* Support restoring from the WAL archive
 ## [2.0.0] - 2026-09-09
 
 ### 🚀 Features
