@@ -144,6 +144,9 @@ components:
       # -- The size of the Postgres data volume.
       size: 10Gi
 
+    # -- Bootstrap the Postgres cluster from the WAL archive written by `backup` instead of initialising an empty one. Passed through verbatim to the Postgres Operator's `clone` spec. Empty in normal operation; set only to restore. See `charts/fmx-postgres/templates/manifest.yaml` for the expected shape.
+    clone: {}
+
     # -- The resource requests and limits for the Postgres cluster pods.
     resources:
       requests:

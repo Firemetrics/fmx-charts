@@ -17,7 +17,6 @@ spec:
   postgresql: {{ .Values.postgresql | toYaml | nindent 4 }}
   volume: {{ .Values.volume | toYaml | nindent 4 }}
   resources: {{ .Values.resources | toYaml | nindent 4 }}
-  enableMasterLoadBalancer: {{ .Values.enableMasterLoadBalancer }}
   spiloRunAsUser: {{ .Values.spiloRunAsUser }}
   spiloRunAsGroup: {{ .Values.spiloRunAsGroup }}
   spiloFSGroup: {{ .Values.spiloFSGroup }}
@@ -60,6 +59,24 @@ spec:
 
   {{- end }}
 
-  {{- with .Values.allowedSourceRanges }}
-  allowedSourceRanges: {{ . | toYaml | nindent 4 }}
+  {{- /*
+    Bootstrap this cluster from a WAL archive instead of initialising an empty one.
+    Passed through verbatim to the Postgres Operator's `clone` spec, so any field
+    it supports can be set. Absent in normal operation; set only to restore.
+
+    Restoring from the S3 archive written by `backup` above, to the latest state:
+
+      clone:
+        cluster: fmx-postgres
+        s3_endpoint: http://minio
+        s3_access_key_id: ...
+        s3_secret_access_key: ...
+        s3_force_path_style: "true"
+
+    Add `timestamp: "2026-01-01T12:00:00+00:00"` for point-in-time recovery.
+    Note the operator takes these credentials as literal strings; unlike `backup`
+    above, it has no way to read them from a secret.
+  */}}
+  {{- with .Values.clone }}
+  clone: {{- . | toYaml | nindent 4 }}
   {{- end }}

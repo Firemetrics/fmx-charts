@@ -70,4 +70,7 @@ backup:
     # -- The key in the secret containing the S3 secret key.
     secretKeyKey: secretKey
 
+# -- Bootstrap the cluster from a WAL archive instead of initialising an empty one. Passed through verbatim to the Postgres Operator's `clone` spec. Empty in normal operation; set only to restore. See `templates/manifest.yaml` for the expected shape.
+clone: {}
+
 env: []

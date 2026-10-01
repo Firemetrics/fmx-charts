@@ -14,6 +14,7 @@
 | backup.userSecret.accessKeyKey | string | `"accessKey"` | The key in the secret containing the S3 access key. |
 | backup.userSecret.name | string | `"backup-bucket-user"` | The secret containing the S3 user credentials for WAL archiving. |
 | backup.userSecret.secretKeyKey | string | `"secretKey"` | The key in the secret containing the S3 secret key. |
+| clone | object | `{}` | Bootstrap the cluster from a WAL archive instead of initialising an empty one. Passed through verbatim to the Postgres Operator's `clone` spec. Empty in normal operation; set only to restore. See `templates/manifest.yaml` for the expected shape. |
 | clusterNameOverride | string | `""` |  |
 | enableMasterLoadBalancer | bool | `false` | Enable the creation of a LoadBalancer service for the Postgres master pod. |
 | enableReplicaLoadBalancer | bool | `false` | Enable the creation of a LoadBalancer service for the Postgres master pod. |

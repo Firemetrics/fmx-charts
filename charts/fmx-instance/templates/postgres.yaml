@@ -55,6 +55,10 @@ spec:
         backup: {{- .Values.backup | toYaml | nindent 10 }}
         {{- end }}
 
+        {{- with .Values.components.postgres.clone }}
+        clone: {{- . | toYaml | nindent 10 }}
+        {{- end }}
+
         {{- with .Values.components.postgres.extraEnv }}
         env: {{- . | toYaml | nindent 10 }}
         {{- end }}
