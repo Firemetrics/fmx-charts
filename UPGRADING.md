@@ -1,77 +1,57 @@
 # Upgrading
 
-## 1.20.x → next release (monitoring stack)
+## 2.0.x → 2.1.0
 
-This release introduces the `fmx-monitoring` chart (metrics collection via
-Alloy, a local Prometheus, kube-state-metrics, and the "FMX Cluster Health"
-Grafana dashboard) and **moves the Alloy collector out of `fmx-loki`** into
-`fmx-monitoring`. New values: `components.monitoring.*` (disabled by default).
+No action required.
 
-### Required steps for installs with Loki enabled
+## 1.20.x → 2.0.0
 
-The Alloy DaemonSet, ConfigMap, ServiceAccount, ClusterRole, and
-ClusterRoleBinding previously managed by the `<instance>-loki` Application are
-no longer part of the `fmx-loki` chart. Because child Applications sync with
-`prune: false`, Argo CD will **not** delete the old resources — until they are
-pruned, two Alloy DaemonSets run side by side and ship duplicate log lines to
-Loki.
+2.0.0 adds cluster monitoring: metrics in Prometheus and an "FMX Cluster
+Health" dashboard in Grafana. The upgrade changes no data.
 
-After the upgrade has synced, prune the orphaned resources once:
+1. Update the playbooks in your installation directory. Download
+   `firemetrics-installation-v2.1.0.zip`, unpack it somewhere else, and unpack
+   only its `assets.zip` over your installation directory:
+
+   ```sh
+   cd /path/to/your/installation
+   unzip -o /path/to/firemetrics-installation/assets.zip
+   ```
+
+   This replaces the playbooks, `templates/` and `group_vars/`, which also
+   prepare Traefik and storage for monitoring. Your `inventories/` and
+   `secrets/` are not in the package and stay as they are. Do not run
+   `init.sh`, because it would generate new secrets. If you changed
+   `group_vars/all.yaml`, apply your changes again.
+2. In `inventories/main.yaml`, set `target_revision` to `"2.1.0"`. To turn
+   monitoring on as well, add it under `values`. Then run `./deploy.sh`:
+
+   ```yaml
+   deployments:
+     main:
+       chart:
+         target_revision: "2.1.0"
+       values:
+         components:
+           monitoring:
+             enabled: true
+   ```
+
+3. If Loki was enabled before, remove the old log collector once the upgrade
+   has synced. Otherwise logs arrive twice:
+
+   ```sh
+   argocd app sync <instance>-loki --prune
+   ```
+
+## After every upgrade
+
+Check that the database extension matches the new Firemetrics version:
 
 ```sh
-argocd app sync <instance>-loki --prune
+kubectl -n <namespace> exec <instance>-postgres-0 -c postgres -- \
+  psql -U postgres -d firemetrics -Atc "select extversion from pg_extension where extname = 'fhirql'"
 ```
 
-or delete them by name (the old resources carry no metadata labels; note the
-old ClusterRole/Binding name has no namespace suffix):
-
-```sh
-kubectl -n <namespace> delete daemonset/<instance>-loki-alloy serviceaccount/<instance>-loki-alloy configmap/<instance>-loki-alloy-config
-kubectl delete clusterrole,clusterrolebinding <instance>-loki-alloy
-```
-
-### Removed values
-
-- `components.loki.alloy.image` — the Alloy image is now configured at
-  `components.monitoring.alloy.image`. Setting the old key fails the render
-  with a pointer to the new one. `components.loki.alloy.enabled` and
-  `components.loki.alloy.config.*` remain and still control the log pipeline.
-- Alloy settings inside `components.loki.valuesOverride` no longer apply:
-  that override reaches only the fmx-loki chart, which no longer contains
-  Alloy. Move any `alloy:` keys there (e.g. a namespaces allowlist or custom
-  labelFields) to `components.loki.alloy.config.*`, or to
-  `components.monitoring.valuesOverride` — silently, nothing else warns
-  about this.
-- Standalone (non-Argo CD) users of the individually published `fmx-loki`
-  chart: `helm upgrade` deletes the Alloy collector with the removed
-  manifests and log ingestion stops while Loki itself stays healthy. Install
-  `fmx-monitoring` with `logs.enabled: true` and `logs.lokiUrl` pointing at
-  your Loki service to restore collection.
-
-### Enabling monitoring on an existing install
-
-1. Verify the Nexus registry mirror proxies the two new image paths
-   (`prom/prometheus` from docker.io and
-   `kube-state-metrics/kube-state-metrics` from registry.k8s.io) — the mirror
-   is a wildcard pull-through, so this is a server-side Nexus check only.
-2. For ingress traffic metrics, re-run the fmx-cluster infrastructure playbook
-   (it now exposes Traefik's metrics service); or set
-   `components.monitoring.scrape.traefik.enabled: false`. The same playbook
-   run also sets `defaultVolumeType: local` on the `local-path` StorageClass,
-   which the PVC dashboard panels need — without it (or for volumes
-   provisioned before it), the PVC panels show "No data" because hostPath
-   volumes have no kubelet volume stats.
-3. Set `components.monitoring.enabled: true`.
-4. The Grafana pod must restart to load the new Prometheus datasource —
-   changing datasources does not restart it automatically. The image/values
-   change of a regular chart upgrade does this as a side effect; otherwise:
-   `kubectl -n <namespace> rollout restart deployment <instance>-grafana`.
-
-### Known limitations
-
-- Single-node design: on multi-node clusters, cluster-level scrapes
-  (kube-state-metrics, Traefik, cert-manager, probes) run once per node and
-  duplicate samples.
-- The metric keep-list (`metrics.keepList` in fmx-monitoring) drops everything
-  the shipped dashboard does not use. Add metric names to the list before
-  building panels that need them; history starts at that moment.
+If it still shows the old version, delete the `<instance>-bootstrap-*` job and
+run `argocd app sync <instance>-bootstrap`.
