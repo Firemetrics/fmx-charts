@@ -53,5 +53,12 @@ kubectl -n <namespace> exec <instance>-postgres-0 -c postgres -- \
   psql -U postgres -d firemetrics -Atc "SELECT fmx_extension_version();"
 ```
 
-If it still shows the old version, delete the `<instance>-bootstrap-*` job and
-run `argocd app sync <instance>-bootstrap`.
+If it still shows the old version, delete the bootstrap job and let Argo CD
+create it again:
+
+```sh
+kubectl -n <namespace> get jobs | grep bootstrap
+kubectl -n <namespace> delete job <instance>-bootstrap-<version>
+kubectl -n argocd patch application <instance>-bootstrap --type merge \
+  -p '{"operation":{"sync":{"revision":""}}}'
+```
