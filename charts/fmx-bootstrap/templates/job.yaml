@@ -44,6 +44,15 @@ spec:
                 sleep 1
               done
 
+              # This job runs the Spilo image Postgres is rolling to, so the fhirql
+              # version shipped here is the one the database has to end up on.
+              PG_MAJOR="$(psql -tAc "SELECT current_setting('server_version_num')::int / 10000")"
+              TARGET="$(sed -n "s/^default_version *= *'\(.*\)'/\1/p" "/usr/share/postgresql/$PG_MAJOR/extension/fhirql.control")"
+              if [ -z "$TARGET" ]; then
+                echo "Could not read the fhirql version from this image"
+                exit 1
+              fi
+
               echo "Bootstrapping database $DATABASE_NAME..."
 
               if [ "$(psql -tAc "SELECT 1 FROM pg_database WHERE datname = '$DATABASE_NAME'")" != "1" ]; then
@@ -51,7 +60,19 @@ spec:
               fi
 
               psql -d $DATABASE_NAME -c "CREATE EXTENSION IF NOT EXISTS fhirql CASCADE;"
-              psql -d $DATABASE_NAME -c "ALTER EXTENSION fhirql UPDATE;"
+
+              # While the old Postgres pod is still running, the update is a no-op,
+              # so retry until the new pod is up and the update reaches TARGET.
+              DEADLINE=$((SECONDS + 1800))
+              until psql -d $DATABASE_NAME -c "ALTER EXTENSION fhirql UPDATE;" &&
+                    [ "$(psql -d $DATABASE_NAME -tAc "SELECT fmx_extension_version()" 2> /dev/null)" = "$TARGET" ]; do
+                if [ "$SECONDS" -ge "$DEADLINE" ]; then
+                  echo "fhirql did not reach $TARGET within 30 minutes"
+                  exit 1
+                fi
+                echo "Waiting for fhirql $TARGET..."
+                sleep 5
+              done
 
               echo "Running fhirql migrations..."
               fql_migrate --postgres-url "postgresql://$PGUSER:$PGPASSWORD@$PGHOST:$DATABASE_PORT/$DATABASE_NAME"
