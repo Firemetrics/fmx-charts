@@ -41,7 +41,8 @@ Health" dashboard in Grafana. The upgrade changes no data.
    has synced. Otherwise logs arrive twice:
 
    ```sh
-   argocd app sync <instance>-loki --prune
+   kubectl -n argocd patch application <instance>-loki --type merge \
+     -p '{"operation":{"sync":{"revision":"","prune":true}}}'
    ```
 
 ## After every upgrade
