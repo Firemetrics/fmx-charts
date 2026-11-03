@@ -50,7 +50,7 @@ Check that the database extension matches the new Firemetrics version:
 
 ```sh
 kubectl -n <namespace> exec <instance>-postgres-0 -c postgres -- \
-  psql -U postgres -d firemetrics -Atc "select extversion from pg_extension where extname = 'fhirql'"
+  psql -U postgres -d firemetrics -Atc "SELECT fmx_extension_version();"
 ```
 
 If it still shows the old version, delete the `<instance>-bootstrap-*` job and
