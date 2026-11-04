@@ -61,11 +61,19 @@ spec:
 
               psql -d $DATABASE_NAME -c "CREATE EXTENSION IF NOT EXISTS fhirql CASCADE;"
 
+              # A database already on a newer fhirql than this image is a downgrade,
+              # which ALTER EXTENSION cannot do, so fail now instead of retrying.
+              INSTALLED="$(psql -d $DATABASE_NAME -tAc "SELECT extversion FROM pg_extension WHERE extname = 'fhirql'")"
+              if [ "$INSTALLED" != "$TARGET" ] && [ "$(printf '%s\n' "$INSTALLED" "$TARGET" | sort -V | tail -n 1)" = "$INSTALLED" ]; then
+                echo "fhirql $INSTALLED is newer than $TARGET in this image; downgrades are not supported"
+                exit 1
+              fi
+
               # While the old Postgres pod is still running, the update is a no-op,
               # so retry until the new pod is up and the update reaches TARGET.
               DEADLINE=$((SECONDS + 1800))
               until psql -d $DATABASE_NAME -c "ALTER EXTENSION fhirql UPDATE;" &&
-                    [ "$(psql -d $DATABASE_NAME -tAc "SELECT fmx_extension_version()" 2> /dev/null)" = "$TARGET" ]; do
+                    [ "$(psql -d $DATABASE_NAME -tAc "SELECT extversion FROM pg_extension WHERE extname = 'fhirql'" 2> /dev/null)" = "$TARGET" ]; do
                 if [ "$SECONDS" -ge "$DEADLINE" ]; then
                   echo "fhirql did not reach $TARGET within 30 minutes"
                   exit 1
