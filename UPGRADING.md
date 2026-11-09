@@ -9,7 +9,10 @@ No action required.
 2.0.0 adds cluster monitoring: metrics in Prometheus and an "FMX Cluster
 Health" dashboard in Grafana. The upgrade changes no data.
 
-1. Update the playbooks in your installation directory. Download
+1. Only if you turn monitoring on in step 2: update the playbooks in your
+   installation directory. They expose Traefik's metrics and make new volumes
+   report their disk usage, so the Traefik and disk usage panels work. Without
+   monitoring, skip this step. Download
    `firemetrics-installation-v2.1.0.zip`, unpack it somewhere else, and unpack
    only its `assets.zip` over your installation directory:
 
@@ -18,10 +21,9 @@ Health" dashboard in Grafana. The upgrade changes no data.
    unzip -o /path/to/firemetrics-installation/assets.zip
    ```
 
-   This replaces the playbooks, `templates/` and `group_vars/`, which also
-   prepare Traefik and storage for monitoring. Your `inventories/` and
-   `secrets/` are not in the package and stay as they are. Do not run
-   `init.sh`, because it would generate new secrets. If you changed
+   This replaces the playbooks, `templates/` and `group_vars/`. Your
+   `inventories/` and `secrets/` are not in the package and stay as they are.
+   Do not run `init.sh`, because it would generate new secrets. If you changed
    `group_vars/all.yaml`, apply your changes again.
 2. In `inventories/main.yaml`, set `target_revision` to `"2.1.0"`. To turn
    monitoring on as well, add it under `values`. Then run `./deploy.sh`:
