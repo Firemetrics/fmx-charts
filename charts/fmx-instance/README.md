@@ -1,6 +1,6 @@
 # fmx-instance
 
-![Version: 2.1.0](https://img.shields.io/badge/Version-2.1.0-informational?style=flat-square)
+![Version: 2.2.0](https://img.shields.io/badge/Version-2.2.0-informational?style=flat-square)
 
 ## Values
 
@@ -172,7 +172,7 @@
 | components.panel.enabled | bool | `true` | Enable the Panel component. |
 | components.panel.env | list | `[]` | Extra environment variables for the Panel pods. |
 | components.panel.featureFlags | list | `["resource_explorer","nocode_builder","sql_editor","audit_logs"]` | The features enabled in the Panel. `audit_logs` requires `components.loki.enabled: true` so the Panel can query Loki. |
-| components.panel.image | string | `"ghcr.io/firemetrics/fmx-panel:v1.9.0"` | The image used for the Panel pods. |
+| components.panel.image | string | `"ghcr.io/firemetrics/fmx-panel:v1.10.0"` | The image used for the Panel pods. |
 | components.panel.mcpApiKeySecret.enabled | bool | `false` | Enable the MCP API key for the Panel AI assistant. |
 | components.panel.mcpApiKeySecret.key | string | `"api-key"` | The key in the secret containing the MCP API key. |
 | components.panel.mcpApiKeySecret.name | string | `"mcp-api-key"` | The secret containing the MCP API key. |
@@ -210,7 +210,7 @@
 | database.existingSuperUserSecret | string | `""` | The database super user used by the Firemetrics instance to manage the Postgres instance. Defaults to the user created by Postgres Operator. |
 | database.hostnameOverride | string | `""` | The database host used by the Firemetrics instance. Defaults to the Postgres cluster created by this chart. |
 | database.port | int | `5432` | The database port used by the Firemetrics instance. |
-| firemetricsVersion | string | `"v0.13.1"` | The version tag for core Firemetrics images (fuego, dicom_receiver, spilo). |
+| firemetricsVersion | string | `"v0.15.0"` | The version tag for core Firemetrics images (fuego, dicom_receiver, spilo). |
 | hostname | string | `""` | The hostname for the Firemetrics instance (deprecated, use ingress.fqdn instead). |
 | imagePullSecret | string | `""` | The image pull secret used for the Firemetrics instance. |
 | ingress.fqdn | string | `"example.com"` | The FQDN for the Firemetrics instance. |

@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.2.0] - 2026-11-10
+
+### 🚀 Features
+
+- Update firemetrics to v0.15.0 and fmx-panel to v1.10.0
+
+### 🐛 Bug Fixes
+
+- *(fmx-bootstrap)* Retry the fhirql update until it reaches the new version
+- *(fmx-bootstrap)* Fail fast on a fhirql downgrade
+- *(fmx-bootstrap)* Read the fhirql version from pg_extension in both checks
+
+### 📚 Documentation
+
+- Simplify UPGRADING for 2.x
+- Rerun the bootstrap job with kubectl only
+- Prune the old Loki collector with kubectl only
+- Update the playbooks only when turning monitoring on
+
+### ⚙️ Miscellaneous Tasks
+
+- Change how user can see current fmx extension version in postgres
 ## [2.1.0] - 2026-10-01
 
 ### 🚀 Features
