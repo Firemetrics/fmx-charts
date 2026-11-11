@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.2.2] - 2026-11-11
+
+### 🐛 Bug Fixes
+
+- *(fmx-postgres)* Keep the Postgres cluster when its Argo app is deleted
 ## [2.2.1] - 2026-11-11
 
 ### 🐛 Bug Fixes

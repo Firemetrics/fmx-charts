@@ -1,6 +1,6 @@
 # fmx-loki
 
-![Version: 2.2.1](https://img.shields.io/badge/Version-2.2.1-informational?style=flat-square)
+![Version: 2.2.2](https://img.shields.io/badge/Version-2.2.2-informational?style=flat-square)
 
 Loki log aggregation (log collection is handled by the Alloy collector in fmx-monitoring)
 
