@@ -2,6 +2,11 @@ apiVersion: "acid.zalan.do/v1"
 kind: postgresql
 metadata:
   name: {{ include "clusterName" . | quote }}
+  annotations:
+    # Keep the cluster when Argo CD deletes this app, e.g. when the parent
+    # prunes it after postgres is disabled or renamed. Deleting this resource
+    # makes the operator delete the data volume with it.
+    argocd.argoproj.io/sync-options: Delete=false
 spec:
   enableMasterLoadBalancer: {{ .Values.enableMasterLoadBalancer }}
   enableReplicaLoadBalancer: {{ .Values.enableReplicaLoadBalancer }}
